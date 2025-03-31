@@ -1,53 +1,53 @@
 /* General dashboard container */
-.dashboard-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  background-color: #f4f4f4;
-  padding: 20px;
-}
+/* .dashboard-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background-color: #f4f4f4;
+    padding: 20px;
+  } */
 
 /* Dashboard card styles */
-.dashboard-card {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  margin: 10px;
-  text-align: center;
-  width: 300px;
-}
+/* .dashboard-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 10px;
+    text-align: center;
+    width: 300px;
+  } */
 
 /* Dashboard grid layout */
-.dashboard-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
-  width: 100%;
-  max-width: 1200px;
-}
+/* .dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+  } */
 
 /* Profile dropdown */
-.profile-dropdown {
-  position: absolute;
-  top: 50px;
-  right: 20px;
-  background: white;
-  padding: 15px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  display: none;
-}
+/* .profile-dropdown {
+    position: absolute;
+    top: 50px;
+    right: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    display: none;
+  } */
 
-.profile-dropdown.active {
-  display: block;
-}
+/* .profile-dropdown.active {
+    display: block;
+  } */
 
-.profile-icon {
-  position: absolute;
-  top: 10px;
-  right: 20px;
-  cursor: pointer;
-}
+/* .profile-icon {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    cursor: pointer;
+  } */

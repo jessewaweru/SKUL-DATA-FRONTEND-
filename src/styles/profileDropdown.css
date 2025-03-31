@@ -1,65 +1,45 @@
-.profile-dropdown {
-  position: absolute;
-  top: 10px;
-  right: 20px;
+.profile-dropdown-navbar {
+  position: relative;
+}
+
+.profile-icon {
+  cursor: pointer;
+  color: white;
+  transition: color 0.3s ease;
   cursor: pointer;
 }
 
-.profile-icon img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  transition: 0.3s;
-}
-
-.profile-icon img:hover {
-  transform: scale(1.1);
+.profile-icon:hover {
+  color: var(--secondary-purple);
 }
 
 .dropdown-menu {
-  position: absolute;
+  position: sticky;
   top: 50px;
   right: 0;
   background: white;
   border-radius: 8px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-  width: 180px;
-  padding: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 200px;
+  padding: 15px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-}
-
-.dropdown-menu p {
-  margin: 5px 0;
-  font-weight: bold;
-}
-
-.user-role {
-  color: gray;
-  font-size: 14px;
-}
-
-.dropdown-menu hr {
-  width: 100%;
-  border: 0.5px solid #ddd;
+  cursor: pointer;
 }
 
 .dropdown-menu button {
-  background: none;
-  border: none;
-  padding: 8px;
   width: 100%;
-  text-align: center;
+  padding: 10px;
+  margin: 5px 5px;
+  border: none;
+  background: var(--primary-purple);
+  color: white;
+  border-radius: 4px;
   cursor: pointer;
-  font-size: 14px;
+  transition: background 0.3s ease;
 }
 
 .dropdown-menu button:hover {
-  background: #f5f5f5;
-}
-
-.logout {
-  color: red;
-  font-weight: bold;
+  background: var(--secondary-purple);
+  cursor: pointer;
 }

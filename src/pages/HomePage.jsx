@@ -1,11 +1,26 @@
 import "../styles/index.css";
+import "../styles/ProfileDropdown.css";
+// import { useState, useEffect } from "react";
+import image1 from "../assets/image1.jpg";
+import image2 from "../assets/image2.jpg";
+import image3 from "../assets/image3.jpg";
 
-const Homepage = () => {
-  console.log("Homepage is rendering");
+const Homepage = ({ heroCount, transitionStage }) => {
+  //   const [key, setKey] = useState(0);
+
+  //   useEffect(() => {
+  //     setKey((prev) => prev + 1);
+  //   }, [heroCount]);
+
+  const images = [image1, image2, image3];
+
   return (
-    <div className="homepage-container">
-      <h1>This is the Homepage</h1>
-    </div>
+    <img
+      //   key={key}
+      src={images[heroCount]}
+      className={`background ${transitionStage}`}
+      alt={`Slide ${heroCount + 1}`}
+    />
   );
 };
 

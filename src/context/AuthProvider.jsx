@@ -12,7 +12,7 @@ export const UserProvider = ({ children }) => {
     }
   }, []);
 
-  const handleAuth = async (formData, isRegistering) => {
+  const handleAuth = async (formData) => {
     try {
       const response = await axios.post("api/login-register", formData, {
         headers: { "Content-Type": "application/json" },

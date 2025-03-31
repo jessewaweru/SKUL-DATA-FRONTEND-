@@ -1,0 +1,86 @@
+.hero {
+  margin: 0px 120px;
+  margin-top: 270px;
+  position: relative;
+  z-index: 1;
+}
+
+/* .hero-text {
+  color: #4a0e4e;
+  font-size: 30px;
+  font-weight: 350;
+  line-height: 40px;
+  padding: 5px 20px 10px 5px;
+} */
+
+.hero-text {
+  color: #4a0e4e;
+  font-size: 30px;
+  font-weight: 350;
+  line-height: 50px;
+  padding: 5px 20px 10px 5px;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-explore {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  width: fit-content;
+  margin-top: 10px;
+  padding: 5px 8px;
+  padding-left: 30px;
+  border-radius: 60px;
+  transition: opacity 500ms ease !important;
+  opacity: 1;
+  background-color: whitesmoke;
+  cursor: pointer;
+}
+
+.hero-explore.fadeOut {
+  opacity: 0;
+}
+
+/* Optional: Smooth hover effect */
+.hero-explore:not(.fadeOut):hover {
+  transform: translateX(5px);
+  transition: transform 200ms ease;
+}
+
+.hero-explore img {
+  width: 30px;
+  height: auto;
+  object-fit: contain;
+}
+
+.hero-explore p {
+  color: #4a0e4e;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.hero-dot-play {
+  margin-top: 120px;
+  display: flex;
+  justify-content: flex-start; /* Changed from space-between since we removed the play button */
+}
+
+.hero-dots {
+  display: flex;
+  align-items: center;
+  gap: 23px;
+  list-style: none;
+}
+
+.hero-dot {
+  width: 15px;
+  height: 15px;
+  background: #fff;
+  border-radius: 7.5px;
+  cursor: pointer;
+}
+
+.hero-dot.purple {
+  background-color: #4a0e4e;
+}

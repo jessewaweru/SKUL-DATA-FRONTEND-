@@ -1,6 +1,81 @@
-h1 {
-  color: black;
-  font-size: 3.2em;
-  line-height: 1.1;
-  text-align: center;
+/* Global Color Variables */
+:root {
+  --primary-purple: #4a0e4e;
+  --secondary-purple: #6a1b9a;
+  --dark-background: #121212;
+  --text-color: #e0e0e0;
 }
+
+/* Base Styles */
+body {
+  background-color: var(--dark-background);
+  color: var(--text-color);
+  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden; /* Prevents horizontal scroll during transitions */
+}
+
+/* ====================== */
+/* Image Transition System */
+/* ====================== */
+.background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+
+  /* Transition (replaces old fade-in animation) */
+  opacity: 1;
+  transition: opacity 500ms ease !important;
+}
+
+.background.fadeOut {
+  opacity: 0;
+}
+
+/* ====================== */
+/* Text Transition System */
+/* ====================== */
+.hero-text-container {
+  position: relative;
+  min-height: 150px; /* Prevents layout jumps */
+}
+
+.hero-text,
+.hero-explore {
+  transition: opacity 500ms ease !important;
+  opacity: 1;
+}
+.fadeIn {
+  opacity: 1;
+}
+.fadeOut {
+  opacity: 0;
+}
+
+/* ====================== */
+/* Deprecated Styles (Safe to Remove) */
+/* ====================== */
+/* 
+.homepage-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.fade-in {
+  animation: fadeIn 500ms ease-in-out;
+} 
+*/
