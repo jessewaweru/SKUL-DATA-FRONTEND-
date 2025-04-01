@@ -1,4 +1,4 @@
-import LoginRegister from "./pages/LoginRegister";
+import LoginRegister from "./pages/LoginRegister.jsx";
 import { SuperuserDashboard } from "./pages/Dashboards/Dashboard.jsx";
 import { ParentDashboard } from "./pages/Dashboards/Dashboard.jsx";
 import { TeacherDashboard } from "./pages/Dashboards/Dashboard.jsx";

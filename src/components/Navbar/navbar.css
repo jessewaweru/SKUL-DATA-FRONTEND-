@@ -1,0 +1,49 @@
+.nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* margin: 40px 120px; */
+  margin: 40px 120px 40px 120px; /* top right bottom left */
+  padding-right: 180px; /* Space for auth buttons */
+  color: #4a0e4e;
+  position: relative;
+  z-index: 1;
+}
+
+.nav-logo {
+  font-family: "Gill Sans";
+  font-size: 42px;
+  font-weight: 500;
+  color: #4a0e4e;
+}
+
+.nav-menu {
+  display: flex;
+  align-items: center;
+  list-style: none;
+  font-size: 17px;
+  gap: 40px;
+}
+
+.nav-menu li {
+  color: #4a0e4e;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.nav-menu li:hover {
+  color: #fff;
+}
+
+/* .nav-contact-button {
+  border-radius: 50px;
+  padding: 10px;
+  background: #fff;
+  color: #4a0e4e;
+  transition: background-color 0.3s ease, color 0.3s ease;
+} */
+
+/* .nav-contact-button:hover {
+  background: #4a0e4e;
+  color: #fff;
+} */

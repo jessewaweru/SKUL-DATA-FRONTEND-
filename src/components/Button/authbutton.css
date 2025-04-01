@@ -1,0 +1,69 @@
+/* Auth Buttons */
+/* .auth-buttons {
+  position: fixed;
+  top: 20px;
+  right: 40px;
+  z-index: 1000;
+  display: flex;
+  gap: 12px;
+} */
+
+.auth-buttons {
+  position: absolute;
+  top: 92px; /* Matches navbar margin-top */
+  right: 100px; /* Matches navbar margin-right */
+  z-index: 1000;
+  display: flex;
+  gap: 12px;
+}
+
+.auth-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.login-btn {
+  color: #4a0e4e;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(74, 14, 78, 0.2);
+  border-radius: 20px;
+}
+
+/* .login-btn {
+  border-radius: 50px;
+  padding: 10px;
+  background: #fff;
+  color: #4a0e4e;
+  transition: background-color 0.3s ease, color 0.3s ease;
+} */
+
+/* .login-btn:hover {
+  background: rgba(255, 255, 255, 1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+} */
+.login-btn:hover {
+  background: #4a0e4e;
+  color: #fff;
+}
+
+/* .signup-btn {
+  color: white;
+  background: var(--primary-purple);
+  border: 1px solid var(--secondary-purple);
+} */
+
+.signup-btn {
+  color: #4a0e4e;
+}
+
+/* .signup-btn:hover {
+  background: #5a1e8a;
+  transform: translateY(-1px);
+} */
+.signup-btn:hover {
+  color: #fff;
+}

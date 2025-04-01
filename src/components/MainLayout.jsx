@@ -1,22 +1,13 @@
 import { useEffect, useState, useRef } from "react";
-import Navbar from "./NavBar";
+import Navbar from "./Navbar/NavBar";
 import Homepage from "../pages/HomePage";
-import Hero from "./Hero";
+import Hero from "./Hero/Hero";
+import AuthButton from "./Button/AuthButton";
 
 const MainLayout = () => {
   const [heroCount, setHeroCount] = useState(0);
   const [transitionStage, setTransitionStage] = useState("fadeIn");
   const intervalRef = useRef();
-
-  //   useEffect(() => {
-  //     const interval = setInterval(() => {
-  //       console.log("Interval triggered at", new Date().toLocaleTimeString());
-  //       setHeroCount((prev) => (prev === 2 ? 0 : prev + 1));
-  //     }, 5000);
-  //     return () => {
-  //       clearInterval(interval);
-  //     };
-  //   }, []);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
@@ -60,7 +51,10 @@ const MainLayout = () => {
 
   return (
     <>
-      <Navbar />
+      <div>
+        <Navbar />
+        <AuthButton />
+      </div>
       <Homepage heroCount={heroCount} transitionStage={transitionStage} />
       <Hero
         heroSections={heroSections[heroCount]}

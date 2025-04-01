@@ -1,8 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../../context/UserContext";
 import axios from "axios";
-import ProfileDropdown from "../../components/ProfileDropdown";
-// import "../styles/dashboard.css";
 
 const Dashboard = ({ userRole }) => {
   const { user } = useContext(UserContext);
