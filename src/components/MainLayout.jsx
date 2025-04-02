@@ -3,6 +3,7 @@ import Navbar from "./Navbar/NavBar";
 import Homepage from "../pages/HomePage";
 import Hero from "./Hero/Hero";
 import AuthButton from "./Button/AuthButton";
+import Footer from "./Footer/Footer";
 
 const MainLayout = () => {
   const [heroCount, setHeroCount] = useState(0);
@@ -62,6 +63,7 @@ const MainLayout = () => {
         setHeroCount={handleDotClick}
         transitionStage={transitionStage}
       />
+      <Footer />
     </>
   );
 };

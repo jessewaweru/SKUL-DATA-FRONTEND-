@@ -1,14 +1,11 @@
 import LoginRegister from "./pages/LoginRegister.jsx";
-import { SuperuserDashboard } from "./pages/Dashboards/Dashboard.jsx";
-import { ParentDashboard } from "./pages/Dashboards/Dashboard.jsx";
-import { TeacherDashboard } from "./pages/Dashboards/Dashboard.jsx";
+import DashboardPage from "./pages/DashboardPage.jsx";
 import {
   createBrowserRouter,
   Navigate,
   RouterProvider,
 } from "react-router-dom";
 import { UserProvider } from "./context/AuthProvider";
-import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./components/MainLayout.jsx";
 
 function App() {
@@ -22,28 +19,8 @@ function App() {
       element: <LoginRegister />,
     },
     {
-      path: "/superuser-dashboard",
-      element: (
-        <ProtectedRoute allowedRoles={["superuser"]}>
-          <SuperuserDashboard />
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: "/parent-dashboard",
-      element: (
-        <ProtectedRoute allowedRoles={["parent"]}>
-          <ParentDashboard />
-        </ProtectedRoute>
-      ),
-    },
-    {
-      path: "/teacher-dashboard",
-      element: (
-        <ProtectedRoute allowedRoles={["teacher"]}>
-          <TeacherDashboard />
-        </ProtectedRoute>
-      ),
+      path: "/dashboard",
+      element: <DashboardPage />,
     },
     {
       path: "*",

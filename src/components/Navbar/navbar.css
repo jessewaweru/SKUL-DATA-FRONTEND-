@@ -17,6 +17,19 @@
   color: #4a0e4e;
 }
 
+.nav-logo-img {
+  height: 140px; /* Fixed height matching navbar height */
+  width: auto; /* Maintain aspect ratio */
+  display: flex;
+  align-items: center;
+}
+
+.nav-logo-img img {
+  height: 100%; /* Takes full height of container */
+  width: auto; /* Maintain aspect ratio */
+  max-width: 150px; /* Optional: prevent too wide logos */
+}
+
 .nav-menu {
   display: flex;
   align-items: center;

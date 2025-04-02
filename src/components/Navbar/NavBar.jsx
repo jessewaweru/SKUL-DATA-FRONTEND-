@@ -4,6 +4,9 @@ const Navbar = () => {
   return (
     <div className="nav">
       <div className="nav-logo">SKUL-DATA</div>
+      {/* <div className="nav-logo-img">
+        <img src="src/assets/logo-removebg.png" alt="logo" />
+      </div> */}
       <ul className="nav-menu">
         <li>Home</li>
         <li>Explore</li>

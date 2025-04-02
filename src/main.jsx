@@ -4,6 +4,7 @@ import "./styles/LoginRegister.css";
 import App from "./App.jsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import React from "react";
+import "@fortawesome/fontawesome-free/css/all.min.css";
 
 const root = createRoot(document.getElementById("root"));
 
