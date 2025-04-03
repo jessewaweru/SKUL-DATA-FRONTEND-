@@ -2,7 +2,6 @@ import { useEffect, useState, useRef } from "react";
 import Navbar from "./Navbar/NavBar";
 import Homepage from "../pages/HomePage";
 import Hero from "./Hero/Hero";
-import AuthButton from "./Button/AuthButton";
 import Footer from "./Footer/Footer";
 
 const MainLayout = () => {
@@ -54,7 +53,6 @@ const MainLayout = () => {
     <>
       <div>
         <Navbar />
-        <AuthButton />
       </div>
       <Homepage heroCount={heroCount} transitionStage={transitionStage} />
       <Hero

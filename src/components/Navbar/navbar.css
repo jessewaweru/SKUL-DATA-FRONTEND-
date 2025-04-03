@@ -1,62 +1,304 @@
+/* Reset CSS to eliminate any potential margin/padding issues */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+/* Navbar container with transparent background initially */
+.nav-container {
+  position: absolute; /* Start as absolute so it's part of the document flow */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: transparent; /* Fully transparent initially */
+  transition: all 0.3s ease;
+}
+
+/* When scrolled, show the background and make it fixed */
+.nav-container.scrolled {
+  position: fixed;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* The actual navbar */
 .nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  /* margin: 40px 120px; */
-  margin: 40px 120px 40px 120px; /* top right bottom left */
-  padding-right: 180px; /* Space for auth buttons */
+  max-width: 1500px;
+  margin: 0 auto;
+  padding: 0 10px;
+  height: 70px;
   color: #4a0e4e;
-  position: relative;
-  z-index: 1;
+  transition: all 0.3s ease;
 }
 
-.nav-logo {
-  font-family: "Gill Sans";
-  font-size: 42px;
-  font-weight: 500;
-  color: #4a0e4e;
-}
-
-.nav-logo-img {
-  height: 140px; /* Fixed height matching navbar height */
-  width: auto; /* Maintain aspect ratio */
+/* Left section containing logo and menu */
+.nav-left {
   display: flex;
   align-items: center;
+  flex: 1;
+}
+
+/* Right section with auth buttons */
+.nav-right {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+  padding-right: 30px;
+}
+
+/* Logo styling */
+.nav-logo-img {
+  height: 250px;
+  display: flex;
+  align-items: center;
+  margin-right: 25px;
+  transition: all 0.3s ease;
 }
 
 .nav-logo-img img {
-  height: 100%; /* Takes full height of container */
-  width: auto; /* Maintain aspect ratio */
-  max-width: 150px; /* Optional: prevent too wide logos */
+  height: 100%;
+  width: auto;
+  max-height: 250px;
+  object-fit: contain;
+  transition: all 0.3s ease;
 }
 
+/* Smaller logo when scrolled */
+.scrolled .nav-logo-img {
+  height: 250px;
+}
+
+.scrolled .nav-logo-img img {
+  max-height: 250px;
+}
+
+/* Navigation menu */
 .nav-menu {
   display: flex;
   align-items: center;
   list-style: none;
   font-size: 17px;
-  gap: 40px;
+  gap: 25px;
+  margin: 0;
+  padding: 0;
 }
 
 .nav-menu li {
   color: #4a0e4e;
   cursor: pointer;
   transition: color 0.3s ease;
+  font-weight: 500;
+  position: relative;
+  padding-bottom: 2px;
 }
 
 .nav-menu li:hover {
-  color: #fff;
+  color: #6b1871;
 }
 
-/* .nav-contact-button {
-  border-radius: 50px;
-  padding: 10px;
-  background: #fff;
-  color: #4a0e4e;
-  transition: background-color 0.3s ease, color 0.3s ease;
-} */
+.nav-menu li:hover::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #6b1871;
+  animation: underline 0.3s ease;
+}
 
-/* .nav-contact-button:hover {
-  background: #4a0e4e;
+.nav-menu li.dropdown-parent.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: #6b1871;
+}
+
+@keyframes underline {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+/* Auth Buttons */
+.auth-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.auth-btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.login-btn {
   color: #fff;
-} */
+  background: #4a0e4e;
+  border-radius: 20px;
+}
+
+.login-btn:hover {
+  background: #6b1871;
+}
+
+.signup-btn {
+  color: #4a0e4e;
+}
+
+.signup-btn:hover {
+  color: #6b1871;
+}
+
+/* Dropdown styles */
+.dropdown-parent {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.dropdown-arrow {
+  font-size: 10px;
+  transition: transform 0.3s ease;
+  display: inline-block; /* Needed for transform to work */
+  margin-left: 5px;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: white;
+  min-width: 200px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+  padding: 10px 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.dropdown-parent:hover .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Only rotate when parent has 'active' class */
+.dropdown-parent.active .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu li {
+  padding: 8px 20px;
+  white-space: nowrap;
+  color: #4a0e4e !important;
+  cursor: pointer;
+  pointer-events: auto;
+  list-style: none;
+}
+
+.dropdown-menu li:hover {
+  background: #f5f5f5;
+  color: #6b1871 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+  .nav-menu {
+    gap: 15px;
+  }
+
+  .nav-logo-img {
+    margin-right: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nav-container {
+    position: absolute;
+  }
+
+  .nav-container.scrolled {
+    position: fixed;
+  }
+
+  .nav {
+    flex-direction: column;
+    height: auto;
+    padding: 10px 20px;
+  }
+
+  .nav-left,
+  .nav-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .nav-left {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .nav-logo-img {
+    margin-right: 0;
+    margin-bottom: 10px;
+    height: 50px;
+  }
+
+  .nav-logo-img img {
+    max-height: 50px;
+  }
+
+  .scrolled .nav-logo-img {
+    height: 40px;
+  }
+
+  .scrolled .nav-logo-img img {
+    max-height: 40px;
+  }
+
+  .nav-menu {
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 15px;
+  }
+
+  .nav-right {
+    justify-content: center;
+  }
+}
+/* Mobile dropdown */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    position: static;
+    box-shadow: none;
+    margin-left: 15px;
+  }
+}

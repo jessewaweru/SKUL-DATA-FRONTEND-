@@ -4,14 +4,15 @@
   --secondary-purple: #6a1b9a;
   --dark-background: #121212;
   --text-color: #e0e0e0;
+
+  --global-font: "Open Sans", "Raleway", "Inter";
 }
 
 /* Base Styles */
 body {
   background-color: var(--dark-background);
   color: var(--text-color);
-  font-family: "Inter", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  /* font-family: "Poppins", sans-serif; */
+  font-family: var(--global-font);
   margin: 0;
   padding: 0;
   overflow-x: hidden; /* Prevents horizontal scroll during transitions */
@@ -66,26 +67,3 @@ body {
 .fadeOut {
   opacity: 0;
 }
-
-/* ====================== */
-/* Deprecated Styles (Safe to Remove) */
-/* ====================== */
-/* 
-.homepage-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.fade-in {
-  animation: fadeIn 500ms ease-in-out;
-} 
-*/

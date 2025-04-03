@@ -5,21 +5,9 @@ const Footer = () => {
     <footer className="site-footer">
       <div className="footer-content">
         <div className="footer-section">
-          <h3>SKUL-DATA</h3>
-          <p>Revolutionizing school's data architecture since 2025</p>
-          <div className="social-media-icons">
-            <a href="#">
-              <i className="fab fa-twitter"></i>
-            </a>
-            <a href="#">
-              <i className="fab fa-facebook"></i>
-            </a>
-            <a href="#">
-              <i className="fab fa-instagram"></i>
-            </a>
-            <a href="#">
-              <i className="fab fa-linkedin"></i>
-            </a>
+          <div className="footer-logo-img">
+            <img src="src/assets/logo1.svg" alt="Skul-Data Logo" />
+            {/* <p>Revolutionizing school's data architecture since 2025</p> */}
           </div>
         </div>
 
@@ -60,8 +48,11 @@ const Footer = () => {
         </div>
 
         <div className="footer-section">
-          <h4>Legal</h4>
+          <h4>About</h4>
           <ul>
+            <li>
+              <a href="#">FAQ</a>
+            </li>
             <li>
               <a href="#">Privacy Policy</a>
             </li>
@@ -76,7 +67,24 @@ const Footer = () => {
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} SKUL-DATA. All rights reserved.</p>
+        <p>&copy; {new Date().getFullYear()} Skul-Data. All rights reserved.</p>
+        <div className="social-icons">
+          <a href="#">
+            <i className="fab fa-square-x-twitter"></i>
+          </a>
+          <a href="#">
+            <i className="fab fa-facebook"></i>
+          </a>
+          <a href="#">
+            <i className="fab fa-instagram"></i>
+          </a>
+          <a href="#">
+            <i className="fab fa-linkedin"></i>
+          </a>
+          <a href="#">
+            <i className="fab fa-tiktok"></i>
+          </a>
+        </div>
       </div>
     </footer>
   );
