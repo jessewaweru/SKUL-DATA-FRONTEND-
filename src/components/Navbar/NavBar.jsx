@@ -2,24 +2,6 @@ import { useEffect, useState } from "react";
 import "../Navbar/navbar.css";
 import { Link } from "react-router-dom";
 
-// const Navbar = () => {
-//   return (
-//     <div className="nav">
-//       {/* <div className="nav-logo">SKUL-DATA</div> */}
-//       <div className="nav-logo-img">
-//         <img src="src/assets/Skul-Data.svg" alt="logo" />
-//       </div>
-//       <ul className="nav-menu">
-//         <li>Home</li>
-//         <li>Explore</li>
-//         <li>Solutions</li>
-//         <li>Pricing</li>
-//         <li className="nav-contact-button">Contact Us</li>
-//         <AuthButton />
-//       </ul>
-//     </div>
-//   );
-// };
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [seeDropdown, setSeeDropdown] = useState(false);
@@ -63,7 +45,16 @@ const Navbar = () => {
       <div className="nav">
         <div className="nav-left">
           <div className="nav-logo-img">
-            <img src="src/assets/logo1.svg" alt="Skul-Data Logo" />
+            <Link
+              to="/"
+              onClick={() => {
+                if (window.location.pathname === "/") {
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
+            >
+              <img src="src/assets/logo1.svg" alt="Skul-Data Logo" />
+            </Link>
           </div>
           <ul className="nav-menu">
             <li>Explore</li>
@@ -89,12 +80,14 @@ const Navbar = () => {
               )}
             </li>
             <li>Pricing</li>
-            <li className="nav-contact-button">Contact Us</li>
+            <Link to="/contact">
+              <li className="nav-contact-button">Contact Us</li>
+            </Link>
           </ul>
         </div>
         <div className="nav-right">
           <div className="auth-buttons">
-            <Link to="/login" className="auth-btn signup-btn">
+            <Link to="/register" className="auth-btn signup-btn">
               SignUp
             </Link>
             <Link to="/login" className="auth-btn login-btn">

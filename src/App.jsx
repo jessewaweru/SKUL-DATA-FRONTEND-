@@ -7,6 +7,7 @@ import {
 } from "react-router-dom";
 import { UserProvider } from "./context/AuthProvider";
 import MainLayout from "./components/MainLayout.jsx";
+import ContactPage from "./pages/Contact/Contact.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -16,11 +17,19 @@ function App() {
     },
     {
       path: "/login",
-      element: <LoginRegister />,
+      element: <LoginRegister mode="login" />,
+    },
+    {
+      path: "/register",
+      element: <LoginRegister mode="register" />,
     },
     {
       path: "/dashboard",
       element: <DashboardPage />,
+    },
+    {
+      path: "/contact",
+      element: <ContactPage />,
     },
     {
       path: "*",

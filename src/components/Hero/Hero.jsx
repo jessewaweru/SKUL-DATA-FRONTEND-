@@ -1,10 +1,6 @@
 import "../Hero/hero.css";
 
 const Hero = ({ heroSections, heroCount, setHeroCount, transitionStage }) => {
-  //   const handleDotClick = (index) => {
-  //     // Using a callback function ensures we're working with the latest state
-  //     setHeroCount(index);
-  //   };
   return (
     <div className="hero">
       <div className={`hero-text ${transitionStage}`}>
@@ -31,28 +27,3 @@ const Hero = ({ heroSections, heroCount, setHeroCount, transitionStage }) => {
 };
 
 export default Hero;
-
-// const Hero = ({ heroSections, heroCount, setHeroCount, transitionStage }) => {
-//   return (
-//     <div className="hero">
-//       <div className={`hero-text ${transitionStage}`}>
-//         <h1>{heroSections.title}</h1>
-//         <p>{heroSections.description}</p>
-//       </div>
-//       {/* Dot buttons */}
-//       <div className="hero-dot-play">
-//         <ul className="hero-dots">
-//           {[0, 1, 2].map((index) => (
-//             <li
-//               key={index}
-//               onClick={() => setHeroCount(index)}
-//               className={heroCount === index ? "hero-dot purple" : "hero-dot"}
-//             ></li>
-//           ))}
-//         </ul>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Hero;

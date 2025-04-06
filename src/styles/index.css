@@ -30,16 +30,17 @@ body {
 /* ====================== */
 /* Image Transition System */
 /* ====================== */
-.background {
-  position: fixed;
+
+/* position: fixed; */
+
+/* .background {
+  position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   z-index: -1;
-
-  /* Transition (replaces old fade-in animation) */
   opacity: 1;
   transition: opacity 500ms ease !important;
 }
@@ -48,12 +49,23 @@ body {
   opacity: 0;
 }
 
+main {
+  position: relative;
+  z-index: 1;
+}
+
+
+.layout-container {
+  display: flex;
+  flex-direction: column;
+} */
+
 /* ====================== */
 /* Text Transition System */
 /* ====================== */
 .hero-text-container {
   position: relative;
-  min-height: 150px; /* Prevents layout jumps */
+  min-height: 150px;
 }
 
 .hero-text,

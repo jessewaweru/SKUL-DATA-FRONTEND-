@@ -97,6 +97,10 @@ body {
   padding: 0;
 }
 
+.nav-menu a {
+  text-decoration: none;
+}
+
 .nav-menu li {
   color: #4a0e4e;
   cursor: pointer;
