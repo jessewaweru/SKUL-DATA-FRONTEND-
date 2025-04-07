@@ -1,0 +1,397 @@
+/* Pricing Page Styles */
+.pricing-page {
+  color: var(--text-color);
+  background-color: var(--dark-background);
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hero Section */
+.pricing-hero {
+  /* background: linear-gradient(rgba(74, 14, 78, 0.9), rgba(74, 14, 78, 0.9)); */
+  /* background: linear-gradient(rgba(136, 64, 142, 0.9), rgba(37, 1, 39, 0.9)); */
+  background: linear-gradient(rgba(16, 0, 17, 0.9), rgba(111, 45, 117, 0.9));
+  padding: 80px 120px;
+  text-align: center;
+}
+
+.pricing-hero-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.pricing-hero h1 {
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.pricing-hero .subheading {
+  font-size: 1.2rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Pricing Toggle */
+.pricing-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 40px 0;
+  font-weight: 500;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: 0.4s;
+}
+
+input:checked + .slider {
+  background-color: var(--secondary-purple);
+}
+
+input:checked + .slider:before {
+  transform: translateX(26px);
+}
+
+.discount-badge {
+  background-color: #4caf50;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  margin-left: 5px;
+}
+
+/* Pricing Plans */
+.pricing-plans {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 120px;
+  align-items: stretch;
+}
+
+.pricing-card {
+  /* background: #1e1e1e; */
+  background: linear-gradient(rgba(111, 45, 117, 0.9), rgba(16, 0, 17, 0.9));
+  border-radius: 10px;
+  padding: 30px;
+  flex: 1;
+  position: relative;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-card:hover {
+  transform: translateY(-5px);
+}
+
+.pricing-card.featured {
+  border: 2px solid var(--secondary-purple);
+  box-shadow: 0 10px 30px rgba(106, 27, 154, 0.3);
+}
+
+.popular-badge {
+  position: absolute;
+  top: -15px;
+  right: 20px;
+  background: var(--secondary-purple);
+  color: white;
+  padding: 5px 15px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.plan-header {
+  padding-bottom: 25px;
+  border-bottom: 1px solid #333;
+  margin-bottom: 25px;
+}
+
+.plan-header h3 {
+  font-size: 1.5rem;
+  margin-bottom: 15px;
+  color: white;
+}
+
+.price {
+  margin: 20px 0;
+}
+
+.amount {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: white;
+}
+
+.period {
+  font-size: 1rem;
+  color: #b8b8b8;
+}
+
+.plan-description {
+  margin-bottom: 25px;
+  color: #b8b8b8;
+}
+
+.plan-button {
+  width: 100%;
+  padding: 15px;
+  border-radius: 5px;
+  border: none;
+  background: #333;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.plan-button:hover {
+  background: #444;
+}
+
+.featured-button {
+  background: var(--secondary-purple);
+  color: white;
+}
+
+.featured-button:hover {
+  background: var(--primary-purple);
+}
+
+.plan-features {
+  flex-grow: 1;
+}
+
+.plan-features h4 {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.plan-features ul {
+  list-style: none;
+  padding: 0;
+}
+
+.plan-features li {
+  margin-bottom: 15px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.feature-check {
+  color: var(--secondary-purple);
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+/* Feature Comparison */
+.feature-comparison {
+  padding: 80px 120px;
+  /* background: #121212; */
+  background: linear-gradient(rgba(16, 0, 17, 0.9), rgba(111, 45, 117, 0.9));
+}
+
+.section-container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.comparison-title {
+  text-align: center;
+}
+
+.comparison-table {
+  margin-top: 40px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.comparison-row {
+  display: flex;
+  border-bottom: 1px solid #333;
+}
+
+.comparison-row.header {
+  background: var(--primary-purple);
+  color: white;
+  font-weight: bold;
+}
+
+.comparison-feature,
+.comparison-plan {
+  padding: 20px;
+  flex: 1;
+}
+
+.comparison-row.header .comparison-feature {
+  flex: 2;
+}
+
+.comparison-feature {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #1a1a1a;
+  color: white;
+}
+
+.feature-icon {
+  color: var(--secondary-purple);
+}
+
+.comparison-plan {
+  text-align: center;
+  background: #1e1e1e;
+}
+
+/* CTA Section */
+.pricing-cta {
+  /* background: linear-gradient(rgba(74, 14, 78, 0.9), rgba(74, 14, 78, 0.9)); */
+  background: linear-gradient(rgba(111, 45, 117, 0.9), rgba(16, 0, 17, 0.9));
+  padding: 80px 120px;
+  text-align: center;
+}
+
+.cta-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.pricing-cta h2 {
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: white;
+}
+
+.pricing-cta p {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.cta-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+}
+
+.primary-btn {
+  padding: 15px 30px;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.primary-btn {
+  background: transparent;
+  color: white;
+  border: 2px solid white;
+}
+
+.primary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-2px);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .pricing-plans,
+  .feature-comparison,
+  .pricing-faq,
+  .pricing-cta {
+    padding: 60px 40px;
+  }
+
+  .pricing-plans {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 768px) {
+  .pricing-hero {
+    padding: 60px 40px;
+  }
+
+  .comparison-row {
+    flex-direction: column;
+  }
+
+  .comparison-row.header {
+    display: none;
+  }
+
+  .comparison-feature {
+    border-bottom: 1px solid #333;
+  }
+
+  .cta-buttons {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .pricing-hero,
+  .feature-comparison,
+  .pricing-faq,
+  .pricing-cta {
+    padding: 60px 20px;
+  }
+
+  .pricing-hero h1 {
+    font-size: 2rem;
+  }
+}

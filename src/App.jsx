@@ -8,12 +8,17 @@ import {
 import { UserProvider } from "./context/AuthProvider";
 import MainLayout from "./components/MainLayout.jsx";
 import ContactPage from "./pages/Contact/Contact.jsx";
+import Pricing from "./pages/Pricing/Pricing.jsx";
 
 function App() {
   const router = createBrowserRouter([
     {
       path: "/",
       element: <MainLayout />,
+    },
+    {
+      path: "/pricing",
+      element: <Pricing />,
     },
     {
       path: "/login",

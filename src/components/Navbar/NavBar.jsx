@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import "../Navbar/navbar.css";
 import { Link } from "react-router-dom";
+import logo from "../../assets/logo1.svg";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
@@ -53,7 +54,7 @@ const Navbar = () => {
                 }
               }}
             >
-              <img src="src/assets/logo1.svg" alt="Skul-Data Logo" />
+              <img src={logo} alt="Skul-Data Logo" />
             </Link>
           </div>
           <ul className="nav-menu">

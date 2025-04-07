@@ -1,4 +1,5 @@
 import "../Footer/footer.css";
+import logo from "../../assets/logo1.svg";
 
 const Footer = () => {
   return (
@@ -6,7 +7,7 @@ const Footer = () => {
       <div className="footer-content">
         <div className="footer-section">
           <div className="footer-logo-img">
-            <img src="src/assets/logo1.svg" alt="Skul-Data Logo" />
+            <img src={logo} alt="Skul-Data Logo" />
             {/* <p>Revolutionizing school's data architecture since 2025</p> */}
           </div>
         </div>
