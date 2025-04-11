@@ -1,0 +1,48 @@
+version: "3.8"
+
+services:
+  # Backend (Django) Service
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./skul_data:/app # Mount the backend code inside the container
+    ports:
+      - "8000:8000"
+    environment:
+      - DATABASE_NAME=${DATABASE_NAME}
+      - DATABASE_USER=${DATABASE_USER}
+      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-5432}
+    depends_on:
+      - db
+    command: python manage.py runserver 0.0.0.0:8000
+
+  # Database (PostgreSQL) Service
+  db:
+    image: postgres:13
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # Persist the database data
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - "5432:5432"
+
+  # Frontend (React + Vite) Service
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    ports:
+      - "5000:5000"
+    depends_on:
+      - web
+    environment:
+      - REACT_APP_API_URL=http://web:8000 # Set API URL to the Django backend
+
+volumes:
+  postgres_data:

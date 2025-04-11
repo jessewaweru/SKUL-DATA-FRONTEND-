@@ -1,19 +1,29 @@
 import {
   FiHome,
   FiUsers,
-  FiPaperclip,
-  FiLink,
-  FiDollarSign,
+  FiFileText,
+  FiPieChart,
+  FiBookOpen,
+  FiUser,
+  FiUserPlus,
+  FiGrid,
+  FiBarChart2,
+  FiCalendar,
 } from "react-icons/fi";
 
 const CategorySelect = () => {
   return (
     <div className="nav-list">
       <Route Icon={FiHome} selected={true} title="Dashboard" />
-      <Route Icon={FiUsers} selected={false} title="Team" />
-      <Route Icon={FiPaperclip} selected={false} title="Invoices" />
-      <Route Icon={FiLink} selected={false} title="Integrations" />
-      <Route Icon={FiDollarSign} selected={false} title="Finance" />
+      <Route Icon={FiUsers} selected={false} title="Users" />
+      <Route Icon={FiFileText} selected={false} title="Documents" />
+      <Route Icon={FiPieChart} selected={false} title="Reports" />
+      <Route Icon={FiBookOpen} selected={false} title="Teachers" />
+      <Route Icon={FiUser} selected={false} title="Parents" />
+      <Route Icon={FiUserPlus} selected={false} title="Students" />
+      <Route Icon={FiGrid} selected={false} title="Classes" />
+      <Route Icon={FiBarChart2} selected={false} title="Analytics" />
+      <Route Icon={FiCalendar} selected={false} title="Calender" />
     </div>
   );
 };

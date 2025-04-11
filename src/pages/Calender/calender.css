@@ -1,0 +1,17 @@
+.custom-calendar-header {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.calendar-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: white;
+  margin: 0;
+}
+
+.calendar-subtitle {
+  font-size: 1rem;
+  color: #e7e7e7;
+  margin: 0;
+}

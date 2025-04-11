@@ -4,19 +4,6 @@ import "../components/Dashboards/SchoolSidebar/sidebar.css";
 import Dashboard from "../components/Dashboards/SchoolDashboard/Dashboard";
 import { useEffect, useState } from "react";
 
-// const DashboardPage = () => {
-//   return (
-//     <div className="dashboard-page">
-//       <div className="sidebar-container">
-//         <Sidebar />
-//       </div>
-//       <div className="main-content">
-//         <Dashboard />
-//       </div>
-//     </div>
-//   );
-// };
-
 const DashboardPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
@@ -39,7 +26,7 @@ const DashboardPage = () => {
     };
 
     window.addEventListener("resize", handleResize);
-    handleResize(); // Initial check
+    handleResize();
 
     return () => {
       window.removeEventListener("resize", handleResize);
