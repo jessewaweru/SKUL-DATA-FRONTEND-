@@ -420,6 +420,58 @@
   color: var(--text-color);
 }
 
+/* Styling for Introduction of content to the right on the Dashboard */
+
+.main-content {
+  flex: 1;
+  padding: 1.5rem 1.5rem 1.5rem 2rem; /* Added more left padding */
+  margin-left: 240px; /* Match the sidebar width */
+  background-color: var(--dark-background);
+  transition: margin-left 0.3s ease;
+  min-width: 0; /* Allows content to shrink properly */
+}
+
+.user-accounts,
+.user-roles,
+.user-sessions {
+  padding: 1rem;
+}
+
+.user-accounts h2,
+.user-roles h2,
+.user-sessions h2 {
+  margin-bottom: 1.5rem;
+  color: var(--highlight-text);
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* When sidebar is closed */
+.sidebar-container:not(.open) + .main-content {
+  margin-left: 0;
+  padding-left: 1.5rem; /* Less padding when sidebar is closed */
+}
+
+/* Dashboard content container */
+.dashboard-container {
+  background-color: var(--primary-purple);
+  background-image: linear-gradient(
+    to bottom right,
+    var(--primary-purple),
+    var(--dark-background) 30%
+  );
+  border-radius: 0.5rem;
+  padding: 1.5rem; /* Added padding */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
+  color: var(--text-color);
+  margin-left: 0; /* Remove negative margin */
+  margin-right: 0;
+}
+
+.dashboard-home {
+  padding: 1rem;
+}
+
 /* Media queries for responsiveness */
 @media (max-width: 1024px) {
   .stat-card {

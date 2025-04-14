@@ -3,7 +3,7 @@ import TransactionGraph from "./TransactionGraph";
 import UsageRadarChart from "./UsageRadarChart";
 import RecentActivityTable from "./RecentActivityTable";
 
-const Grid = () => {
+const DashboardHome = () => {
   return (
     <div className="grid-container">
       <StatCards />
@@ -14,4 +14,4 @@ const Grid = () => {
   );
 };
 
-export default Grid;
+export default DashboardHome;
