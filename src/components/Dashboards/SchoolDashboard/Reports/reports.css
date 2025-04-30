@@ -1,0 +1,902 @@
+/* src/components/SchoolDashboard/Reports/Reports.css */
+.reports-container {
+  display: flex;
+  height: 100%;
+  background-color: #f5f7fa;
+}
+
+.reports-sidebar {
+  width: 250px;
+  background-color: #2c3e50;
+  color: white;
+  transition: width 0.3s ease;
+  overflow-y: auto;
+}
+
+.reports-sidebar.closed {
+  width: 60px;
+}
+
+.sidebar-header {
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #34495e;
+}
+
+.toggle-sidebar {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+.sidebar-tabs {
+  padding: 0.5rem;
+}
+
+.sidebar-tab {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  border-radius: 4px;
+  background: none;
+  border: none;
+  color: #bdc3c7;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sidebar-tab:hover {
+  background-color: #34495e;
+  color: white;
+}
+
+.sidebar-tab.active {
+  background-color: #3498db;
+  color: white;
+}
+
+.tab-icon {
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.reports-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+/* Templates Page */
+.templates-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+.templates-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.templates-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.filter-select {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.template-card {
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 1.25rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.template-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.template-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+}
+
+.template-type {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+.template-type.academic {
+  background-color: #e3f2fd;
+  color: #1976d2;
+}
+
+.template-type.attendance {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.template-type.payroll {
+  background-color: #f3e5f5;
+  color: #8e24aa;
+}
+
+.template-type.enrollment {
+  background-color: #fff3e0;
+  color: #fb8c00;
+}
+
+.template-description {
+  color: #666;
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+  min-height: 40px;
+}
+
+.template-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.template-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  color: #7f8c8d;
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.25rem;
+  border-radius: 4px;
+}
+
+.btn-icon:hover {
+  color: #3498db;
+  background-color: #ecf0f1;
+}
+
+.btn-icon.danger:hover {
+  color: #e74c3c;
+}
+
+/* Generated Reports */
+.generated-reports-container {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+}
+
+.reports-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.reports-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filter-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-tabs button {
+  padding: 0.5rem 1rem;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  cursor: pointer;
+}
+
+.filter-tabs button.active {
+  background-color: #3498db;
+  color: white;
+  border-color: #3498db;
+}
+
+.filters-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.filter-group label {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.filter-group select,
+.filter-group input {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.reports-table-container {
+  overflow-x: auto;
+}
+
+.reports-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.reports-table th {
+  background-color: #f8f9fa;
+  padding: 0.75rem 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: #555;
+  border-bottom: 2px solid #eee;
+}
+
+.reports-table td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #eee;
+  vertical-align: middle;
+}
+
+.reports-table tr:hover {
+  background-color: #f8f9fa;
+}
+
+.type-academic {
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.type-attendance {
+  color: #388e3c;
+  font-weight: 500;
+}
+
+.type-payroll {
+  color: #8e24aa;
+  font-weight: 500;
+}
+
+.type-enrollment {
+  color: #fb8c00;
+  font-weight: 500;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge.published {
+  background-color: #e8f5e9;
+  color: #388e3c;
+}
+
+.status-badge.draft {
+  background-color: #fff3e0;
+  color: #fb8c00;
+}
+
+.status-badge.archived {
+  background-color: #ffebee;
+  color: #e53935;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+/* Modals */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.generate-report-modal,
+.template-editor-modal {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.modal-header {
+  padding: 1.25rem;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.form-group {
+  margin-bottom: 1.25rem;
+  padding: 0 1.25rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+.form-group textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-actions {
+  padding: 1.25rem;
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+}
+
+.btn-secondary {
+  background-color: #ecf0f1;
+  color: #7f8c8d;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: background-color 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: #bdc3c7;
+}
+
+/* Template Preview */
+.template-preview-container {
+  border: 1px solid #eee;
+  padding: 1rem;
+  max-height: 300px;
+  overflow-y: auto;
+  background: white;
+}
+
+.academic-report-preview {
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+.academic-report-preview .report-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.academic-report-preview .report-header h2 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.academic-report-preview .school-info {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.academic-report-preview .student-info {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.academic-report-preview .grades-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.academic-report-preview .grades-table th,
+.academic-report-preview .grades-table td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.academic-report-preview .grades-table th {
+  background-color: #f8f9fa;
+}
+
+.academic-report-preview .teacher-comments {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.academic-report-preview .report-footer {
+  margin-top: 2rem;
+  text-align: right;
+  font-size: 0.8rem;
+  color: #7f8c8d;
+}
+
+/* Loading states */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  color: #7f8c8d;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  color: #7f8c8d;
+}
+
+/* Add to Reports.css */
+.share-modal {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.share-method {
+  margin-bottom: 2rem;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 6px;
+}
+
+.share-method h3 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0;
+  color: #2c3e50;
+}
+
+.share-link-container {
+  display: flex;
+  margin-top: 1rem;
+}
+
+.share-link-input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 4px 0 0 4px;
+  font-size: 0.9rem;
+}
+
+.share-link-container .btn-icon {
+  border-radius: 0 4px 4px 0;
+  border: 1px solid #ddd;
+  border-left: none;
+  background-color: #f8f9fa;
+  height: 100%;
+}
+
+.error-message {
+  color: #e74c3c;
+  padding: 0.5rem;
+  background-color: #ffebee;
+  border-radius: 4px;
+  margin-top: 1rem;
+}
+
+/* Add to Reports.css */
+.template-preview-modal {
+  background: white;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 800px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.template-preview-content {
+  padding: 1.5rem;
+}
+
+.template-preview {
+  font-family: Arial, sans-serif;
+  color: #333;
+  line-height: 1.6;
+}
+
+.template-preview h2 {
+  color: #2c3e50;
+  margin-top: 0;
+}
+
+.template-preview .header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.template-preview .school-info {
+  font-size: 0.9rem;
+  color: #7f8c8d;
+}
+
+.template-preview .student-info,
+.template-preview .teacher-info {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.template-preview table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+}
+
+.template-preview th,
+.template-preview td {
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.template-preview th {
+  background-color: #f8f9fa;
+}
+
+.template-preview .teacher-comments {
+  margin-top: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: 4px;
+}
+
+.template-preview .total {
+  font-weight: bold;
+  background-color: #f8f9fa;
+}
+
+.modal-footer {
+  padding: 1rem;
+  border-top: 1px solid #eee;
+  font-size: 0.9rem;
+}
+
+.template-type {
+  margin-bottom: 0.5rem;
+}
+
+.template-type span {
+  font-weight: 600;
+  color: #3498db;
+}
+
+.template-description {
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+/* Add to Reports.css */
+.template-designer {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 1rem;
+  background-color: white;
+}
+
+.designer-toolbar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+  margin-bottom: 1rem;
+}
+
+.tool-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tool-button:hover {
+  background-color: #f0f0f0;
+}
+
+.tool-separator {
+  width: 1px;
+  background-color: #ddd;
+  margin: 0 0.25rem;
+}
+
+.designer-tabs {
+  display: flex;
+  margin-bottom: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.tab-button {
+  padding: 0.5rem 1rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  font-weight: 500;
+  color: #555;
+}
+
+.tab-button.active {
+  color: #3498db;
+}
+
+.tab-button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: #3498db;
+}
+
+.designer-content {
+  min-height: 300px;
+}
+
+.design-section {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  border: 1px solid #eee;
+  border-radius: 4px;
+}
+
+.design-section h4 {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.design-options {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.design-options label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.columns-list {
+  grid-column: 1 / -1;
+  margin-top: 1rem;
+}
+
+.column-item {
+  margin-bottom: 0.5rem;
+}
+
+.column-item input {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.color-picker {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.color-picker label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* src/components/SchoolDashboard/Reports/Reports.css */
+.reports-page-container {
+  padding: 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.reports-overview {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.reports-overview h2 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: #7f8c8d;
+  margin-bottom: 2rem;
+}
+
+.report-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.report-card {
+  background: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.report-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.report-card h3 {
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.report-card p {
+  color: #7f8c8d;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+/* Keep all the other existing styles from previous implementation */
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .reports-container {
+    flex-direction: column;
+  }
+
+  .reports-sidebar {
+    width: 100%;
+    height: auto;
+  }
+
+  .reports-sidebar.closed {
+    width: 100%;
+    height: 60px;
+  }
+
+  .sidebar-tabs {
+    display: flex;
+    overflow-x: auto;
+    padding-bottom: 0.5rem;
+  }
+
+  .sidebar-tab {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+    margin-right: 0.5rem;
+  }
+
+  .tab-name {
+    display: none;
+  }
+
+  .filters-container {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filter-group {
+    width: 100%;
+  }
+}

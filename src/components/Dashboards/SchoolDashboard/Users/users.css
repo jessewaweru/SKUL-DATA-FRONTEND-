@@ -499,7 +499,7 @@
   background-color: rgba(90, 27, 93, 0.2);
 }
 
-.user-info {
+/* .user-info {
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -516,7 +516,7 @@
   display: block;
   color: #b0b0b0;
   font-size: 0.75rem;
-}
+} */
 
 .role-badge {
   display: inline-block;

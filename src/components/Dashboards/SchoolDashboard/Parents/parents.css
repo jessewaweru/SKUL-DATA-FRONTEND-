@@ -1,0 +1,907 @@
+/* Parents Overview */
+.parents-overview {
+  padding: 1.5rem;
+}
+
+.parents-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.parents-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.search-filter {
+  display: flex;
+  align-items: center;
+  background: var(--card-background);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--border-color);
+}
+
+.search-filter input {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  margin-left: 0.5rem;
+}
+
+.create-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+/* Parent Table */
+.parent-table-container {
+  margin-top: 1rem;
+  background: var(--card-background);
+  border-radius: 0.25rem;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.status-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background: rgba(46, 125, 50, 0.2);
+  color: #69f0ae;
+}
+
+.status-badge.pending {
+  background: rgba(251, 192, 45, 0.2);
+  color: #ffc107;
+}
+
+.status-badge.inactive {
+  background: rgba(198, 40, 40, 0.2);
+  color: #ff8a80;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.action-buttons button {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+/* Parent Detail */
+.parent-detail-wrapper {
+  padding: 1.5rem;
+}
+
+.parent-header {
+  margin-bottom: 1.5rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tabs button {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.tabs button.active {
+  color: var(--accent-purple-light);
+}
+
+.tabs button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent-purple-light);
+}
+
+/* Child Cards */
+.children-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.child-card {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.child-header {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.child-avatar {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  background: var(--primary-purple);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.class-badge {
+  background: rgba(142, 77, 145, 0.2);
+  color: var(--accent-purple-light);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+}
+
+.performance-badge {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  font-weight: bold;
+}
+
+.performance-badge.good {
+  background: rgba(46, 125, 50, 0.2);
+  color: #69f0ae;
+}
+
+.attendance-rate {
+  font-weight: bold;
+  color: var(--highlight-text);
+}
+
+.child-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.child-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.view-reports {
+  background: var(--primary-purple);
+  color: white;
+}
+
+.view-attendance {
+  background: var(--card-background);
+  color: var(--text-color);
+  border: 1px solid var(--border-color) !important;
+}
+
+/* Parent Actions */
+.parent-actions {
+  display: grid;
+  gap: 2rem;
+}
+
+.action-section {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.status-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.status-actions button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: none;
+  cursor: pointer;
+}
+
+.status-actions button.danger {
+  background: rgba(198, 40, 40, 0.2);
+  color: #ff8a80;
+}
+
+.status-actions button.success {
+  background: rgba(46, 125, 50, 0.2);
+  color: #69f0ae;
+}
+
+.edit-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  color: var(--accent-purple-light);
+}
+
+.form-group input {
+  background: var(--dark-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  color: var(--text-color);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.quick-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.action-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--primary-purple);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+/* Parent Notifications */
+.parent-notifications {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.notifications-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.notifications-header .tabs {
+  display: flex;
+  gap: 1rem;
+}
+
+.notifications-header .tabs button {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+}
+
+.notifications-header .tabs button.active {
+  color: var(--accent-purple-light);
+  border-bottom: 2px solid var(--accent-purple-light);
+}
+
+.notifications-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.notification-item {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+}
+
+.notification-item.unread {
+  border-left: 4px solid var(--accent-purple-light);
+}
+
+.notification-icon {
+  font-size: 1.5rem;
+  color: var(--accent-purple-light);
+}
+
+.notification-content {
+  flex: 1;
+}
+
+.notification-meta {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #b0b0b0;
+}
+
+.type-badge {
+  background: rgba(142, 77, 145, 0.2);
+  color: var(--accent-purple-light);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.notification-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.notification-actions button {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+/* Parent Documents */
+.parent-documents {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+}
+
+.documents-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.search-filter {
+  display: flex;
+  align-items: center;
+  background: var(--dark-background);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  border: 1px solid var(--border-color);
+}
+
+.search-filter input {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  margin-left: 0.5rem;
+}
+
+.documents-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.document-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.document-icon {
+  font-size: 2rem;
+  color: var(--accent-purple-light);
+  margin-bottom: 1rem;
+}
+
+.document-info {
+  flex: 1;
+}
+
+.document-info h4 {
+  margin-bottom: 0.5rem;
+}
+
+.document-info .description {
+  color: #b0b0b0;
+  font-size: 0.875rem;
+  margin-bottom: 1rem;
+}
+
+.document-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: #b0b0b0;
+}
+
+.document-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.document-actions button {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+/* Create Parent */
+.create-parent {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.form-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.cancel-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  color: var(--accent-purple-light);
+}
+
+.form-group input {
+  background: var(--dark-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+  color: var(--text-color);
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.primary {
+  background: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.empty-state {
+  padding: 2rem;
+  text-align: center;
+  color: #b0b0b0;
+  font-style: italic;
+}
+
+/* Parent Messages */
+.parent-messages {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.messages-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.message-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.message-stats span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--card-background);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+}
+
+.message-container {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1;
+}
+
+.message-list {
+  flex: 1;
+  background: var(--card-background);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  overflow-y: auto;
+  max-height: 70vh;
+}
+
+.message-item {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  background: rgba(30, 26, 31, 0.8);
+  border-left: 3px solid var(--accent-purple-light);
+}
+
+.message-item.unread {
+  border-left-color: var(--highlight-text);
+  background: rgba(142, 77, 145, 0.1);
+}
+
+.message-meta {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.875rem;
+  color: #b0b0b0;
+}
+
+.message-type {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.message-date {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.read-indicator {
+  color: #69f0ae;
+}
+
+.message-content {
+  margin: 0.5rem 0;
+  white-space: pre-wrap;
+}
+
+.message-sender {
+  font-size: 0.875rem;
+  color: #b0b0b0;
+  margin-top: 0.5rem;
+}
+
+.message-composer {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.method-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.method-selector label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.method-selector input[type="radio"] {
+  margin-right: 0.5rem;
+}
+
+.message-composer textarea {
+  width: 100%;
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  padding: 0.75rem;
+  color: var(--text-color);
+}
+
+.message-composer button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.75rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+/* Parent Reports Access */
+.parent-reports-access {
+  padding: 1.5rem;
+}
+
+.reports-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.parent-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  background: var(--card-background);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+}
+
+.children-count {
+  background: rgba(142, 77, 145, 0.2);
+  color: var(--accent-purple-light);
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.tabs-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
+}
+
+.tabs {
+  display: flex;
+  gap: 1rem;
+}
+
+.tabs button {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  cursor: pointer;
+  position: relative;
+}
+
+.tabs button.active {
+  color: var(--accent-purple-light);
+}
+
+.tabs button.active::after {
+  content: "";
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--accent-purple-light);
+}
+
+.filter-controls select {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+}
+
+.reports-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+}
+
+.report-card {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.report-header {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.report-icon {
+  font-size: 1.5rem;
+  color: var(--accent-purple-light);
+}
+
+.report-meta {
+  flex: 1;
+}
+
+.report-meta h4 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.report-date {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: #b0b0b0;
+}
+
+.report-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.report-actions button {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  padding: 0.5rem;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.view-btn {
+  background: rgba(142, 77, 145, 0.2);
+  color: var(--accent-purple-light);
+}
+
+.download-btn {
+  background: var(--primary-purple);
+  color: white;
+}
+
+.share-btn {
+  background: var(--card-background);
+  color: var(--text-color);
+  border: 1px solid var(--border-color) !important;
+}
+
+.report-student {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: #b0b0b0;
+}
+
+/* Documents Table */
+.documents-table {
+  background: var(--card-background);
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.documents-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.documents-table th,
+.documents-table td {
+  padding: 0.75rem 1rem;
+  text-align: left;
+}
+
+.documents-table th {
+  background: rgba(142, 77, 145, 0.1);
+  color: var(--accent-purple-light);
+}
+
+.documents-table tr {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.documents-table tr:last-child {
+  border-bottom: none;
+}
+
+.doc-type {
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+}
+
+.doc-type.report-card {
+  background: rgba(46, 125, 50, 0.2);
+  color: #69f0ae;
+}
+
+.doc-type.attendance {
+  background: rgba(251, 192, 45, 0.2);
+  color: #ffc107;
+}
+
+.doc-type.other {
+  background: rgba(66, 165, 245, 0.2);
+  color: #42a5f5;
+}
+
+.doc-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.doc-actions button {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.25rem;
+}

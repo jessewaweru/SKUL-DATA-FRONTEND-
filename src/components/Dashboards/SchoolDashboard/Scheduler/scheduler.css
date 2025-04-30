@@ -1,0 +1,167 @@
+/* scheduler.css */
+.scheduler-container {
+  display: flex;
+  height: 100%;
+}
+
+.scheduler-sidebar {
+  width: 220px;
+  background-color: var(--card-background);
+  border-right: 1px solid var(--border-color);
+  padding: 1rem;
+}
+
+.scheduler-sidebar .nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  border-radius: 0.25rem;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.scheduler-sidebar .nav-link:hover {
+  background-color: var(--hover-color);
+}
+
+.scheduler-sidebar .nav-link.active {
+  background-color: var(--primary-purple);
+  color: white;
+}
+
+.scheduler-sidebar .nav-link svg {
+  margin-right: 0.75rem;
+}
+
+.scheduler-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.calendar-view {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.calendar-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.calendar-container {
+  flex: 1;
+  background-color: var(--card-background);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.event-editor-form {
+  padding: 1rem 0;
+}
+
+.datetime-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.target-selection {
+  display: flex;
+  gap: 1rem;
+}
+
+/* Syncfusion overrides */
+.e-schedule .e-appointment {
+  border-radius: 4px;
+}
+
+.e-schedule .e-appointment .e-appointment-details {
+  padding: 4px;
+}
+
+.e-schedule .e-vertical-view .e-day-wrapper .e-appointment {
+  margin: 1px 3px;
+}
+
+.e-quick-popup-wrapper .e-popup-content {
+  padding: 12px;
+}
+
+.e-quick-popup-wrapper .e-event-popup .e-popup-header {
+  background-color: var(--primary-purple);
+  color: white;
+}
+
+/* Event Management and Templates */
+.event-management,
+.event-templates {
+  padding: 1rem;
+}
+
+.management-header,
+.templates-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.filters {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.events-table,
+.templates-table {
+  margin-top: 1rem;
+  box-shadow: none;
+  border: 1px solid var(--border-color);
+}
+
+/* Dialog styles */
+.MuiDialog-paper {
+  background-color: var(--card-background) !important;
+  color: var(--text-color) !important;
+}
+
+.MuiInputBase-root {
+  color: var(--text-color) !important;
+}
+
+.MuiOutlinedInput-notchedOutline {
+  border-color: var(--border-color) !important;
+}
+
+.MuiInputLabel-root {
+  color: var(--text-color) !important;
+}
+
+.MuiTable-root {
+  background-color: var(--card-background);
+}
+
+.MuiTableCell-root {
+  border-bottom: 1px solid var(--border-color) !important;
+  color: var(--text-color) !important;
+}
+
+.MuiTableHead-root {
+  background-color: var(--primary-purple);
+}
+
+.MuiTableHead-root .MuiTableCell-root {
+  color: white !important;
+}
+
+.MuiTableRow-root:hover {
+  background-color: rgba(142, 77, 145, 0.1) !important;
+}

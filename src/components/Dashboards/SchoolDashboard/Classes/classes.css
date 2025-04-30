@@ -1,0 +1,1099 @@
+/* Classes container */
+.classes-container {
+  display: flex;
+  height: 100%;
+}
+
+.classes-sidebar {
+  width: 200px;
+  background-color: var(--sidebar-bg);
+  padding: 1rem;
+}
+
+.classes-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.classes-sidebar a {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.classes-sidebar a:hover {
+  background-color: var(--hover-color);
+}
+
+.classes-sidebar a.active {
+  background-color: var(--primary-purple);
+  color: white;
+}
+
+/* Classes content */
+.classes-content {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+/* Overview styles */
+.classes-overview {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.classes-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.classes-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.search-filter {
+  display: flex;
+  align-items: center;
+  background-color: var(--card-background);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+}
+
+.search-filter input {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  margin-left: 0.5rem;
+}
+
+.filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Class cards grid */
+.classes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.class-card {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  text-decoration: none;
+  color: var(--text-color);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.class-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.class-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.class-header h3 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.academic-year {
+  background-color: var(--accent-purple-dark);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+.class-teacher {
+  font-size: 0.9rem;
+  color: var(--accent-purple-light);
+}
+
+.class-stats {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: auto;
+}
+
+.class-stats .stat {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+}
+
+/* Stream management */
+.streams-management {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.streams-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.create-btn {
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.streams-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.stream-card {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.stream-info h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.stream-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  color: #b0b0b0;
+}
+
+.edit-btn {
+  align-self: flex-end;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.edit-btn:hover {
+  background-color: var(--hover-color);
+}
+
+/* Class Details */
+.class-details-container {
+  padding: 1.5rem;
+}
+
+.back-button {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--accent-purple-light);
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.class-header {
+  margin-bottom: 1.5rem;
+}
+
+.class-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.class-meta {
+  display: flex;
+  gap: 1.5rem;
+  color: var(--accent-purple-light);
+  margin-top: 0.5rem;
+}
+
+.class-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.action-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.promote-btn {
+  background-color: var(--primary-purple);
+  color: white;
+}
+
+.archive-btn {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.class-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--text-color);
+}
+
+.tab-btn.active {
+  border-bottom-color: var(--primary-purple);
+  color: var(--primary-purple);
+  font-weight: 500;
+}
+
+/* Teacher Tab */
+.teacher-info,
+.no-teacher {
+  background-color: var(--card-background);
+  padding: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.change-teacher-btn,
+.assign-teacher-btn {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Attendance Summary */
+.attendance-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.attendance-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.time-range-selector select {
+  background-color: var(--card-background);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.attendance-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+}
+
+.stat-card {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: var(--highlight-text);
+}
+
+.stat-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--accent-purple-light);
+  margin: 0.5rem 0;
+}
+
+.stat-trend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+}
+
+.stat-trend.up {
+  color: #4ade80;
+}
+
+.stat-trend.down {
+  color: #f87171;
+}
+
+/* Heatmap */
+.attendance-heatmap {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.react-calendar-heatmap {
+  width: 100%;
+  margin-top: 1rem;
+}
+
+/* Attendance Table */
+.attendance-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.attendance-table th,
+.attendance-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.attendance-table th {
+  color: var(--accent-purple-light);
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.attendance-table th:hover {
+  background-color: var(--hover-color);
+}
+
+/* Student Performance Table */
+.student-performance-table {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.student-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.student-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--accent-purple-light);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.student-name {
+  font-weight: 500;
+}
+
+.student-id {
+  font-size: 0.8rem;
+  color: var(--accent-purple-light);
+}
+
+.score-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.score-bar {
+  height: 4px;
+  background-color: var(--border-color);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.score-fill {
+  height: 100%;
+  background-color: var(--primary-purple);
+}
+
+.trend-up {
+  color: #4ade80;
+}
+
+.trend-down {
+  color: #f87171;
+}
+
+.trend-neutral {
+  color: #b0b0b0;
+}
+
+.view-btn {
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.view-btn:hover {
+  background-color: var(--hover-color);
+}
+
+/* Modals */
+.promote-modal,
+.assign-teacher-modal {
+  padding: 1.5rem;
+  max-width: 500px;
+  width: 100%;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.cancel-btn {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.confirm-btn {
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.confirm-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #f87171;
+  margin-top: 1rem;
+}
+
+/* Teacher Search */
+.search-teacher {
+  display: flex;
+  align-items: center;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+}
+
+.search-teacher input {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  margin-left: 0.5rem;
+  width: 100%;
+}
+
+.teachers-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.teacher-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+  cursor: pointer;
+}
+
+.teacher-item:hover {
+  background-color: var(--hover-color);
+}
+
+.teacher-item.selected {
+  border-color: var(--primary-purple);
+  background-color: rgba(90, 27, 93, 0.1);
+}
+
+.teacher-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: var(--accent-purple-light);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.teacher-info h4 {
+  margin: 0;
+}
+
+.current-teacher-badge {
+  margin-left: auto;
+  background-color: var(--primary-purple);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+}
+
+/* Documents Page */
+.class-documents-page {
+  padding: 1.5rem;
+}
+
+.documents-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.documents-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.document-filter {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem;
+  border-radius: 4px;
+}
+
+.upload-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.documents-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.documents-table th,
+.documents-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.documents-table th {
+  color: var(--accent-purple-light);
+  font-weight: 500;
+}
+
+.document-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.download-btn,
+.delete-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.download-btn:hover {
+  color: var(--primary-purple);
+}
+
+.delete-btn:hover {
+  color: #f87171;
+}
+
+/* Timetables Page */
+.class-timetables-page {
+  padding: 1.5rem;
+}
+
+.timetables-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.active-timetable {
+  margin-bottom: 2rem;
+}
+
+.timetable-card {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.timetable-card.active {
+  border-left: 4px solid var(--primary-purple);
+}
+
+.timetable-info h4 {
+  margin: 0 0 0.5rem 0;
+}
+
+.timetable-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.set-active-btn {
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Analytics Page */
+.class-analytics-page {
+  padding: 1.5rem;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.analytics-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.summary-card {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.summary-value {
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--highlight-text);
+  margin-bottom: 0.5rem;
+}
+
+.summary-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--accent-purple-light);
+}
+
+.summary-trend {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.summary-trend.up {
+  color: #4ade80;
+}
+
+.summary-trend.down {
+  color: #f87171;
+}
+
+.analytics-charts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.chart-container {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.subject-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.subject-table th,
+.subject-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.subject-table th {
+  color: var(--accent-purple-light);
+  font-weight: 500;
+}
+
+.attendance-trends {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trend-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.trend-month {
+  width: 80px;
+}
+
+.trend-bar {
+  flex: 1;
+  height: 20px;
+  background-color: var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.trend-fill {
+  height: 100%;
+  background-color: var(--primary-purple);
+}
+
+/* Modals */
+.document-upload-modal,
+.timetable-upload-modal {
+  width: 100%;
+  max-width: 500px;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-color);
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--accent-purple-light);
+}
+
+.form-group input[type="text"],
+.form-group input[type="file"],
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--card-background);
+  color: var(--text-color);
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+/* Stream Modal */
+.stream-modal {
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+.stream-modal .modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.stream-modal .modal-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.stream-modal .close-btn {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 1.25rem;
+}
+
+.stream-modal .form-group {
+  margin-bottom: 1rem;
+}
+
+.stream-modal label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.stream-modal input,
+.stream-modal textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background-color: var(--card-background);
+  color: var(--text-color);
+}
+
+.stream-modal textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.stream-modal .modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.stream-modal .cancel-btn {
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.stream-modal .save-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.stream-modal .save-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.error-message {
+  color: #f87171;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  background-color: rgba(248, 113, 113, 0.1);
+  border-radius: 4px;
+}
+
+/* Class List Styles */
+.class-list-container {
+  margin-top: 1.5rem;
+}
+
+.list-filters {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.filter-btn {
+  padding: 0.5rem 1rem;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.filter-btn.active {
+  background-color: var(--primary-purple);
+  color: white;
+  border-color: var(--primary-purple);
+}
+
+.class-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.class-list-table th,
+.class-list-table td {
+  padding: 0.75rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.class-list-table th {
+  color: var(--accent-purple-light);
+  font-weight: 500;
+}
+
+.class-name-link {
+  color: var(--primary-purple);
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.class-name-link:hover {
+  color: var(--accent-purple-light);
+}
+
+.stat-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-btn,
+.delete-btn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+.edit-btn {
+  background-color: rgba(74, 108, 247, 0.1);
+  color: #4a6cf7;
+}
+
+.delete-btn {
+  background-color: rgba(220, 38, 38, 0.1);
+  color: #dc2626;
+}
+
+.status-btn {
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.8rem;
+  background-color: var(--card-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.status-btn:hover {
+  background-color: var(--hover-color);
+}

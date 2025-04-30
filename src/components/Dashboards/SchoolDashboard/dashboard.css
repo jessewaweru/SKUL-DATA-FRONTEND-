@@ -497,4 +497,29 @@
   .stat-card {
     grid-column: span 12;
   }
+
+  .builder-container {
+    flex-direction: column;
+  }
+
+  .analytics-charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .analytics-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .analytics-toolbar {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .top-metrics-grid {
+    grid-template-columns: 1fr;
+  }
 }

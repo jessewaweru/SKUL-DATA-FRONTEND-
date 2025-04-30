@@ -1,6 +1,4 @@
 import "../../SchoolDashboard/dashboard.css";
-
-// components/SchoolDashboard/Users/UserRoles.jsx
 import { useState, useEffect } from "react";
 import {
   FiUsers,
@@ -11,15 +9,7 @@ import {
   FiArrowLeft,
 } from "react-icons/fi";
 import { useNavigate } from "react-router-dom";
-
-// Mock permission data
-const allPermissions = [
-  { id: "view_dashboard", name: "View Dashboard" },
-  { id: "manage_users", name: "Manage Users" },
-  { id: "manage_classes", name: "Manage Classes" },
-  { id: "view_reports", name: "View Reports" },
-  { id: "edit_grades", name: "Edit Grades" },
-];
+import axios from "axios";
 
 const UserRoles = () => {
   const navigate = useNavigate();
@@ -28,52 +18,45 @@ const UserRoles = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [newRoleName, setNewRoleName] = useState("");
   const [permissions, setPermissions] = useState({});
+  const [allPermissions, setAllPermissions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
 
-  // Load roles from API
-  useEffect(() => {
-    const fetchRoles = async () => {
-      try {
-        // Mock data - replace with actual API call
-        const mockRoles = [
-          {
-            id: 1,
-            name: "Administrator",
-            permissions: ["manage_users", "manage_classes", "view_reports"],
-          },
-          {
-            id: 2,
-            name: "Teacher",
-            permissions: ["view_dashboard", "view_reports", "edit_grades"],
-          },
-          { id: 3, name: "Parent", permissions: ["view_dashboard"] },
-        ];
+  const API_BASE = "/users";
 
-        setRoles(mockRoles);
+  // Fetch permissions and roles
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [permRes, roleRes] = await Promise.all([
+          axios.get(`${API_BASE}/permissions/`),
+          axios.get(`${API_BASE}/roles/`),
+        ]);
+
+        setAllPermissions(permRes.data);
+        setRoles(roleRes.data.results);
         setLoading(false);
       } catch (error) {
-        console.error("Error fetching roles:", error);
+        console.error("Error fetching roles or permissions:", error);
         setLoading(false);
       }
     };
-
-    fetchRoles();
+    fetchData();
   }, []);
 
-  // Initialize permissions when role is selected
+  // Update permission checkboxes when a role is selected
   useEffect(() => {
     if (selectedRole) {
       const initialPermissions = {};
       allPermissions.forEach((perm) => {
-        initialPermissions[perm.id] = selectedRole.permissions.includes(
+        initialPermissions[perm.code] = selectedRole.permissions.includes(
           perm.id
         );
       });
       setPermissions(initialPermissions);
       setNewRoleName(selectedRole.name);
     }
-  }, [selectedRole]);
+  }, [selectedRole, allPermissions]);
 
   const handlePermissionChange = (permissionId) => {
     setPermissions((prev) => ({
@@ -85,30 +68,29 @@ const UserRoles = () => {
   const handleSaveRole = async () => {
     if (!newRoleName.trim()) return;
 
-    const selectedPermissions = Object.keys(permissions).filter(
-      (perm) => permissions[perm]
-    );
+    const selectedPermissionIds = allPermissions
+      .filter((perm) => permissions[perm.code])
+      .map((perm) => perm.id);
 
     try {
-      // In a real app, you would make an API call here
       if (isEditing) {
-        // Update existing role
-        const updatedRoles = roles.map((role) =>
-          role.id === selectedRole.id
-            ? { ...role, name: newRoleName, permissions: selectedPermissions }
-            : role
+        const updated = await axios.put(
+          `${API_BASE}/roles/${selectedRole.id}/`,
+          {
+            name: newRoleName,
+            permissions: selectedPermissionIds,
+          }
         );
-        setRoles(updatedRoles);
+        setRoles((prev) =>
+          prev.map((r) => (r.id === selectedRole.id ? updated.data : r))
+        );
       } else {
-        // Create new role
-        const newRole = {
-          id: roles.length + 1,
+        const created = await axios.post(`${API_BASE}/roles/`, {
           name: newRoleName,
-          permissions: selectedPermissions,
-        };
-        setRoles([...roles, newRole]);
+          permissions: selectedPermissionIds,
+        });
+        setRoles((prev) => [...prev, created.data]);
       }
-
       resetForm();
     } catch (error) {
       console.error("Error saving role:", error);
@@ -117,11 +99,9 @@ const UserRoles = () => {
 
   const handleDeleteRole = async (roleId) => {
     try {
-      // In a real app, you would make an API call here
-      setRoles(roles.filter((role) => role.id !== roleId));
-      if (selectedRole && selectedRole.id === roleId) {
-        resetForm();
-      }
+      await axios.delete(`${API_BASE}/roles/${roleId}/`);
+      setRoles((prev) => prev.filter((r) => r.id !== roleId));
+      if (selectedRole?.id === roleId) resetForm();
     } catch (error) {
       console.error("Error deleting role:", error);
     }
@@ -139,7 +119,7 @@ const UserRoles = () => {
     resetForm();
     const initialPermissions = {};
     allPermissions.forEach((perm) => {
-      initialPermissions[perm.id] = false;
+      initialPermissions[perm.code] = false;
     });
     setPermissions(initialPermissions);
     setShowCreateModal(true);
@@ -167,47 +147,47 @@ const UserRoles = () => {
         <div className="roles-list">
           {loading ? (
             <div className="loading">Loading roles...</div>
-          ) : (
-            <>
-              {roles.map((role) => (
-                <div
-                  key={role.id}
-                  className={`role-card ${
-                    selectedRole?.id === role.id ? "selected" : ""
-                  }`}
-                  onClick={() => {
-                    setSelectedRole(role);
-                    setIsEditing(false);
-                  }}
-                >
-                  <h3>{role.name}</h3>
-                  <div className="permissions-summary">
-                    {role.permissions.length} permissions
-                  </div>
-                  <div className="role-actions">
-                    <button
-                      className="icon-button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedRole(role);
-                        setIsEditing(true);
-                      }}
-                    >
-                      <FiEdit2 />
-                    </button>
-                    <button
-                      className="icon-button danger"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleDeleteRole(role.id);
-                      }}
-                    >
-                      <FiTrash2 />
-                    </button>
-                  </div>
+          ) : Array.isArray(roles) && roles.length > 0 ? (
+            roles.map((role) => (
+              <div
+                key={role.id}
+                className={`role-card ${
+                  selectedRole?.id === role.id ? "selected" : ""
+                }`}
+                onClick={() => {
+                  setSelectedRole(role);
+                  setIsEditing(false);
+                }}
+              >
+                <h3>{role.name}</h3>
+                <div className="permissions-summary">
+                  {role.permissions.length} permissions
                 </div>
-              ))}
-            </>
+                <div className="role-actions">
+                  <button
+                    className="icon-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedRole(role);
+                      setIsEditing(true);
+                    }}
+                  >
+                    <FiEdit2 />
+                  </button>
+                  <button
+                    className="icon-button danger"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteRole(role.id);
+                    }}
+                  >
+                    <FiTrash2 />
+                  </button>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="error">No roles found or failed to load.</div>
           )}
         </div>
 
@@ -241,8 +221,8 @@ const UserRoles = () => {
                     <label>
                       <input
                         type="checkbox"
-                        checked={permissions[permission.id] || false}
-                        onChange={() => handlePermissionChange(permission.id)}
+                        checked={permissions[permission.code] || false}
+                        onChange={() => handlePermissionChange(permission.code)}
                         disabled={!isEditing && !showCreateModal}
                       />
                       {permission.name}

@@ -1,0 +1,340 @@
+/* Analytics Page Styles */
+.analytics-page {
+  padding: 1rem;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.analytics-title {
+  font-size: 1.5rem;
+  color: var(--text-color);
+}
+
+.analytics-breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--accent-purple-light);
+}
+
+.analytics-toolbar {
+  display: flex;
+  gap: 1rem;
+}
+
+.date-range-picker select {
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: var(--card-background);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.export-button {
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.export-button:hover {
+  background-color: var(--accent-purple-dark);
+}
+
+/* Metrics Grid */
+.top-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.metric-card {
+  background-color: var(--card-background);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  display: flex;
+  gap: 1rem;
+}
+
+.metric-icon {
+  font-size: 1.5rem;
+  color: var(--accent-purple-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metric-content {
+  flex: 1;
+}
+
+.metric-title {
+  font-size: 0.875rem;
+  color: var(--accent-purple-light);
+  margin-bottom: 0.5rem;
+}
+
+.metric-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--highlight-text);
+  margin-bottom: 0.25rem;
+}
+
+.metric-change {
+  font-size: 0.75rem;
+}
+
+.metric-change.up {
+  color: #4ade80;
+}
+
+.metric-change.down {
+  color: #f87171;
+}
+
+/* Charts Grid */
+.analytics-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+.chart-container {
+  background-color: var(--card-background);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.chart-container h3 {
+  margin-bottom: 1rem;
+  color: var(--accent-purple-light);
+  font-size: 1rem;
+}
+
+.chart-wrapper {
+  width: 100%;
+  height: 300px;
+}
+
+/* Teacher Analytics */
+.teacher-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.teacher-charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Loading Spinner */
+.loading-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  color: var(--accent-purple-light);
+}
+
+/* Analytics Builder Styles */
+.analytics-builder {
+  padding: 1rem;
+}
+
+.builder-header {
+  margin-bottom: 2rem;
+}
+
+.builder-header h2 {
+  color: var(--highlight-text);
+  margin-bottom: 0.5rem;
+}
+
+.builder-container {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.metrics-panel {
+  flex: 1;
+  background-color: var(--card-background);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+}
+
+.metrics-panel h3 {
+  margin-bottom: 1rem;
+  color: var(--accent-purple-light);
+}
+
+.metrics-list {
+  min-height: 300px;
+  padding: 0.5rem;
+  background-color: rgba(30, 26, 31, 0.5);
+  border-radius: 0.25rem;
+}
+
+.metric-item {
+  padding: 0.75rem;
+  margin-bottom: 0.5rem;
+  background-color: var(--card-background);
+  border-radius: 0.25rem;
+  border: 1px solid var(--border-color);
+  cursor: grab;
+}
+
+.metric-item:active {
+  cursor: grabbing;
+}
+
+.metric-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.metric-category {
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--primary-purple);
+  color: white;
+  border-radius: 0.25rem;
+}
+
+.metric-name {
+  font-size: 0.875rem;
+}
+
+.save-view {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.save-view input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: var(--card-background);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
+.save-view button {
+  padding: 0.5rem 1rem;
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.save-view button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.saved-views h3 {
+  margin-bottom: 1rem;
+  color: var(--accent-purple-light);
+}
+
+.views-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+}
+
+.view-item {
+  background-color: var(--card-background);
+  border-radius: 0.5rem;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.view-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.view-actions button {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  background-color: var(--primary-purple);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.view-actions button:last-child {
+  background-color: #f44336;
+}
+
+/* Chart specific styles */
+.chart-wrapper {
+  width: 100%;
+  height: 100%;
+  min-height: 300px;
+}
+
+.recharts-legend-item-text {
+  font-size: 0.8rem;
+  color: var(--text-color);
+}
+
+.recharts-tooltip {
+  background-color: var(--card-background) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: 0.25rem;
+  padding: 0.5rem;
+}
+
+.recharts-tooltip-label {
+  color: var(--accent-purple-light);
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.recharts-default-tooltip {
+  color: var(--text-color) !important;
+}
+
+.recharts-cartesian-axis-tick-value {
+  font-size: 0.75rem;
+  fill: var(--text-color);
+}
+
+.recharts-polar-grid-angle line {
+  stroke: var(--border-color);
+}
+
+.recharts-polar-radius-axis-tick-value {
+  font-size: 0.75rem;
+  fill: var(--text-color);
+}
