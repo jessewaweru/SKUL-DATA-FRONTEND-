@@ -1,4 +1,4 @@
-import "../../SchoolDashboard/dashboard.css";
+import "../Users/users.css";
 import { useState, useEffect } from "react";
 import {
   FiUsers,

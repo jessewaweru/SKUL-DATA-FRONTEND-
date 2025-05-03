@@ -1,6 +1,4 @@
-import "../../SchoolDashboard/dashboard.css";
-
-// components/SchoolDashboard/Users/UserSessions.jsx
+import "../Users/users.css";
 import { useState, useEffect } from "react";
 import {
   FiUsers,

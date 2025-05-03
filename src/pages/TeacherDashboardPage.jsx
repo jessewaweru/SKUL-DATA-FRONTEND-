@@ -1,23 +1,20 @@
-import Sidebar from "../components/SchoolDashboards/SchoolSidebar/Sidebar";
-import "../components/SchoolDashboards/SchoolDashboardSection/dashboard.css";
-import "../components/SchoolDashboards/SchoolSidebar/sidebar.css";
-import Dashboard from "../components/SchoolDashboards/SchoolDashboardSection/Dashboard";
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
+import TeacherSidebar from "../components/TeacherDashboards/TeacherSidebar/TeacherSidebar";
+import TeacherDashboard from "../components/TeacherDashboards/TeacherDashboardSection/TeacherDashboard";
+import "../components/TeacherDashboards/TeacherDashboardSection/teacherdashboard.css";
+import "../components/TeacherDashboards/TeacherSidebar/teachersidebar.css";
 
-const DashboardPage = () => {
+const TeacherDashboardPage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  // Toggle sidebar
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      // Automatically close sidebar on small screens
       if (window.innerWidth < 768) {
         setSidebarOpen(false);
       } else {
@@ -34,12 +31,12 @@ const DashboardPage = () => {
   }, []);
 
   return (
-    <div className="dashboard-page">
-      <div className={`sidebar-container ${sidebarOpen ? "open" : ""}`}>
-        <Sidebar />
+    <div className="teacher-dashboard-page">
+      <div className={`teacher-sidebar-container ${sidebarOpen ? "open" : ""}`}>
+        <TeacherSidebar />
       </div>
       <div
-        className="main-content"
+        className="teacher-main-content"
         style={{
           marginLeft: sidebarOpen ? "240px" : "0",
         }}
@@ -47,16 +44,16 @@ const DashboardPage = () => {
         {windowWidth < 768 && (
           <button
             onClick={toggleSidebar}
-            className="sidebar-toggle"
+            className="teacher-sidebar-toggle"
             aria-label="Toggle Sidebar"
           >
             {sidebarOpen ? "×" : "☰"}
           </button>
         )}
-        <Dashboard />
+        <TeacherDashboard />
       </div>
     </div>
   );
 };
 
-export default DashboardPage;
+export default TeacherDashboardPage;

@@ -1,23 +1,20 @@
-import Sidebar from "../components/SchoolDashboards/SchoolSidebar/Sidebar";
-import "../components/SchoolDashboards/SchoolDashboardSection/dashboard.css";
-import "../components/SchoolDashboards/SchoolSidebar/sidebar.css";
-import Dashboard from "../components/SchoolDashboards/SchoolDashboardSection/Dashboard";
-import { useEffect, useState } from "react";
+// AccountProfilePage.jsx
+import { useState, useEffect } from "react";
+import AccountSidebar from "./AccountSidebar";
+import { Outlet } from "react-router-dom";
+import "../AccountProfile/accountprofile.css";
 
-const DashboardPage = () => {
+const AccountProfilePage = () => {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  // Toggle sidebar
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-  // Handle window resize
   useEffect(() => {
     const handleResize = () => {
       setWindowWidth(window.innerWidth);
-      // Automatically close sidebar on small screens
       if (window.innerWidth < 768) {
         setSidebarOpen(false);
       } else {
@@ -34,9 +31,9 @@ const DashboardPage = () => {
   }, []);
 
   return (
-    <div className="dashboard-page">
+    <div className="account-profile-page">
       <div className={`sidebar-container ${sidebarOpen ? "open" : ""}`}>
-        <Sidebar />
+        <AccountSidebar />
       </div>
       <div
         className="main-content"
@@ -53,10 +50,10 @@ const DashboardPage = () => {
             {sidebarOpen ? "×" : "☰"}
           </button>
         )}
-        <Dashboard />
+        <Outlet />
       </div>
     </div>
   );
 };
 
-export default DashboardPage;
+export default AccountProfilePage;

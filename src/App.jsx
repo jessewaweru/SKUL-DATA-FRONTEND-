@@ -21,77 +21,85 @@ import MainLayout from "./components/MainLayout.jsx";
 import ContactPage from "./pages/Contact/Contact.jsx";
 import Pricing from "./pages/Pricing/Pricing.jsx";
 import Calendar from "./pages/Calender/Calender.jsx";
-import DashboardHome from "./components/Dashboards/SchoolDashboard/DashboardHome.jsx";
-import UserAccounts from "./components/Dashboards/SchoolDashboard/Users/UserAccounts.jsx";
-import UserRoles from "./components/Dashboards/SchoolDashboard/Users/UserRoles.jsx";
-import UserSessions from "./components/Dashboards/SchoolDashboard/Users/UserSessions.jsx";
-import CreateUser from "./components/Dashboards/SchoolDashboard/Users/UserCreation/CreateUser.jsx";
-import EditUser from "./components/Dashboards/SchoolDashboard/Users/UserCreation/EditUser.jsx";
-import ReportsPage from "./components/Dashboards/SchoolDashboard/Reports/ReportsPage.jsx";
-import GeneratedReports from "./components/Dashboards/SchoolDashboard/Reports/GeneratedReports.jsx";
-import ReportTemplates from "./components/Dashboards/SchoolDashboard/Reports/ReportTemplates.jsx";
-import ReportScheduler from "./components/Dashboards/SchoolDashboard/Reports/ReportScheduler.jsx";
-import ReportBuilder from "./components/Dashboards/SchoolDashboard/Reports/ReportBuilder.jsx";
-import ReportAnalytics from "./components/Dashboards/SchoolDashboard/Reports/ReportAnalytics.jsx";
-import ParentReportRequest from "./components/Dashboards/SchoolDashboard/Reports/ParentReportRequest.jsx";
-import ReportsOverview from "./components/Dashboards/SchoolDashboard/Reports/ReportsOverview .jsx";
-import DocumentsMainPage from "./components/Dashboards/SchoolDashboard/Documents/DocumentsLayout.jsx";
-import DocumentsOverview from "./components/Dashboards/SchoolDashboard/Documents/DocumentsOverview.jsx";
-import DocumentCategories from "./components/Dashboards/SchoolDashboard/Documents/DocumentCategories.jsx";
-import DocumentTemplates from "./components/Dashboards/SchoolDashboard/Documents/DocumentTemplates.jsx";
-import SharedDocuments from "./components/Dashboards/SchoolDashboard/Documents/SharedDocuments.jsx";
-import DocumentUploads from "./components/Dashboards/SchoolDashboard/Documents/DocumentUploads.jsx";
-import ClassesPage from "./components/Dashboards/SchoolDashboard/Classes/ClassesPage.jsx";
-import ClassManagement from "./components/Dashboards/SchoolDashboard/Classes/ClassManagement.jsx";
-import ClassDetails from "./components/Dashboards/SchoolDashboard/Classes/ClassDetails.jsx";
-import ClassCreateForm from "./components/Dashboards/SchoolDashboard/Classes/ClassCreateForm.jsx";
-import ClassAttendanceSummary from "./components/Dashboards/SchoolDashboard/Classes/ClassAttendance.jsx";
-import ClassDocumentsPage from "./components/Dashboards/SchoolDashboard/Classes/ClassDocumentsPage.jsx";
-import ClassTimetablesPage from "./components/Dashboards/SchoolDashboard/Classes/ClassTimetablesPage.jsx";
-import ClassAnalytics from "./components/Dashboards/SchoolDashboard/Classes/ClassAnalytics.jsx";
-import StreamsManagement from "./components/Dashboards/SchoolDashboard/Classes/StreamsManagement.jsx";
-import ClassesOverview from "./components/Dashboards/SchoolDashboard/Classes/ClassesOverview.jsx";
-import StudentsPage from "./components/Dashboards/SchoolDashboard/Students/StudentsPage.jsx";
-import StudentsOverview from "./components/Dashboards/SchoolDashboard/Students/StudentsOverview.jsx";
-import StudentDirectory from "./components/Dashboards/SchoolDashboard/Students/StudentDirectory.jsx";
-import StudentProfile from "./components/Dashboards/SchoolDashboard/Students/StudentProfile.jsx";
-import CreateStudent from "./components/Dashboards/SchoolDashboard/Students/CreateStudent.jsx";
-import EditStudent from "./components/Dashboards/SchoolDashboard/Students/EditStudent.jsx";
-import StudentAnalytics from "./components/Dashboards/SchoolDashboard/Students/StudentAnalytics.jsx";
-import TeachersPage from "./components/Dashboards/SchoolDashboard/Teachers/TeachersPage.jsx";
-import TeachersOverview from "./components/Dashboards/SchoolDashboard/Teachers/TeachersOverview.jsx";
-import TeacherProfiles from "./components/Dashboards/SchoolDashboard/Teachers/TeacherProfiles.jsx";
-import TeacherCreateForm from "./components/Dashboards/SchoolDashboard/Teachers/TeacherCreateForm.jsx";
-import TeacherProfileDetail from "./components/Dashboards/SchoolDashboard/Teachers/TeacherProfileDetail.jsx";
-import TeacherEditForm from "./components/Dashboards/SchoolDashboard/Teachers/TeacherEditForm.jsx";
-import TeacherReports from "./components/Dashboards/SchoolDashboard/Teachers/TeacherReports.jsx";
-import TeacherDocuments from "./components/Dashboards/SchoolDashboard/Teachers/TeacherDocuments.jsx";
-import TeacherActivityLogs from "./components/Dashboards/SchoolDashboard/Teachers/TeacherActivityLogs.jsx";
-import ParentsPage from "./components/Dashboards/SchoolDashboard/Parents/ParentsPage.jsx";
-import ParentsOverview from "./components/Dashboards/SchoolDashboard/Parents/ParentsOverview.jsx";
-import ParentDetailWrapper from "./components/Dashboards/SchoolDashboard/Parents/ParentDetailWrapper.jsx";
-import ParentProfile from "./components/Dashboards/SchoolDashboard/Parents/ParentProfile.jsx";
-import ParentChildren from "./components/Dashboards/SchoolDashboard/Parents/ParentChildren.jsx";
-import ParentDocuments from "./components/Dashboards/SchoolDashboard/Parents/ParentDocuments.jsx";
-import ParentNotifications from "./components/Dashboards/SchoolDashboard/Parents/ParentNotifications.jsx";
-import ParentActions from "./components/Dashboards/SchoolDashboard/Parents/ParentActions.jsx";
-import CreateParent from "./components/Dashboards/SchoolDashboard/Parents/CreateParent.jsx";
-import ParentMessages from "./components/Dashboards/SchoolDashboard/Parents/ParentMessages.jsx";
-import ParentReportsAccess from "./components/Dashboards/SchoolDashboard/Parents/ParentReportsAccess.jsx";
-import AllParents from "./components/Dashboards/SchoolDashboard/Parents/AllParents.jsx";
-import ParentAnalytics from "./components/Dashboards/SchoolDashboard/Analytics/Parents/ParentAnalytics.jsx";
-import DocumentAnalytics from "./components/Dashboards/SchoolDashboard/Analytics/Documents/DocumentAnalytics.jsx";
-import SchoolWideAnalytics from "./components/Dashboards/SchoolDashboard/Analytics/SchoolWideAnalytics.jsx";
-import AnalyticsPage from "./components/Dashboards/SchoolDashboard/Analytics/AnalyticsPage.jsx";
-import AnalyticsOverview from "./components/Dashboards/SchoolDashboard/Analytics/AnalyticsOverview.jsx";
-import TeacherAnalytics from "./components/Dashboards/SchoolDashboard/Analytics/Teachers/TeacherAnalytics.jsx";
-import ReportBasedAnalytics from "./components/Dashboards/SchoolDashboard/Analytics/Reports/ReportBasedAnalytics.jsx";
-import AnalyticsBuilder from "./components/Dashboards/SchoolDashboard/Analytics/AnalyticsBuilder.jsx";
-import EventManagement from "./components/Dashboards/SchoolDashboard/Scheduler/EventManagement.jsx";
-import CalendarView from "./components/Dashboards/SchoolDashboard/Scheduler/CalendarView.jsx";
-import EventTemplates from "./components/Dashboards/SchoolDashboard/Scheduler/EventTemplates.jsx";
-import SchedulerPage from "./components/Dashboards/SchoolDashboard/Scheduler/SchedulerPage.jsx";
-import ActionLogs from "./components/Dashboards/SchoolDashboard/ActionLogs/ActionLogs.jsx";
+import DashboardHome from "./components/SchoolDashboards/SchoolDashboardSection/DashboardHome.jsx";
+import UserAccounts from "./components/SchoolDashboards/SchoolDashboardSection/Users/UserAccounts.jsx";
+import UserRoles from "./components/SchoolDashboards/SchoolDashboardSection/Users/UserRoles.jsx";
+import UserSessions from "./components/SchoolDashboards/SchoolDashboardSection/Users/UserSessions.jsx";
+import CreateUser from "./components/SchoolDashboards/SchoolDashboardSection/Users/UserCreation/CreateUser.jsx";
+import EditUser from "./components/SchoolDashboards/SchoolDashboardSection/Users/UserCreation/EditUser.jsx";
+import ReportsPage from "./components/SchoolDashboards/SchoolDashboardSection/Reports/ReportsPage.jsx";
+import GeneratedReports from "./components/SchoolDashboards/SchoolDashboardSection/Reports/GeneratedReports.jsx";
+import ReportTemplates from "./components/SchoolDashboards/SchoolDashboardSection/Reports/ReportTemplates.jsx";
+import ReportScheduler from "./components/SchoolDashboards/SchoolDashboardSection/Reports/ReportScheduler.jsx";
+import ReportBuilder from "./components/SchoolDashboards/SchoolDashboardSection/Reports/ReportBuilder.jsx";
+import ReportAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Reports/ReportAnalytics.jsx";
+import ParentReportRequest from "./components/SchoolDashboards/SchoolDashboardSection/Reports/ParentReportRequest.jsx";
+import ReportsOverview from "./components/SchoolDashboards/SchoolDashboardSection/Reports/ReportsOverview .jsx";
+import DocumentsMainPage from "./components/SchoolDashboards/SchoolDashboardSection/Documents/DocumentsLayout.jsx";
+import DocumentsOverview from "./components/SchoolDashboards/SchoolDashboardSection/Documents/DocumentsOverview.jsx";
+import DocumentCategories from "./components/SchoolDashboards/SchoolDashboardSection/Documents/DocumentCategories.jsx";
+import DocumentTemplates from "./components/SchoolDashboards/SchoolDashboardSection/Documents/DocumentTemplates.jsx";
+import SharedDocuments from "./components/SchoolDashboards/SchoolDashboardSection/Documents/SharedDocuments.jsx";
+import DocumentUploads from "./components/SchoolDashboards/SchoolDashboardSection/Documents/DocumentUploads.jsx";
+import ClassesPage from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassesPage.jsx";
+import ClassManagement from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassManagement.jsx";
+import ClassDetails from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassDetails.jsx";
+import ClassCreateForm from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassCreateForm.jsx";
+import ClassAttendanceSummary from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassAttendance.jsx";
+import ClassDocumentsPage from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassDocumentsPage.jsx";
+import ClassTimetablesPage from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassTimetablesPage.jsx";
+import ClassAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassAnalytics.jsx";
+import StreamsManagement from "./components/SchoolDashboards/SchoolDashboardSection/Classes/StreamsManagement.jsx";
+import ClassesOverview from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassesOverview.jsx";
+import StudentsPage from "./components/SchoolDashboards/SchoolDashboardSection/Students/StudentsPage.jsx";
+import StudentsOverview from "./components/SchoolDashboards/SchoolDashboardSection/Students/StudentsOverview.jsx";
+import StudentDirectory from "./components/SchoolDashboards/SchoolDashboardSection/Students/StudentDirectory.jsx";
+import StudentProfile from "./components/SchoolDashboards/SchoolDashboardSection/Students/StudentProfile.jsx";
+import CreateStudent from "./components/SchoolDashboards/SchoolDashboardSection/Students/CreateStudent.jsx";
+import EditStudent from "./components/SchoolDashboards/SchoolDashboardSection/Students/EditStudent.jsx";
+import StudentAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Students/StudentAnalytics.jsx";
+import TeachersPage from "./components/SchoolDashboards/SchoolDashboardSection/Teachers/TeachersPage.jsx";
+import TeachersOverview from "./components/SchoolDashboards/SchoolDashboardSection/Teachers/TeachersOverview.jsx";
+import TeacherProfiles from "./components/SchoolDashboards/SchoolDashboardSection/Teachers/TeacherProfiles.jsx";
+import TeacherCreateForm from "./components/SchoolDashboards/SchoolDashboardSection/Teachers/TeacherCreateForm.jsx";
+import TeacherProfileDetail from "./components/SchoolDashboards/SchoolDashboardSection/Teachers/TeacherProfileDetail.jsx";
+import TeacherEditForm from "./components/SchoolDashboards/SchoolDashboardSection/Teachers/TeacherEditForm.jsx";
+import TeacherReports from "./components/SchoolDashboards/SchoolDashboardSection/Teachers/TeacherReports.jsx";
+import TeacherDocuments from "./components/SchoolDashboards/SchoolDashboardSection/Teachers/TeacherDocuments.jsx";
+import TeacherActivityLogs from "./components/SchoolDashboards/SchoolDashboardSection/Teachers/TeacherActivityLogs.jsx";
+import ParentsPage from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentsPage.jsx";
+import ParentsOverview from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentsOverview.jsx";
+import ParentDetailWrapper from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentDetailWrapper.jsx";
+import ParentProfile from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentProfile.jsx";
+import ParentChildren from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentChildren.jsx";
+import ParentDocuments from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentDocuments.jsx";
+import ParentNotifications from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentNotifications.jsx";
+import ParentActions from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentActions.jsx";
+import CreateParent from "./components/SchoolDashboards/SchoolDashboardSection/Parents/CreateParent.jsx";
+import ParentMessages from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentMessages.jsx";
+import ParentReportsAccess from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentReportsAccess.jsx";
+import AllParents from "./components/SchoolDashboards/SchoolDashboardSection/Parents/AllParents.jsx";
+import ParentAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Analytics/Parents/ParentAnalytics.jsx";
+import DocumentAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Analytics/Documents/DocumentAnalytics.jsx";
+import SchoolWideAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Analytics/SchoolWideAnalytics.jsx";
+import AnalyticsPage from "./components/SchoolDashboards/SchoolDashboardSection/Analytics/AnalyticsPage.jsx";
+import AnalyticsOverview from "./components/SchoolDashboards/SchoolDashboardSection/Analytics/AnalyticsOverview.jsx";
+import TeacherAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Analytics/Teachers/TeacherAnalytics.jsx";
+import ReportBasedAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Analytics/Reports/ReportBasedAnalytics.jsx";
+import AnalyticsBuilder from "./components/SchoolDashboards/SchoolDashboardSection/Analytics/AnalyticsBuilder.jsx";
+import EventManagement from "./components/SchoolDashboards/SchoolDashboardSection/Scheduler/EventManagement.jsx";
+import CalendarView from "./components/SchoolDashboards/SchoolDashboardSection/Scheduler/CalendarView.jsx";
+import EventTemplates from "./components/SchoolDashboards/SchoolDashboardSection/Scheduler/EventTemplates.jsx";
+import SchedulerPage from "./components/SchoolDashboards/SchoolDashboardSection/Scheduler/SchedulerPage.jsx";
+import ActionLogs from "./components/SchoolDashboards/SchoolDashboardSection/ActionLogs/ActionLogs.jsx";
+import AccountProfilePage from "./components/AccountProfile/AccountProfilePage.jsx";
+import AccountProfile from "./components/AccountProfile/AccountProfile.jsx";
+import AccountSecurity from "./components/AccountProfile/AccountSecurity.jsx";
+import AccountSubscription from "./components/AccountProfile/AccountSubscription.jsx";
+import AccountMessages from "./components/AccountProfile/AccountMessages.jsx";
+import AccountNotifications from "./components/AccountProfile/AccountNotifications.jsx";
+import AccountSettings from "./components/AccountProfile/AccountSettings.jsx";
+import TeacherDashboardPage from "./pages/TeacherDashboardPage.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -110,6 +118,11 @@ function App() {
     {
       path: "/register",
       element: <LoginRegister mode="register" />,
+    },
+    {
+      path: "/teacher-dashboard",
+      element: <TeacherDashboardPage />,
+      children: [],
     },
     {
       path: "/dashboard",
@@ -473,6 +486,40 @@ function App() {
     {
       path: "/contact",
       element: <ContactPage />,
+    },
+    {
+      path: "/account",
+      element: <AccountProfilePage />,
+      children: [
+        {
+          index: true,
+          element: <Navigate to="profile" replace />,
+        },
+        {
+          path: "profile",
+          element: <AccountProfile />,
+        },
+        {
+          path: "security",
+          element: <AccountSecurity />,
+        },
+        {
+          path: "subscription",
+          element: <AccountSubscription />,
+        },
+        {
+          path: "messages",
+          element: <AccountMessages />,
+        },
+        {
+          path: "notifications",
+          element: <AccountNotifications />,
+        },
+        {
+          path: "settings",
+          element: <AccountSettings />,
+        },
+      ],
     },
     {
       path: "/calender",
