@@ -100,6 +100,7 @@ import AccountMessages from "./components/AccountProfile/AccountMessages.jsx";
 import AccountNotifications from "./components/AccountProfile/AccountNotifications.jsx";
 import AccountSettings from "./components/AccountProfile/AccountSettings.jsx";
 import TeacherDashboardPage from "./pages/TeacherDashboardPage.jsx";
+import ParentDashboardPage from "./pages/ParentDashboardPage/ParentDashboardPage.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -123,6 +124,10 @@ function App() {
       path: "/teacher-dashboard",
       element: <TeacherDashboardPage />,
       children: [],
+    },
+    {
+      path: "/parent-dashboard",
+      element: <ParentDashboardPage />,
     },
     {
       path: "/dashboard",

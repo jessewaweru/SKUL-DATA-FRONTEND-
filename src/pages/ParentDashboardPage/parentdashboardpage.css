@@ -1,0 +1,68 @@
+/* Parent Dashboard Page */
+.parent-dashboard-page {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--parent-dark);
+  color: var(--parent-text);
+}
+
+.parent-main-content {
+  flex: 1;
+  padding: 1.5rem 1.5rem 1.5rem 2rem;
+  margin-left: 240px;
+  background-color: var(--parent-dark);
+  transition: margin-left 0.3s ease;
+  min-width: 0;
+}
+
+.parent-sidebar-container {
+  width: 240px;
+  flex-shrink: 0;
+  background-color: var(--parent-primary);
+  padding: 1rem;
+  border-right: 1px solid var(--parent-border);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  color: var(--parent-text);
+  transition: all 0.3s ease;
+}
+
+.parent-sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 20;
+  padding: 0.5rem;
+  background-color: var(--parent-primary);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .parent-sidebar-container {
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+    opacity: 0;
+  }
+
+  .parent-sidebar-container.open {
+    width: 240px;
+    padding: 1rem;
+    opacity: 1;
+  }
+
+  .parent-sidebar-toggle {
+    display: block;
+  }
+}

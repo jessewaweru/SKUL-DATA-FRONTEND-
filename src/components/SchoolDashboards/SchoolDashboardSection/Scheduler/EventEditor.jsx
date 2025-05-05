@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import dayjs from "dayjs";
 import {
   Dialog,
   DialogTitle,
@@ -22,8 +23,8 @@ const EventEditor = ({ event, onClose, onSave }) => {
   const [formData, setFormData] = useState({
     title: "",
     description: "",
-    start_datetime: new Date(),
-    end_datetime: new Date(),
+    start_datetime: dayjs(),
+    end_datetime: dayjs().add(1, "hour"),
     event_type: "general",
     target_type: "all",
     location: "",
@@ -38,12 +39,27 @@ const EventEditor = ({ event, onClose, onSave }) => {
   const [classes, setClasses] = useState([]);
 
   useEffect(() => {
+    const fetchOptions = async () => {
+      try {
+        const [teachersRes, parentsRes, classesRes] = await Promise.all([
+          axios.get("/api/users/teachers/"),
+          axios.get("/api/users/parents/"),
+          axios.get("/api/schools/classes/"),
+        ]);
+        setTeachers(teachersRes.data);
+        setParents(parentsRes.data);
+        setClasses(classesRes.data);
+      } catch (err) {
+        console.error("Error fetching options:", err);
+      }
+    };
+
     if (event) {
       setFormData({
         title: event.title,
         description: event.description || "",
-        start_datetime: new Date(event.start_datetime),
-        end_datetime: new Date(event.end_datetime),
+        start_datetime: dayjs(event.start_datetime),
+        end_datetime: dayjs(event.end_datetime),
         event_type: event.event_type,
         target_type: event.target_type,
         location: event.location || "",
@@ -54,23 +70,6 @@ const EventEditor = ({ event, onClose, onSave }) => {
       });
     }
 
-    // Fetch available options
-    const fetchOptions = async () => {
-      try {
-        const [teachersRes, parentsRes, classesRes] = await Promise.all([
-          axios.get("/api/users/teachers/"),
-          axios.get("/api/users/parents/"),
-          axios.get("/api/schools/classes/"),
-        ]);
-
-        setTeachers(teachersRes.data);
-        setParents(parentsRes.data);
-        setClasses(classesRes.data);
-      } catch (err) {
-        console.error("Error fetching options:", err);
-      }
-    };
-
     fetchOptions();
   }, [event]);
 
@@ -78,8 +77,12 @@ const EventEditor = ({ event, onClose, onSave }) => {
     try {
       const payload = {
         ...formData,
-        start_datetime: formData.start_datetime.toISOString(),
-        end_datetime: formData.end_datetime.toISOString(),
+        start_datetime: formData.is_all_day
+          ? formData.start_datetime.startOf("day").toISOString()
+          : formData.start_datetime.toISOString(),
+        end_datetime: formData.is_all_day
+          ? formData.start_datetime.endOf("day").toISOString()
+          : formData.end_datetime.toISOString(),
       };
 
       if (event) {
@@ -92,6 +95,17 @@ const EventEditor = ({ event, onClose, onSave }) => {
     } catch (err) {
       console.error("Error saving event:", err);
     }
+  };
+
+  const handleDateChange = (field, value) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+      // Update end time if it's before start time when changing start time
+      ...(field === "start_datetime" && dayjs(value).isAfter(prev.end_datetime)
+        ? { end_datetime: dayjs(value).add(1, "hour") }
+        : {}),
+    }));
   };
 
   return (
@@ -107,6 +121,7 @@ const EventEditor = ({ event, onClose, onSave }) => {
             onChange={(e) =>
               setFormData({ ...formData, title: e.target.value })
             }
+            required
           />
 
           <TextField
@@ -125,26 +140,46 @@ const EventEditor = ({ event, onClose, onSave }) => {
             <DateTimePicker
               label="Start Time"
               value={formData.start_datetime}
-              onChange={(date) =>
-                setFormData({ ...formData, start_datetime: date })
-              }
+              onChange={(date) => handleDateChange("start_datetime", date)}
               renderInput={(params) => (
                 <TextField {...params} fullWidth margin="normal" />
               )}
+              disabled={formData.is_all_day}
             />
 
             <DateTimePicker
               label="End Time"
               value={formData.end_datetime}
-              onChange={(date) =>
-                setFormData({ ...formData, end_datetime: date })
-              }
+              onChange={(date) => handleDateChange("end_datetime", date)}
               renderInput={(params) => (
                 <TextField {...params} fullWidth margin="normal" />
               )}
               minDateTime={formData.start_datetime}
+              disabled={formData.is_all_day}
             />
           </div>
+
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={formData.is_all_day}
+                onChange={(e) => {
+                  const isAllDay = e.target.checked;
+                  setFormData((prev) => ({
+                    ...prev,
+                    is_all_day: isAllDay,
+                    start_datetime: isAllDay
+                      ? prev.start_datetime.startOf("day")
+                      : prev.start_datetime,
+                    end_datetime: isAllDay
+                      ? prev.start_datetime.endOf("day")
+                      : prev.end_datetime,
+                  }));
+                }}
+              />
+            }
+            label="All Day Event"
+          />
 
           <FormControl fullWidth margin="normal">
             <InputLabel>Event Type</InputLabel>
@@ -231,7 +266,10 @@ const EventEditor = ({ event, onClose, onSave }) => {
                 multiple
                 value={formData.targeted_classes}
                 onChange={(e) =>
-                  setFormData({ ...formData, targeted_classes: e.target.value })
+                  setFormData({
+                    ...formData,
+                    targeted_classes: e.target.value,
+                  })
                 }
               >
                 {classes.map((cls) => (
@@ -243,16 +281,14 @@ const EventEditor = ({ event, onClose, onSave }) => {
             </FormControl>
           )}
 
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={formData.is_all_day}
-                onChange={(e) =>
-                  setFormData({ ...formData, is_all_day: e.target.checked })
-                }
-              />
+          <TextField
+            label="Location"
+            fullWidth
+            margin="normal"
+            value={formData.location}
+            onChange={(e) =>
+              setFormData({ ...formData, location: e.target.value })
             }
-            label="All Day Event"
           />
         </div>
       </DialogContent>
