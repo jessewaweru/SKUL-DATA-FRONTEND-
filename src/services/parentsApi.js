@@ -57,3 +57,49 @@ export const markNotificationAsRead = async (notificationId) => {
   );
   return response.data;
 };
+
+export const bulkImportParents = async (file, options = {}) => {
+  try {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("send_welcome_email", options.sendWelcomeEmail || false);
+    formData.append("default_status", options.defaultStatus || "ACTIVE");
+
+    const response = await api.post("/parents/bulk-import/", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    if (response.status === 207) {
+      // Handle multi-status responses
+      return {
+        ...response.data,
+        hasPartialSuccess:
+          response.data.errors.length > 0 && response.data.success.length > 0,
+      };
+    }
+
+    return response.data;
+  } catch (error) {
+    // Handle different error scenarios
+    if (error.response) {
+      // The request was made and the server responded with a status code
+      // that falls out of the range of 2xx
+      throw new Error(error.response.data.error || "Import failed");
+    } else if (error.request) {
+      // The request was made but no response was received
+      throw new Error("No response from server");
+    } else {
+      // Something happened in setting up the request that triggered an Error
+      throw new Error(error.message);
+    }
+  }
+};
+
+export const downloadParentTemplate = async () => {
+  const response = await api.get("/parents/download-template/", {
+    responseType: "blob", // Important for file downloads
+  });
+  return response.data;
+};

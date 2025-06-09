@@ -618,6 +618,11 @@ const CategorySelect = () => {
               isActive={location.pathname.includes("/parents/create")}
             />
             <SubRoute
+              title="Bulk Import"
+              onClick={() => handleParentSubItemClick("bulk-import")}
+              isActive={location.pathname.includes("/parents/bulk-import")}
+            />
+            <SubRoute
               title="Reports Access"
               onClick={() => handleParentSubItemClick("reports-access")}
               isActive={location.pathname.includes("/parents/reports-access")}

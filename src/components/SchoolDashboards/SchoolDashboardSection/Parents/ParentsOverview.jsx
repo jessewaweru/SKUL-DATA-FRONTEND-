@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { FiSearch, FiPlus } from "react-icons/fi";
+import { useNavigate } from "react-router-dom";
+import { FiSearch, FiPlus, FiUpload } from "react-icons/fi";
+
 import ParentTable from "./ParentTable";
 import { fetchParents } from "../../../../services/parentsApi";
-import { useNavigate } from "react-router-dom";
 import "../Parents/parents.css";
 
 const ParentsOverview = () => {
@@ -13,16 +14,18 @@ const ParentsOverview = () => {
     childrenCount: "",
   });
 
+  const navigate = useNavigate();
+
   const { data: parents, isLoading } = useQuery({
     queryKey: ["parents", { search: searchTerm, ...filters }],
     queryFn: () => fetchParents({ search: searchTerm, ...filters }),
   });
-  const navigate = useNavigate();
 
   return (
     <div className="parents-overview">
       <div className="parents-header">
         <h2>Parents Management</h2>
+
         <div className="parents-actions">
           <div className="search-filter">
             <FiSearch />
@@ -33,12 +36,22 @@ const ParentsOverview = () => {
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <button
-            className="create-button"
-            onClick={() => navigate("/dashboard/parents/create")}
-          >
-            <FiPlus /> New Parent
-          </button>
+
+          <div className="action-buttons">
+            <button
+              className="create-button"
+              onClick={() => navigate("/dashboard/parents/create")}
+            >
+              <FiPlus /> New Parent
+            </button>
+
+            <button
+              className="create-button secondary"
+              onClick={() => navigate("/dashboard/parents/bulk-import")}
+            >
+              <FiUpload /> Bulk Import
+            </button>
+          </div>
         </div>
       </div>
 

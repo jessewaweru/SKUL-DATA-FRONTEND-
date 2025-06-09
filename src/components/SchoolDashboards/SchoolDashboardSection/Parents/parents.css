@@ -1,3 +1,9 @@
+.create-button.secondary {
+  background: var(--card-background);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+}
+
 /* Parents Overview */
 .parents-overview {
   padding: 1.5rem;
@@ -904,4 +910,128 @@
   color: var(--text-color);
   cursor: pointer;
   padding: 0.25rem;
+}
+
+/* Bulk Import Styles */
+.bulk-import-container {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.bulk-import-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.import-instructions {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: rgba(142, 77, 145, 0.1);
+  border-radius: 0.25rem;
+}
+
+.text-link {
+  background: none;
+  border: none;
+  color: var(--accent-purple-light);
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}
+
+.file-upload {
+  margin-top: 0.5rem;
+}
+
+.file-upload input[type="file"] {
+  display: none;
+}
+
+.file-upload label {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--primary-purple);
+  color: white;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.remove-file {
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 0.25rem;
+}
+
+.import-results {
+  margin-top: 2rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+}
+
+.summary {
+  display: flex;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+}
+
+.summary-item.success {
+  background: rgba(46, 125, 50, 0.2);
+  color: #69f0ae;
+}
+
+.summary-item.error {
+  background: rgba(198, 40, 40, 0.2);
+  color: #ff8a80;
+}
+
+.errors-list {
+  margin-top: 1rem;
+}
+
+.errors-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.errors-list th,
+.errors-list td {
+  padding: 0.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.errors-list th {
+  background: rgba(142, 77, 145, 0.1);
+}
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #ff8a80;
+  margin: 1rem 0;
 }

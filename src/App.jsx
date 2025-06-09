@@ -101,6 +101,7 @@ import AccountNotifications from "./components/AccountProfile/AccountNotificatio
 import AccountSettings from "./components/AccountProfile/AccountSettings.jsx";
 import TeacherDashboardPage from "./pages/TeacherDashboardPage.jsx";
 import ParentDashboardPage from "./pages/ParentDashboardPage/ParentDashboardPage.jsx";
+import ParentBulkImport from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentBulkImport.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -319,9 +320,14 @@ function App() {
                 },
               ],
             },
+            // Move bulk-import outside the :parentId route
+            {
+              path: "bulk-import",
+              element: <ParentBulkImport />,
+            },
             {
               path: "all",
-              element: <AllParents />, // Alternative list view if needed
+              element: <AllParents />,
             },
           ],
         },

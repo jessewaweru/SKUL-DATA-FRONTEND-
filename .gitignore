@@ -23,5 +23,8 @@ dist-ssr
 *.sln
 *.sw?
 
+#env file
+.env
+
 #my own readme file
 myREADME.md
