@@ -8,7 +8,7 @@ import {
   FaChalkboardTeacher,
 } from "react-icons/fa";
 import { useLocation, useNavigate } from "react-router-dom";
-import "../styles/loginregister.css";
+import "../styles/loginRegister.css";
 import Axios from "axios";
 
 const LoginRegister = ({ mode = "login" }) => {
