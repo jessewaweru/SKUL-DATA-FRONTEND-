@@ -14,7 +14,7 @@ import "@syncfusion/ej2-popups/styles/material.css";
 import "@syncfusion/ej2-react-schedule/styles/material.css";
 import { UserProvider } from "./context/AuthProvider.jsx";
 import { RouterProvider } from "react-router-dom";
-import LoginRegister from "./pages/loginregister.jsx";
+import LoginRegister from "./pages/LoginRegister.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import MainLayout from "./components/MainLayout.jsx";
