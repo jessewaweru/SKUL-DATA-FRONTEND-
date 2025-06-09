@@ -1,4 +1,5 @@
 import "../Hero/hero.css";
+import arrowRight from "../../assets/arrow-right.png";
 
 const Hero = ({ heroSections, heroCount, setHeroCount, transitionStage }) => {
   return (
@@ -9,7 +10,7 @@ const Hero = ({ heroSections, heroCount, setHeroCount, transitionStage }) => {
       </div>
       <div className={`hero-explore ${transitionStage}`}>
         <p>Explore our features</p>
-        <img src="src/assets/arrow-right.png" alt="arrow button" />
+        <img src={arrowRight} alt="arrow button" />
       </div>
       <div className="hero-dot-play">
         <ul className="hero-dots">

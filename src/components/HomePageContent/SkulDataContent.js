@@ -1,3 +1,10 @@
+import adminDashboard from "../../assets/admin-dashboard.jpg";
+import teacherPortal from "../../assets/teacher-portal.jpg";
+import parentImg from "../../assets/parent.jpg";
+import schoolBooks from "../../assets/school-books.jpg";
+import featuresImg from "../../assets/features1.png";
+import africaSchool from "../../assets/africa-school.jpg";
+
 export const skulDataContent = {
   // Hero Section Content
   heroSections: [
@@ -24,7 +31,8 @@ export const skulDataContent = {
       title: "Comprehensive School Administration",
       description:
         "Superusers get complete control over all school data - academic records, staff management, financial documents, and institutional reporting. Our dashboard provides tools to manage the entire school ecosystem from one centralized platform.",
-      image: "src/assets/admin-dashboard.jpg",
+      // image: "src/assets/admin-dashboard.jpg",
+      image: adminDashboard,
       isReversed: false,
       icon: "🏫",
     },
@@ -32,7 +40,8 @@ export const skulDataContent = {
       title: "Smart Teacher Portals",
       description:
         "Teachers can easily input academic records through spreadsheet-like interfaces or upload scanned documents. Automatic PDF report generation for each student saves hours of manual work. Role-based access ensures teachers only see data relevant to their classes.",
-      image: "src/assets/teacher-portal.jpg",
+      // image: "src/assets/teacher-portal.jpg",
+      image: teacherPortal,
       isReversed: true,
       icon: "👩🏾‍🏫",
     },
@@ -40,7 +49,8 @@ export const skulDataContent = {
       title: "Parent Engagement System",
       description:
         "Parents receive automated performance reports and school announcements. Our mobile-friendly interface gives parents visibility into their child's progress without overwhelming them with unnecessary school data.",
-      image: "src/assets/parent.jpg",
+      // image: "src/assets/parent.jpg",
+      image: parentImg,
       isReversed: false,
       icon: "👨🏾‍👩🏾‍👧🏾",
     },
@@ -48,7 +58,8 @@ export const skulDataContent = {
       title: "Document Management Hub",
       description:
         "Secure digital repository for all school documents - exams, syllabi, staff records, and more. Intelligent categorization system with metadata tagging (class, subject, author) makes retrieval instant. Bulk upload capabilities handle paper-to-digital transitions.",
-      image: "src/assets/school-books.jpg",
+      // image: "src/assets/school-books.jpg",
+      image: schoolBooks,
       isReversed: true,
       icon: "🗄️",
     },
@@ -68,7 +79,8 @@ export const skulDataContent = {
       "Mobile-first design for low-end devices",
       "Periodic data backups with local server option",
     ],
-    image: "src/assets/features1.png",
+    // image: "src/assets/features1.png",
+    image: featuresImg,
   },
 
   // Process Section
@@ -108,6 +120,7 @@ export const skulDataContent = {
     description:
       "Join the growing network of African schools using Skul-Data to modernize their data management. Schedule a demo to see how we can transform your institution's operations.",
     buttonText: "Request Demo",
-    backgroundImage: "src/assets/africa-school.jpg",
+    // backgroundImage: "src/assets/africa-school.jpg",
+    backgroundImage: africaSchool,
   },
 };
