@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import api from "../../../../services/api";
 import MetricCard from "./MetricCard";
-import TopTeachersChart from "./charts/TopTeachersChart";
-import AttendanceTrendChart from "./charts/AttendanceTrendChart";
-import DocumentUsageChart from "./charts/DocumentUsageChart";
-import ClassPerformanceChart from "./charts/ClassPerformanceChart";
+import TopTeachersChart from "./Charts/TopTeachersChart";
+import AttendanceTrendChart from "./Charts/AttendanceTrendChart";
+import DocumentUsageChart from "./Charts/DocumentUsageChart";
+import ClassPerformanceChart from "./Charts/ClassPerformanceChart";
 import "../Analytics/analytics.css";
 
 const AnalyticsOverview = () => {

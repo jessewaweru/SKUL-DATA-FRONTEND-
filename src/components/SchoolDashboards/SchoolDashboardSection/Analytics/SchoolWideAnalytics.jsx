@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../../../../services/api";
 import SchoolMetrics from "./SchoolMetrics";
-import UserGrowthChart from "./charts/UserGrowthChart";
-import EngagementRateChart from "./charts/EngagementRateChart";
-import ReportGenerationRateChart from "./charts/ReportGenerationRateChart";
+import UserGrowthChart from "./Charts/UserGrowthChart";
+import EngagementRateChart from "./Charts/EngagementRateChart";
+import ReportGenerationRateChart from "./Charts/ReportGenerationRateChart";
 import "../Analytics/analytics.css";
 
 const SchoolWideAnalytics = () => {
