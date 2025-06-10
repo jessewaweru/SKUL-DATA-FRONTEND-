@@ -1,4 +1,27 @@
 import api from "./api";
+import { webSocketService } from "./websocketService";
+
+export const sendMessage = async (messageData) => {
+  try {
+    // First try WebSocket
+    if (
+      webSocketService.sendMessage({
+        type: "message",
+        message: messageData,
+        action: "send",
+      })
+    ) {
+      return { success: true };
+    }
+
+    // Fallback to REST API
+    const response = await api.post("/notifications/messages/", messageData);
+    return response.data;
+  } catch (error) {
+    console.error("Error sending message:", error);
+    throw error;
+  }
+};
 
 export const fetchMessages = async (type = "inbox", params = {}) => {
   const endpoint = type === "sent" ? "sent" : "";
@@ -10,11 +33,6 @@ export const fetchMessages = async (type = "inbox", params = {}) => {
 
 export const fetchMessage = async (id) => {
   const response = await api.get(`/notifications/messages/${id}/`);
-  return response.data;
-};
-
-export const sendMessage = async (messageData) => {
-  const response = await api.post("/notifications/messages/", messageData);
   return response.data;
 };
 

@@ -1,14 +1,17 @@
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import AsyncSelect from "react-select/async";
+import { FiSend, FiPaperclip, FiX } from "react-icons/fi";
+import { webSocketService } from "../../../../services/websocketService";
+import useUser from "../../../../hooks/useUser";
 import {
   sendMessage,
   fetchMessageRecipients,
 } from "../../../../services/messagesService";
-import { FiSend, FiPaperclip, FiX } from "react-icons/fi";
-import { useForm } from "react-hook-form";
-import AsyncSelect from "react-select/async";
 import "../Messages/messages.css";
 
 const MessagesCompose = () => {
+  const { user } = useUser();
   const [attachments, setAttachments] = useState([]);
   const [isSending, setIsSending] = useState(false);
   const [error, setError] = useState(null);
@@ -45,6 +48,7 @@ const MessagesCompose = () => {
       setIsSending(true);
       setError(null);
 
+      // Send via REST API first
       const formData = new FormData();
       formData.append("subject", data.subject);
       formData.append("body", data.body);
@@ -56,13 +60,33 @@ const MessagesCompose = () => {
         formData.append("attachments", file);
       });
 
-      await sendMessage(formData);
+      const response = await sendMessage(formData);
+
+      // Send via WebSocket for real-time delivery to each recipient
+      data.recipients.forEach((recipient) => {
+        if (
+          webSocketService.sendMessage({
+            type: "message",
+            message: {
+              id: response.id,
+              sender_id: user.id,
+              sender_name: user.get_full_name(), // Make sure your auth context provides this
+              recipient_id: recipient.value,
+              subject: data.subject,
+              body: data.body,
+              is_read: false,
+              created_at: new Date().toISOString(),
+              status: "sent",
+            },
+          })
+        ) {
+          console.log(`Sent via WebSocket to recipient ${recipient.value}`);
+        }
+      });
 
       setSuccess(true);
       reset();
       setAttachments([]);
-
-      // Reset success message after 3 seconds
       setTimeout(() => setSuccess(false), 3000);
     } catch (err) {
       setError(err.message || "Failed to send message");

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   fetchMessages,
   markAsRead,
@@ -8,9 +8,13 @@ import { FiInbox, FiStar, FiRefreshCw } from "react-icons/fi";
 import MessageListItem from "./MessageListItem";
 import MessageDetail from "./MessageDetail";
 import Pagination from "../../../common/Pagination/Pagination";
+import { useWebSocketMessages } from "../../../../hooks/useWebSocketMessages";
+import useUser from "../../../../hooks/useUser";
 import "../Messages/messages.css";
 
 const MessagesInbox = () => {
+  const { user } = useUser();
+  const queryClient = useQueryClient();
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -29,6 +33,22 @@ const MessagesInbox = () => {
         page_size: pageSize,
         status: filter === "all" ? undefined : filter,
       }),
+  });
+
+  // WebSocket integration for real-time updates
+  useWebSocketMessages(user?.id, {
+    onNewMessage: (message) => {
+      if (filter !== "unread") {
+        queryClient.setQueryData(
+          ["messages", "inbox", page, pageSize, filter],
+          (old) => ({
+            ...old,
+            results: [message, ...(old?.results || [])],
+          })
+        );
+      }
+      queryClient.invalidateQueries(["messages", "unread"]);
+    },
   });
 
   const handleMessageClick = async (message) => {

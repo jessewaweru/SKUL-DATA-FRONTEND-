@@ -1,12 +1,17 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchMessages } from "../../../../services/messagesService";
 import { FiSend, FiRefreshCw } from "react-icons/fi";
 import MessageListItem from "./MessageListItem";
 import MessageDetail from "./MessageDetail";
 import Pagination from "../../../common/Pagination/Pagination";
+import { useWebSocketMessages } from "../../../../hooks/useWebSocketMessages";
+import useUser from "../../../../hooks/useUser";
+import "../Messages/messages.css";
 
 const MessagesSent = () => {
+  const { user } = useUser();
+  const queryClient = useQueryClient();
   const [selectedMessage, setSelectedMessage] = useState(null);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -25,6 +30,23 @@ const MessagesSent = () => {
         page_size: pageSize,
         status: filter === "all" ? undefined : filter,
       }),
+  });
+
+  // WebSocket integration for delivery receipts
+  useWebSocketMessages(user?.id, {
+    onMessageDelivered: (receipt) => {
+      queryClient.setQueryData(
+        ["messages", "sent", page, pageSize, filter],
+        (old) => ({
+          ...old,
+          results: old?.results?.map((msg) =>
+            msg.id === receipt.message_id
+              ? { ...msg, status: "delivered", updated_at: receipt.created_at }
+              : msg
+          ),
+        })
+      );
+    },
   });
 
   const handleMessageClick = (message) => {
