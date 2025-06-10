@@ -15,6 +15,7 @@ import {
   FiShare2,
   FiLayers,
   FiActivity,
+  FiMail,
 } from "react-icons/fi";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -31,6 +32,7 @@ const CategorySelect = () => {
   const [analyticsExpanded, setAnalyticsExpanded] = useState(false);
   const [schedulerExpanded, setSchedulerExpanded] = useState(false);
   const [actionLogsExpanded, setActionLogsExpanded] = useState(false);
+  const [messagesExpanded, setMessagesExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -54,6 +56,7 @@ const CategorySelect = () => {
       setAnalyticsExpanded(false);
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
+      setMessagesExpanded(false);
       return;
     }
 
@@ -69,6 +72,7 @@ const CategorySelect = () => {
       setAnalyticsExpanded(false);
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
+      setMessagesExpanded(false);
       return;
     }
 
@@ -84,6 +88,7 @@ const CategorySelect = () => {
       setAnalyticsExpanded(false);
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
+      setMessagesExpanded(false);
       return;
     }
 
@@ -99,6 +104,7 @@ const CategorySelect = () => {
       setAnalyticsExpanded(false);
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
+      setMessagesExpanded(false);
       return;
     }
 
@@ -114,6 +120,7 @@ const CategorySelect = () => {
       setAnalyticsExpanded(false);
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
+      setMessagesExpanded(false);
       return;
     }
 
@@ -129,6 +136,7 @@ const CategorySelect = () => {
       setAnalyticsExpanded(false);
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
+      setMessagesExpanded(false);
       return;
     }
 
@@ -144,6 +152,7 @@ const CategorySelect = () => {
       setAnalyticsExpanded(false);
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
+      setMessagesExpanded(false);
       return;
     }
 
@@ -159,6 +168,7 @@ const CategorySelect = () => {
       setParentsExpanded(false);
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
+      setMessagesExpanded(false);
       return;
     }
 
@@ -174,6 +184,7 @@ const CategorySelect = () => {
       setParentsExpanded(false);
       setAnalyticsExpanded(false);
       setActionLogsExpanded(false);
+      setMessagesExpanded(false);
       return;
     }
 
@@ -189,6 +200,22 @@ const CategorySelect = () => {
       setParentsExpanded(false);
       setAnalyticsExpanded(false);
       setSchedulerExpanded(false);
+      setMessagesExpanded(false);
+      return;
+    }
+    if (title === "Messages") {
+      setMessagesExpanded(!messagesExpanded);
+      if (!messagesExpanded) navigate("/dashboard/messages");
+      setUsersExpanded(false);
+      setReportsExpanded(false);
+      setDocumentsExpanded(false);
+      setClassesExpanded(false);
+      setStudentsExpanded(false);
+      setTeachersExpanded(false);
+      setParentsExpanded(false);
+      setAnalyticsExpanded(false);
+      setSchedulerExpanded(false);
+      setActionLogsExpanded(false);
       return;
     }
 
@@ -207,6 +234,7 @@ const CategorySelect = () => {
     setAnalyticsExpanded(false);
     setSchedulerExpanded(false);
     setActionLogsExpanded(false);
+    setMessagesExpanded(false);
   };
 
   const handleUserSubItemClick = (subItem) => {
@@ -256,6 +284,10 @@ const CategorySelect = () => {
   const handleActionLogsSubItemClick = (subItem) => {
     setActiveItem("Action Logs");
     navigate(`/dashboard/action-logs/${subItem}`);
+  };
+  const handleMessagesSubItemClick = (subItem) => {
+    setActiveItem("Messages");
+    navigate(`/dashboard/messages/${subItem}`);
   };
 
   return (
@@ -756,7 +788,7 @@ const CategorySelect = () => {
         )}
       </div>
 
-      {/* Action Logs Section - Fixed alignment */}
+      {/* Action Logs Section */}
       <div
         className={`nav-item-container ${
           activeItem === "Action Logs" ? "active" : ""
@@ -801,6 +833,54 @@ const CategorySelect = () => {
               title="System Events"
               onClick={() => handleActionLogsSubItemClick("system")}
               isActive={location.pathname.includes("/action-logs/system")}
+            />
+          </div>
+        )}
+      </div>
+
+      {/* Messages Section */}
+      <div
+        className={`nav-item-container ${
+          activeItem === "Messages" ? "active" : ""
+        }`}
+      >
+        <button
+          className={`nav-item ${
+            activeItem === "Messages" ? "nav-item-selected" : "nav-item-default"
+          }`}
+          onClick={() => handleItemClick("Messages")}
+        >
+          <FiMail
+            className={activeItem === "Messages" ? "icon-selected" : ""}
+          />
+          <span>Messages</span>
+          {messagesExpanded ? (
+            <FiChevronDown className="chevron-icon" />
+          ) : (
+            <FiChevronRight className="chevron-icon" />
+          )}
+        </button>
+        {messagesExpanded && (
+          <div className="sub-nav-list">
+            <SubRoute
+              title="Inbox"
+              onClick={() => handleMessagesSubItemClick("inbox")}
+              isActive={location.pathname.includes("/messages/inbox")}
+            />
+            <SubRoute
+              title="Sent"
+              onClick={() => handleMessagesSubItemClick("sent")}
+              isActive={location.pathname.includes("/messages/sent")}
+            />
+            <SubRoute
+              title="Compose"
+              onClick={() => handleMessagesSubItemClick("compose")}
+              isActive={location.pathname.includes("/messages/compose")}
+            />
+            <SubRoute
+              title="Contacts"
+              onClick={() => handleMessagesSubItemClick("contacts")}
+              isActive={location.pathname.includes("/messages/contacts")}
             />
           </div>
         )}

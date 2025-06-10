@@ -102,6 +102,11 @@ import AccountSettings from "./components/AccountProfile/AccountSettings.jsx";
 import TeacherDashboardPage from "./pages/TeacherDashboardPage.jsx";
 import ParentDashboardPage from "./pages/ParentDashboardPage/ParentDashboardPage.jsx";
 import ParentBulkImport from "./components/SchoolDashboards/SchoolDashboardSection/Parents/ParentBulkImport.jsx";
+import MessagesPage from "./components/SchoolDashboards/SchoolDashboardSection/Messages/MessagesPage.jsx";
+import MessagesInbox from "./components/SchoolDashboards/SchoolDashboardSection/Messages/MessagesInbox.jsx";
+import MessagesCompose from "./components/SchoolDashboards/SchoolDashboardSection/Messages/MessagesCompose.jsx";
+import MessagesContacts from "./components/SchoolDashboards/SchoolDashboardSection/Messages/MessagesContacts.jsx";
+import MessagesSent from "./components/SchoolDashboards/SchoolDashboardSection/Messages/MessagesSent.jsx";
 
 function App() {
   const router = createBrowserRouter([
@@ -470,6 +475,33 @@ function App() {
             {
               path: "system",
               element: null,
+            },
+          ],
+        },
+        // Messages Section
+        {
+          path: "messages",
+          element: <MessagesPage />,
+          children: [
+            {
+              index: true,
+              element: <Navigate to="inbox" replace />,
+            },
+            {
+              path: "inbox",
+              element: <MessagesInbox />,
+            },
+            {
+              path: "sent",
+              element: <MessagesSent />, // Similar to Inbox but for sent messages
+            },
+            {
+              path: "compose",
+              element: <MessagesCompose />,
+            },
+            {
+              path: "contacts",
+              element: <MessagesContacts />,
             },
           ],
         },
