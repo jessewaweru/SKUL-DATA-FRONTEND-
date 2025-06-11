@@ -1,5 +1,5 @@
 import { formatDistanceToNow } from "date-fns";
-import { FiStar, FiSend } from "react-icons/fi";
+import { FiStar, FiSend, FiCheck, FiCheckCircle } from "react-icons/fi";
 
 const MessageListItem = ({
   message,
@@ -33,6 +33,24 @@ const MessageListItem = ({
       <div className="message-item-preview">
         {message.body.substring(0, 100)}...
       </div>
+
+      {/* Added status display for sent messages */}
+      {variant === "sent" && (
+        <div className="message-item-status">
+          {message.status === "delivered" ? (
+            <>
+              <FiCheckCircle className="status-icon delivered" />
+              <span>Delivered</span>
+            </>
+          ) : (
+            <>
+              <FiCheck className="status-icon sent" />
+              <span>Sent</span>
+            </>
+          )}
+        </div>
+      )}
+
       <div className="message-item-actions">
         <button
           className={`star-button ${message.is_starred ? "starred" : ""}`}

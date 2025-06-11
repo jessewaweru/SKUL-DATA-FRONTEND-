@@ -147,12 +147,25 @@ const ReportAnalytics = () => {
             <div className="analytics-card">
               <h3>Most Active User</h3>
               <p className="stat-value">
-                {analyticsData.reduce((acc, report) => {
-                  const user = report.generated_by?.username || "System";
-                  if (!acc[user]) acc[user] = 0;
-                  acc[user]++;
-                  return acc;
-                }, {})}
+                {(() => {
+                  const userCounts = analyticsData.reduce((acc, report) => {
+                    const user = report.generated_by?.username || "System";
+                    if (!acc[user]) acc[user] = 0;
+                    acc[user]++;
+                    return acc;
+                  }, {});
+
+                  // Find the user with the highest count
+                  const mostActive = Object.entries(userCounts).reduce(
+                    (max, [user, count]) =>
+                      count > max.count ? { user, count } : max,
+                    { user: "", count: 0 }
+                  );
+
+                  return mostActive.user
+                    ? `${mostActive.user} (${mostActive.count} reports)`
+                    : "No data";
+                })()}
               </p>
             </div>
           </div>

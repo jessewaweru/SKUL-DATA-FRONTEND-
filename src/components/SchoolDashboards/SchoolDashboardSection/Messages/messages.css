@@ -466,6 +466,66 @@
   color: #ff8a80;
 }
 
+/* Delivery status styles */
+.delivery-status {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  margin-top: 0.5rem;
+  color: #666;
+}
+
+.delivery-status .icon {
+  font-size: 0.9rem;
+}
+
+.delivery-status .icon.sent {
+  color: #888;
+}
+
+.delivery-status .icon.delivered {
+  color: #4caf50;
+}
+
+.delivery-status.pending {
+  opacity: 0.7;
+}
+
+/* Status indicators */
+.message-item-status,
+.message-status {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: #666;
+  margin-top: 0.3rem;
+}
+
+.status-icon {
+  font-size: 0.9rem;
+}
+
+.status-icon.sent {
+  color: #888;
+}
+
+.status-icon.delivered {
+  color: #4caf50;
+}
+
+/* For MessageDetail specific status */
+.message-status {
+  margin-left: auto;
+  padding-left: 1rem;
+}
+
+/* For MessageListItem status */
+.message-item-status {
+  margin-top: 0.5rem;
+}
+
 /* Loading and Empty States */
 .loading,
 .error,

@@ -1,5 +1,12 @@
 import { format } from "date-fns";
-import { FiTrash2, FiStar, FiCornerUpRight, FiSend } from "react-icons/fi";
+import {
+  FiTrash2,
+  FiStar,
+  FiCornerUpRight,
+  FiSend,
+  FiCheck,
+  FiCheckCircle,
+} from "react-icons/fi";
 import { MdReply } from "react-icons/md";
 
 const MessageDetail = ({ message, onDelete, variant = "inbox" }) => {
@@ -19,6 +26,23 @@ const MessageDetail = ({ message, onDelete, variant = "inbox" }) => {
           <span className="date">
             {format(new Date(message.created_at), "MMM d, yyyy h:mm a")}
           </span>
+
+          {/* Added status display for sent messages */}
+          {variant === "sent" && (
+            <span className="message-status">
+              {message.status === "delivered" ? (
+                <>
+                  <FiCheckCircle className="status-icon delivered" />
+                  <span>Delivered</span>
+                </>
+              ) : (
+                <>
+                  <FiCheck className="status-icon sent" />
+                  <span>Sent</span>
+                </>
+              )}
+            </span>
+          )}
         </div>
         <div className="message-recipients">
           {variant === "inbox"
