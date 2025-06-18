@@ -1,4 +1,3 @@
-import React from "react";
 import { FiFilter, FiX } from "react-icons/fi";
 import { useState } from "react";
 import "../Documents/documents.css";

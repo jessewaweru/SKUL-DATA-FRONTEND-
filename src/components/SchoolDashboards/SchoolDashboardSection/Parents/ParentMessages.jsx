@@ -5,13 +5,14 @@ import {
   fetchParentNotifications,
   sendParentMessage,
 } from "../../../../services/parentsApi";
-import { useQuery, useMutation } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import "../Parents/parents.css";
 
 const ParentMessages = () => {
   const { parentId } = useParams();
   const [message, setMessage] = useState("");
   const [sendMethod, setSendMethod] = useState("EMAIL"); // EMAIL, SMS, BOTH
+  const queryClient = useQueryClient();
 
   const { data: messages, isLoading } = useQuery(
     ["parentMessages", parentId],

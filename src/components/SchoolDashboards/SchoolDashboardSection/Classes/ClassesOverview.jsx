@@ -1,4 +1,3 @@
-// components/SchoolDashboard/Classes/ClassesOverview.jsx
 import { useEffect, useState } from "react";
 import { useApi } from "../../../../hooks/useApi";
 import ClassCard from "./ClassCard";

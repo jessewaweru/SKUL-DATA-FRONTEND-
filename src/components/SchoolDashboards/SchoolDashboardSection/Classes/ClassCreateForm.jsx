@@ -1,4 +1,3 @@
-// src/components/SchoolDashboard/Classes/ClassCreateForm.jsx
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../../../../hooks/useApi";
