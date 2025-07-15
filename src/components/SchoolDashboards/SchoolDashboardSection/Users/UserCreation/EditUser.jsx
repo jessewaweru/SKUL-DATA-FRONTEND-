@@ -21,22 +21,21 @@ const EditUser = () => {
     email: "",
     role: "Teacher",
     status: "Active",
+    isAdministrator: false,
     assignedClass: "",
     phoneNumber: "",
+    position: "",
+    accessLevel: "standard",
   });
-
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showAdminModal, setShowAdminModal] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        // Replace with actual API call
-        // const response = await fetch(`/api/users/${userId}`);
-        // const data = await response.json();
-
-        // Mock data for demonstration
+        // Mock data with administrator examples
         const mockUser = {
           id: userId,
           firstName: "John",
@@ -44,8 +43,11 @@ const EditUser = () => {
           email: "john@peponi.school",
           role: "Teacher",
           status: "Active",
+          isAdministrator: true,
           assignedClass: "Grade 5A",
           phoneNumber: "+254712345678",
+          position: "Head Teacher",
+          accessLevel: "elevated",
         };
 
         setFormData(mockUser);
@@ -59,8 +61,11 @@ const EditUser = () => {
   }, [userId, navigate]);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const validateForm = () => {
@@ -82,13 +87,6 @@ const EditUser = () => {
 
     setIsSubmitting(true);
     try {
-      // Replace with actual API call
-      // const response = await fetch(`/api/users/${userId}`, {
-      //   method: 'PUT',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
-      // });
-
       console.log("User updated:", formData);
       navigate("/dashboard/users", {
         state: { success: "User updated successfully!" },
@@ -102,9 +100,6 @@ const EditUser = () => {
 
   const handleDelete = async () => {
     try {
-      // Replace with actual API call
-      // await fetch(`/api/users/${userId}`, { method: 'DELETE' });
-
       console.log("User deleted:", userId);
       navigate("/dashboard/users", {
         state: { success: "User deleted successfully!" },
@@ -115,8 +110,15 @@ const EditUser = () => {
   };
 
   const handleResetPassword = () => {
-    // Implement password reset logic
     console.log("Password reset requested for:", userId);
+  };
+
+  const handleToggleAdministrator = () => {
+    setFormData((prev) => ({
+      ...prev,
+      isAdministrator: !prev.isAdministrator,
+    }));
+    setShowAdminModal(false);
   };
 
   return (
@@ -175,7 +177,6 @@ const EditUser = () => {
             value={formData.email}
             onChange={handleChange}
             placeholder="Enter email address"
-            disabled // Email typically shouldn't be changed
           />
           {errors.email && (
             <span className="error-message">{errors.email}</span>
@@ -190,10 +191,14 @@ const EditUser = () => {
               name="role"
               value={formData.role}
               onChange={handleChange}
+              disabled={formData.role === "School Owner"}
             >
               <option value="Teacher">Teacher</option>
               <option value="Parent">Parent</option>
-              <option value="Admin">Admin</option>
+              <option value="Administrator">Administrator</option>
+              {formData.role === "School Owner" && (
+                <option value="School Owner">School Owner</option>
+              )}
             </select>
           </div>
 
@@ -225,6 +230,38 @@ const EditUser = () => {
           </div>
         )}
 
+        {(formData.role === "Administrator" || formData.isAdministrator) && (
+          <div className="form-section">
+            <h3>
+              <FiShield /> Administrator Settings
+            </h3>
+            <div className="form-group">
+              <label htmlFor="position">Position Title</label>
+              <input
+                type="text"
+                id="position"
+                name="position"
+                value={formData.position}
+                onChange={handleChange}
+                placeholder="e.g. Academic Administrator"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="accessLevel">Access Level</label>
+              <select
+                id="accessLevel"
+                name="accessLevel"
+                value={formData.accessLevel}
+                onChange={handleChange}
+              >
+                <option value="standard">Standard</option>
+                <option value="elevated">Elevated</option>
+                <option value="restricted">Restricted</option>
+              </select>
+            </div>
+          </div>
+        )}
+
         <div className="form-group">
           <label htmlFor="phoneNumber">Phone Number</label>
           <input
@@ -237,6 +274,27 @@ const EditUser = () => {
           />
         </div>
 
+        {formData.role !== "School Owner" && (
+          <div className="form-group checkbox-group">
+            <input
+              type="checkbox"
+              id="isAdministrator"
+              name="isAdministrator"
+              checked={formData.isAdministrator}
+              onChange={(e) => {
+                if (formData.isAdministrator) {
+                  setShowAdminModal(true);
+                } else {
+                  handleChange(e);
+                }
+              }}
+            />
+            <label htmlFor="isAdministrator">
+              <FiShield /> Administrator Privileges
+            </label>
+          </div>
+        )}
+
         <div className="form-actions">
           <button
             type="button"
@@ -247,13 +305,15 @@ const EditUser = () => {
           </button>
 
           <div className="action-group">
-            <button
-              type="button"
-              className="danger-button"
-              onClick={() => setShowDeleteModal(true)}
-            >
-              <FiTrash2 /> Delete User
-            </button>
+            {formData.role !== "School Owner" && (
+              <button
+                type="button"
+                className="danger-button"
+                onClick={() => setShowDeleteModal(true)}
+              >
+                <FiTrash2 /> Delete User
+              </button>
+            )}
 
             <button
               type="submit"
@@ -285,6 +345,46 @@ const EditUser = () => {
               </button>
               <button className="danger-button" onClick={handleDelete}>
                 Delete User
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Administrator Confirmation Modal */}
+      {showAdminModal && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>
+              {formData.isAdministrator
+                ? "Remove Administrator Privileges"
+                : "Grant Administrator Privileges"}
+            </h3>
+            <p>
+              {formData.isAdministrator
+                ? `Are you sure you want to remove ${formData.firstName} ${formData.lastName}'s administrator privileges?`
+                : `Are you sure you want to make ${formData.firstName} ${formData.lastName} an administrator?`}
+            </p>
+            <p>
+              {formData.isAdministrator
+                ? "They will lose access to administrative features."
+                : "They will gain access to administrative features based on their role permissions."}
+            </p>
+
+            <div className="modal-footer">
+              <button
+                className="secondary-button"
+                onClick={() => setShowAdminModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className={
+                  formData.isAdministrator ? "danger-button" : "primary-button"
+                }
+                onClick={handleToggleAdministrator}
+              >
+                {formData.isAdministrator ? "Remove Admin" : "Make Admin"}
               </button>
             </div>
           </div>

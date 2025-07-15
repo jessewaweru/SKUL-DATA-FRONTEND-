@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { FiUsers, FiBarChart2 } from "react-icons/fi";
-import "../Classes/classes.css";
+import "./classes.css";
 
 const ClassCard = ({ classData }) => {
   const className = `${classData.grade_level} ${

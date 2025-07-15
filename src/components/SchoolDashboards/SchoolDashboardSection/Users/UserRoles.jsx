@@ -1,7 +1,7 @@
 import "../Users/users.css";
 import { useState, useEffect } from "react";
 import {
-  FiUsers,
+  FiShield,
   FiPlus,
   FiEdit2,
   FiTrash2,
@@ -33,7 +33,18 @@ const UserRoles = () => {
           axios.get(`${API_BASE}/roles/`),
         ]);
 
-        setAllPermissions(permRes.data);
+        // Add administrator-specific permissions if they don't exist
+        const permissionsData = permRes.data;
+        if (!permissionsData.some((p) => p.code === "manage_administrators")) {
+          permissionsData.push({
+            id: permissionsData.length + 1,
+            code: "manage_administrators",
+            name: "Manage Administrators",
+            description: "Can appoint and remove administrators",
+          });
+        }
+
+        setAllPermissions(permissionsData);
         setRoles(roleRes.data.results);
         setLoading(false);
       } catch (error) {
@@ -125,6 +136,43 @@ const UserRoles = () => {
     setShowCreateModal(true);
   };
 
+  // Filter permissions into categories for better organization
+  const permissionCategories = {
+    Administration: allPermissions.filter(
+      (p) =>
+        p.code.includes("manage_") ||
+        p.code.includes("administrator") ||
+        p.code === "access_all"
+    ),
+    "User Management": allPermissions.filter(
+      (p) =>
+        p.code.includes("user") ||
+        p.code.includes("teacher") ||
+        p.code.includes("parent")
+    ),
+    "School Operations": allPermissions.filter(
+      (p) =>
+        p.code.includes("school") ||
+        p.code.includes("class") ||
+        p.code.includes("student")
+    ),
+    "Documents & Reports": allPermissions.filter(
+      (p) => p.code.includes("document") || p.code.includes("report")
+    ),
+    Other: allPermissions.filter(
+      (p) =>
+        !p.code.includes("manage_") &&
+        !p.code.includes("user") &&
+        !p.code.includes("teacher") &&
+        !p.code.includes("parent") &&
+        !p.code.includes("school") &&
+        !p.code.includes("class") &&
+        !p.code.includes("student") &&
+        !p.code.includes("document") &&
+        !p.code.includes("report")
+    ),
+  };
+
   return (
     <div className="user-roles-container">
       <div className="header">
@@ -135,7 +183,7 @@ const UserRoles = () => {
           <FiArrowLeft /> Back to Users
         </button>
         <h2>
-          <FiUsers /> User Roles & Permissions
+          <FiShield /> User Roles & Permissions
         </h2>
         <button onClick={startCreateNew} className="primary-button">
           <FiPlus /> Create New Role
@@ -216,19 +264,35 @@ const UserRoles = () => {
 
               <div className="permissions-list">
                 <h4>Permissions</h4>
-                {allPermissions.map((permission) => (
-                  <div key={permission.id} className="permission-item">
-                    <label>
-                      <input
-                        type="checkbox"
-                        checked={permissions[permission.code] || false}
-                        onChange={() => handlePermissionChange(permission.code)}
-                        disabled={!isEditing && !showCreateModal}
-                      />
-                      {permission.name}
-                    </label>
-                  </div>
-                ))}
+
+                {Object.entries(permissionCategories).map(
+                  ([category, perms]) =>
+                    perms.length > 0 && (
+                      <div key={category} className="permission-category">
+                        <h5>{category}</h5>
+                        {perms.map((permission) => (
+                          <div key={permission.id} className="permission-item">
+                            <label>
+                              <input
+                                type="checkbox"
+                                checked={permissions[permission.code] || false}
+                                onChange={() =>
+                                  handlePermissionChange(permission.code)
+                                }
+                                disabled={!isEditing && !showCreateModal}
+                              />
+                              <span className="permission-name">
+                                {permission.name}
+                              </span>
+                              <span className="permission-description">
+                                {permission.description}
+                              </span>
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    )
+                )}
               </div>
 
               {(isEditing || showCreateModal) && (

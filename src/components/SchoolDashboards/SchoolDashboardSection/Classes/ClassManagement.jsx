@@ -28,10 +28,19 @@ const ClassManagement = () => {
           if (value) params.append(key, value);
         });
 
-        const response = await api.get(`/classes/?${params.toString()}`);
-        setClasses(response.data);
+        const response = await api.get(
+          `/api/schools/classes/?${params.toString()}`
+        );
+
+        // Handle both paginated and non-paginated responses
+        const classesData = Array.isArray(response.data)
+          ? response.data
+          : response.data.results || [];
+
+        setClasses(classesData);
       } catch (error) {
         console.error("Error fetching classes:", error);
+        setClasses([]); // Ensure we always have an array
       } finally {
         setLoading(false);
       }

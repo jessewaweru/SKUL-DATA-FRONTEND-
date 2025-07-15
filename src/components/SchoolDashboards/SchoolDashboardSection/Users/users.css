@@ -582,6 +582,80 @@
   font-size: 0.875rem;
 }
 
+/* Administrator-specific styles */
+.admin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.role-badge.school-owner {
+  background-color: rgba(156, 39, 176, 0.2);
+  color: #9c27b0;
+}
+
+.role-badge.administrator {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.role-badge.teacher {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+}
+
+.role-badge.parent {
+  background-color: rgba(255, 152, 0, 0.2);
+  color: #ff9800;
+}
+
+.permission-category {
+  margin-bottom: 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.permission-category h5 {
+  margin: 0 0 0.75rem 0;
+  color: var(--accent-purple-light);
+}
+
+.permission-item {
+  margin-bottom: 0.5rem;
+}
+
+.permission-item label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  cursor: pointer;
+}
+
+.permission-name {
+  font-weight: 500;
+  display: block;
+}
+
+.permission-description {
+  display: block;
+  font-size: 0.8rem;
+  color: #b0b0b0;
+  margin-top: 0.1rem;
+}
+
+.hint {
+  display: block;
+  font-size: 0.8rem;
+  color: #b0b0b0;
+  margin-top: 0.25rem;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .sessions-table {

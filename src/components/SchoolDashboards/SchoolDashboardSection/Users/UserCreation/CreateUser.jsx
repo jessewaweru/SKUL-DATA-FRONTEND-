@@ -17,7 +17,8 @@ const CreateUser = () => {
     firstName: "",
     lastName: "",
     email: "",
-    role: "Teacher", // Default to Teacher
+    role: "Teacher",
+    makeAdministrator: false,
     sendInvite: false,
     // Teacher-specific fields
     assignedClass: "",
@@ -25,6 +26,9 @@ const CreateUser = () => {
     // Parent-specific fields
     children: [],
     relationship: "Parent",
+    // Administrator-specific fields
+    position: "Administrator",
+    accessLevel: "standard",
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,6 +72,9 @@ const CreateUser = () => {
     if (formData.role === "Parent" && formData.children.length === 0) {
       newErrors.children = "At least one child must be selected";
     }
+    if (formData.role === "Administrator" && !formData.position) {
+      newErrors.position = "Position is required for administrators";
+    }
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -85,6 +92,7 @@ const CreateUser = () => {
         lastName: formData.lastName,
         email: formData.email,
         role: formData.role,
+        makeAdministrator: formData.makeAdministrator,
         phoneNumber: formData.phoneNumber || undefined,
         sendInvite: formData.sendInvite,
       };
@@ -96,6 +104,9 @@ const CreateUser = () => {
       } else if (formData.role === "Parent") {
         userData.children = formData.children;
         userData.relationship = formData.relationship;
+      } else if (formData.role === "Administrator") {
+        userData.position = formData.position;
+        userData.accessLevel = formData.accessLevel;
       }
 
       console.log("Submitting user:", userData);
@@ -185,6 +196,7 @@ const CreateUser = () => {
             >
               <option value="Teacher">Teacher</option>
               <option value="Parent">Parent</option>
+              <option value="Administrator">Administrator</option>
             </select>
           </div>
           <div className="form-group">
@@ -198,7 +210,26 @@ const CreateUser = () => {
               placeholder="Enter phone number"
             />
           </div>
+          <div className="form-group checkbox-group">
+            <input
+              type="checkbox"
+              id="makeAdministrator"
+              name="makeAdministrator"
+              checked={formData.makeAdministrator}
+              onChange={handleChange}
+              disabled={formData.role === "Administrator"}
+            />
+            <label htmlFor="makeAdministrator">
+              <FiShield /> Grant administrator privileges
+            </label>
+            {formData.role === "Administrator" && (
+              <span className="hint">
+                (Administrators automatically get admin privileges)
+              </span>
+            )}
+          </div>
         </div>
+
         {/* Role-Specific Sections */}
         {formData.role === "Teacher" && (
           <div className="form-section">
@@ -234,6 +265,7 @@ const CreateUser = () => {
             </div>
           </div>
         )}
+
         {formData.role === "Parent" && (
           <div className="form-section">
             <h3>
@@ -277,6 +309,42 @@ const CreateUser = () => {
             </div>
           </div>
         )}
+
+        {formData.role === "Administrator" && (
+          <div className="form-section">
+            <h3>
+              <FiShield /> Administrator Information
+            </h3>
+            <div className={`form-group ${errors.position ? "error" : ""}`}>
+              <label htmlFor="position">Position Title</label>
+              <input
+                type="text"
+                id="position"
+                name="position"
+                value={formData.position}
+                onChange={handleChange}
+                placeholder="e.g. Academic Administrator"
+              />
+              {errors.position && (
+                <span className="error-message">{errors.position}</span>
+              )}
+            </div>
+            <div className="form-group">
+              <label htmlFor="accessLevel">Access Level</label>
+              <select
+                id="accessLevel"
+                name="accessLevel"
+                value={formData.accessLevel}
+                onChange={handleChange}
+              >
+                <option value="standard">Standard</option>
+                <option value="elevated">Elevated</option>
+                <option value="restricted">Restricted</option>
+              </select>
+            </div>
+          </div>
+        )}
+
         {/* Invitation Section */}
         <div className="form-section">
           <h3>

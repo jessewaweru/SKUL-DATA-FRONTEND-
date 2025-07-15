@@ -1,0 +1,1038 @@
+/* Timetables Page Styles */
+.timetables-container {
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+  overflow-x: auto;
+  margin-top: 20px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.timetables-header {
+  margin-bottom: 30px;
+}
+
+.timetables-header h1 {
+  color: var(--primary-purple);
+  margin-bottom: 10px;
+}
+
+.timetables-header p {
+  color: var(--text-color);
+  opacity: 0.8;
+}
+
+/* View All Timetables */
+.view-all-timetables {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.filters {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  min-width: 200px;
+}
+
+.filter-group label {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.filter-group input,
+.filter-group select {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+}
+
+.timetables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.no-results {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 40px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Timetable Card */
+.timetable-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 15px;
+  transition: all 0.3s ease;
+  border-left: 4px solid transparent;
+}
+
+.timetable-card.active {
+  border-left-color: var(--primary-purple);
+  background: rgba(74, 14, 78, 0.1);
+}
+
+.timetable-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.timetable-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.active-badge {
+  background: var(--primary-purple);
+  color: white;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.timetable-details {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+}
+
+.detail .label {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.detail .value {
+  font-weight: 500;
+}
+
+.timetable-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.btn-view,
+.btn-activate {
+  padding: 8px 15px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-view {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+}
+
+.btn-view:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-activate {
+  background: var(--primary-purple);
+  color: white;
+}
+
+.btn-activate:hover {
+  background: var(--secondary-purple);
+}
+
+/* Create Timetable Wrapper */
+.create-timetable-wrapper {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.create-timetable-wrapper h2 {
+  margin-top: 0;
+  color: var(--primary-purple);
+}
+
+.timetable-form-container {
+  margin-top: 30px;
+}
+
+/* Stepper */
+.stepper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.step-connector {
+  position: absolute;
+  top: 20px;
+  left: 50%;
+  right: -50%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  z-index: 0;
+}
+
+.step.completed .step-connector {
+  background: var(--primary-purple);
+}
+
+.step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  font-weight: bold;
+  color: rgba(255, 255, 255, 0.5);
+  transition: all 0.3s ease;
+}
+
+.step.completed .step-number {
+  background: var(--primary-purple);
+  color: white;
+}
+
+.step.active .step-number {
+  background: var(--secondary-purple);
+  color: white;
+  transform: scale(1.1);
+}
+
+.step-name {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+}
+
+.step.completed .step-name,
+.step.active .step-name {
+  color: white;
+  font-weight: 500;
+}
+
+/* Timetable Steps */
+.timetable-step-1,
+.timetable-step-2,
+.timetable-step-3,
+.timetable-step-4,
+.timetable-step-5 {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.step-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.btn-prev,
+.btn-next {
+  padding: 10px 20px;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.btn-prev {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+}
+
+.btn-prev:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-next {
+  background: var(--primary-purple);
+  color: white;
+}
+
+.btn-next:hover {
+  background: var(--secondary-purple);
+}
+
+.btn-next:disabled {
+  background: rgba(74, 14, 78, 0.5);
+  cursor: not-allowed;
+}
+
+/* Step 1 - Class Selection */
+.classes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.class-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 15px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.class-card:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.class-card.selected {
+  background: rgba(74, 14, 78, 0.2);
+  border: 1px solid var(--primary-purple);
+}
+
+.class-card h4 {
+  margin: 0 0 5px 0;
+}
+
+.class-card p {
+  margin: 5px 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.checkbox {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* Step 2 - Structure */
+.structure-details {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 20px;
+}
+
+.detail-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.detail-label {
+  font-weight: 500;
+  min-width: 150px;
+}
+
+.detail-value {
+  opacity: 0.9;
+}
+
+.time-slots-preview {
+  max-height: 300px;
+  overflow-y: auto;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.time-slot {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.time-slot:last-child {
+  border-bottom: none;
+}
+
+.slot-day {
+  min-width: 80px;
+  font-weight: 500;
+}
+
+.slot-time {
+  min-width: 120px;
+  opacity: 0.8;
+}
+
+.slot-name {
+  margin-left: 15px;
+  opacity: 0.9;
+}
+
+/* Step 3 - Subjects */
+.subjects-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.subject-assignment-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subject-info h4 {
+  margin: 0 0 5px 0;
+}
+
+.subject-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.assignment-controls {
+  display: flex;
+  gap: 15px;
+}
+
+.assignment-controls .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.assignment-controls label {
+  font-size: 0.9rem;
+  margin-bottom: 5px;
+  opacity: 0.8;
+}
+
+.assignment-controls select,
+.assignment-controls input {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+  min-width: 200px;
+}
+
+/* Step 4 - Constraints */
+.constraints-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.constraint-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 15px;
+  position: relative;
+  border-left: 4px solid transparent;
+}
+
+.constraint-card.hard {
+  border-left-color: #e53935;
+}
+
+.constraint-card.soft {
+  border-left-color: #fb8c00;
+}
+
+.constraint-type {
+  font-weight: bold;
+  margin-bottom: 5px;
+  text-transform: capitalize;
+}
+
+.constraint-description {
+  font-size: 0.9rem;
+  margin-bottom: 10px;
+  opacity: 0.9;
+}
+
+.constraint-severity {
+  font-size: 0.8rem;
+  padding: 3px 8px;
+  border-radius: 4px;
+  display: inline-block;
+}
+
+.constraint-card.hard .constraint-severity {
+  background: rgba(229, 57, 53, 0.2);
+  color: #e53935;
+}
+
+.constraint-card.soft .constraint-severity {
+  background: rgba(251, 140, 0, 0.2);
+  color: #fb8c00;
+}
+
+.btn-remove {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  font-size: 1rem;
+}
+
+.btn-remove:hover {
+  color: #e53935;
+}
+
+.add-constraint {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 30px;
+}
+
+.add-constraint h4 {
+  margin-top: 0;
+}
+
+.btn-add {
+  padding: 8px 15px;
+  background: var(--primary-purple);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-top: 10px;
+}
+
+.btn-add:hover {
+  background: var(--secondary-purple);
+}
+
+/* Step 5 - Generate & Review */
+.generation-actions {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.btn-regenerate {
+  padding: 10px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-color);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-regenerate:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-save {
+  padding: 10px 20px;
+  background: var(--primary-purple);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+.btn-save:hover {
+  background: var(--secondary-purple);
+}
+
+.btn-save:disabled {
+  background: rgba(74, 14, 78, 0.5);
+  cursor: not-allowed;
+}
+
+.generation-errors {
+  background: rgba(229, 57, 53, 0.1);
+  border-left: 4px solid #e53935;
+  padding: 15px;
+  margin-bottom: 20px;
+  border-radius: 0 5px 5px 0;
+}
+
+.generation-errors h4 {
+  margin-top: 0;
+  color: #e53935;
+}
+
+.generation-errors ul {
+  margin-bottom: 0;
+  padding-left: 20px;
+}
+
+.timetable-preview-container {
+  margin-top: 20px;
+}
+
+.class-selector {
+  margin-bottom: 20px;
+}
+
+.class-selector select {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+  min-width: 250px;
+}
+
+.timetable-preview {
+  overflow-x: auto;
+}
+
+.timetable-grid {
+  display: grid;
+  grid-template-columns: 120px repeat(5, 1fr);
+  min-width: 800px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.class-timetable-grid {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 800px;
+}
+
+.class-timetable-grid th {
+  background: rgba(74, 14, 78, 0.5);
+  padding: 12px;
+  text-align: center;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.class-timetable-grid td {
+  padding: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  vertical-align: middle;
+}
+
+.time-cell {
+  background: rgba(74, 14, 78, 0.3);
+  font-weight: 500;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.lesson-cell {
+  min-width: 150px;
+  height: 80px;
+}
+
+.lesson-content {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  padding: 8px;
+  background: rgba(74, 14, 78, 0.2);
+  border-radius: 4px;
+}
+
+.lesson-subject {
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.lesson-teacher {
+  font-size: 0.85rem;
+  opacity: 0.9;
+  margin-bottom: 4px;
+}
+
+.free-period {
+  text-align: center;
+}
+
+.double-badge {
+  margin-top: 4px;
+}
+
+/* Break rows styling */
+.break-row td {
+  background: rgba(255, 255, 255, 0.05);
+  font-style: italic;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .timetable-grid {
+    font-size: 0.9rem;
+  }
+
+  .lesson-cell {
+    min-width: 120px;
+    height: 70px;
+  }
+}
+
+.timetable-header {
+  display: contents;
+}
+
+.timetable-header > div {
+  background: rgba(74, 14, 78, 0.5);
+  padding: 10px;
+  font-weight: bold;
+  text-align: center;
+}
+
+.time-header {
+  grid-column: 1;
+}
+
+.day-header {
+  grid-column: span 1;
+}
+
+.timetable-row {
+  display: contents;
+}
+
+.timetable-row > div {
+  padding: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.time-slot {
+  background: rgba(74, 14, 78, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.day-slot {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.lesson {
+  background: rgba(74, 14, 78, 0.3);
+  padding: 8px;
+  border-radius: 5px;
+  height: 100%;
+}
+
+.lesson .subject {
+  font-weight: 500;
+  margin-bottom: 5px;
+}
+
+.lesson .teacher {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+.empty-slot {
+  color: rgba(255, 255, 255, 0.3);
+  text-align: center;
+  padding: 10px 0;
+}
+
+/* Teacher Timetables View */
+.teacher-timetables-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.teacher-selector {
+  margin-bottom: 20px;
+}
+
+.teacher-selector select {
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+  min-width: 300px;
+}
+
+/* Subjects Management */
+.subjects-management-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.subjects-list-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.subjects-list-table th,
+.subjects-list-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.subjects-list-table th {
+  background: rgba(74, 14, 78, 0.3);
+  font-weight: 500;
+}
+
+.subjects-list-table tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* Constraints Management */
+.constraints-management-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.btn-add-constraint {
+  padding: 8px 15px;
+  background: var(--primary-purple);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.btn-add-constraint:hover {
+  background: var(--secondary-purple);
+}
+
+/* Feedback Form */
+.feedback-container {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.feedback-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  max-width: 600px;
+}
+
+.feedback-form .form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.feedback-form label {
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.feedback-form input,
+.feedback-form textarea,
+.feedback-form select {
+  padding: 10px 15px;
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+}
+
+.feedback-form textarea {
+  min-height: 150px;
+  resize: vertical;
+}
+
+.btn-submit-feedback {
+  padding: 10px 20px;
+  background: var(--primary-purple);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: 500;
+  align-self: flex-start;
+}
+
+.btn-submit-feedback:hover {
+  background: var(--secondary-purple);
+}
+
+/* Loading and Error States */
+.loading {
+  padding: 40px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.error {
+  padding: 40px;
+  text-align: center;
+  color: #e53935;
+}
+
+/* Subject Groups Management */
+.subject-groups-management {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 10px;
+  padding: 20px;
+}
+
+.create-group-form {
+  background: rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 30px;
+}
+
+.create-group-form h3 {
+  margin-top: 0;
+}
+
+.subject-select {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-color);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.groups-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.group-card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 15px;
+  border-left: 4px solid var(--primary-purple);
+}
+
+.group-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.group-header h4 {
+  margin: 0;
+}
+
+.btn-delete {
+  background: rgba(229, 57, 53, 0.2);
+  color: #e53935;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-delete:hover {
+  background: rgba(229, 57, 53, 0.3);
+}
+
+.group-description {
+  font-size: 0.9rem;
+  opacity: 0.8;
+  margin: 10px 0;
+}
+
+.subjects-list h5 {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.subjects-list ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.subjects-list li {
+  margin-bottom: 5px;
+  font-size: 0.9rem;
+}
+
+.no-groups {
+  text-align: center;
+  padding: 20px;
+  opacity: 0.7;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .filters {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .filter-group {
+    min-width: 100%;
+  }
+
+  .timetables-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stepper {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .step {
+    flex: 1 0 100px;
+  }
+
+  .step-connector {
+    display: none;
+  }
+
+  .assignment-controls {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .timetable-grid {
+    grid-template-columns: 80px repeat(5, 1fr);
+    font-size: 0.8rem;
+  }
+}

@@ -14,6 +14,7 @@ import Axios from "axios";
 const LoginRegister = ({ mode = "login" }) => {
   const [action, setAction] = useState(mode === "register" ? "active" : "");
   const [formData, setFormData] = useState({
+    username: "",
     email: "",
     password: "",
     schoolName: "",
@@ -23,6 +24,7 @@ const LoginRegister = ({ mode = "login" }) => {
     confirmPassword: "",
   });
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -41,19 +43,121 @@ const LoginRegister = ({ mode = "login" }) => {
     });
   };
 
-  const handleLoginSubmit = (e) => {
+  // const handleLoginSubmit = (e) => {
+  //   e.preventDefault();
+  //   Axios.post("http://localhost:8000/users/login/", {
+  //     email: formData.email,
+  //     password: formData.password,
+  //   })
+  //     .then((response) => {
+  //       localStorage.setItem("access_token", response.data.token);
+  //       navigate("/dashboard");
+  //     })
+  //     .catch(() => {
+  //       setError("Invalid credentials. Please try again.");
+  //     });
+  // };
+
+  // const handleLoginSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await Axios.post("http://localhost:8000/api/token/", {
+  //       username: formData.email, // Django expects 'username' field
+  //       password: formData.password,
+  //     });
+
+  //     console.log("Login response:", response.data); // Debug
+
+  //     // Store BOTH tokens correctly
+  //     localStorage.setItem("accessToken", response.data.access);
+  //     localStorage.setItem("refreshToken", response.data.refresh);
+
+  //     // Redirect to protected page
+  //     navigate("/dashboard");
+  //   } catch (error) {
+  //     console.error("Login failed:", error.response?.data || error);
+  //     setError(error.response?.data?.detail || "Login failed");
+  //   }
+  // };
+
+  // const handleLoginSubmit = async (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await Axios.post("http://localhost:8000/api/token/", {
+  //       username: formData.email, // Change this from email to username
+  //       password: formData.password,
+  //     });
+
+  //     console.log("Login response:", response.data);
+  //     localStorage.setItem("accessToken", response.data.access);
+  //     localStorage.setItem("refreshToken", response.data.refresh);
+
+  //     // Add immediate verification
+  //     const token = localStorage.getItem("accessToken");
+  //     console.log("Stored token:", token);
+
+  //     navigate("/dashboard");
+  //   } catch (error) {
+  //     console.error("Full error:", error);
+  //     console.error("Response data:", error.response?.data);
+  //     setError(error.response?.data?.detail || "Login failed");
+  //   }
+  // };
+
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    Axios.post("http://localhost:8000/users/login/", {
-      email: formData.email,
-      password: formData.password,
-    })
-      .then((response) => {
-        localStorage.setItem("access_token", response.data.token);
-        navigate("/dashboard");
-      })
-      .catch(() => {
-        setError("Invalid credentials. Please try again.");
+    setError(null);
+    setIsLoading(true);
+    try {
+      console.log("Attempting login with:", {
+        username: formData.username,
+        // Don't log password in production
       });
+
+      const response = await Axios.post(
+        "http://localhost:8000/api/token/",
+        {
+          username: formData.username,
+          password: formData.password,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true, // Important for session cookies
+        }
+      );
+
+      console.log("Login response:", response.data);
+
+      // Store tokens
+      localStorage.setItem("accessToken", response.data.access);
+      localStorage.setItem("refreshToken", response.data.refresh);
+
+      // Set default axios header for future requests
+      Axios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${response.data.access}`;
+
+      // Redirect
+      navigate("/dashboard");
+    } catch (error) {
+      console.error("Login error:", error);
+
+      if (error.response?.status === 500) {
+        setError("Server error. Please check your credentials and try again.");
+      } else if (error.response?.status === 401) {
+        setError("Invalid username or password.");
+      } else {
+        setError(
+          error.response?.data?.detail ||
+            error.response?.data?.message ||
+            "Login failed. Please check your credentials."
+        );
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleRegisterSubmit = (e) => {
@@ -99,11 +203,13 @@ const LoginRegister = ({ mode = "login" }) => {
           {error && <p className="error-message">{error}</p>}
           <div className="input-box">
             <input
-              type="email"
-              name="email"
-              placeholder="School email"
+              type="text"
+              name="username"
+              placeholder="Username or Email"
+              value={formData.username}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
             <FaEnvelope className="icon" />
           </div>
@@ -111,9 +217,11 @@ const LoginRegister = ({ mode = "login" }) => {
             <input
               type="password"
               name="password"
-              placeholder="password"
+              placeholder="Password"
+              value={formData.password}
               onChange={handleChange}
               required
+              disabled={isLoading}
             />
             <FaLock className="icon" />
           </div>
@@ -124,7 +232,9 @@ const LoginRegister = ({ mode = "login" }) => {
             </label>
             <a href="#">Forgot Password?</a>
           </div>
-          <button type="submit">Login</button>
+          <button type="submit" disabled={isLoading}>
+            {isLoading ? "Logging in..." : "Login"}
+          </button>
           <div className="register-link">
             <p>
               Don't have an account?

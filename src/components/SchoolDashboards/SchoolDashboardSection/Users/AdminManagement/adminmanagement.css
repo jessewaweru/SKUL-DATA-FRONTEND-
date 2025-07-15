@@ -1,0 +1,251 @@
+/* Admin Management Styles */
+.admin-dashboard {
+  padding: 1.5rem;
+  background-color: var(--card-background);
+  border-radius: 0.5rem;
+  border: 1px solid var(--border-color);
+}
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.admin-header h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  color: var(--highlight-text);
+}
+
+.admin-controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.search-filter {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: var(--dark-background);
+  border: 1px solid var(--border-color);
+  border-radius: 0.25rem;
+  padding: 0.5rem 0.75rem;
+}
+
+.search-box input {
+  background: transparent;
+  border: none;
+  color: var(--text-color);
+  margin-left: 0.5rem;
+  min-width: 200px;
+}
+
+.filter-dropdowns {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.filter-dropdowns select {
+  background-color: var(--dark-background);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+}
+
+.admin-list {
+  margin-top: 1rem;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.admin-table th {
+  text-align: left;
+  padding: 1rem;
+  background-color: rgba(90, 27, 93, 0.3);
+  color: var(--accent-purple-light);
+  font-weight: 500;
+}
+
+.admin-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: top;
+}
+
+.admin-name {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-email {
+  font-size: 0.8rem;
+  color: #b0b0b0;
+  margin-top: 0.25rem;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.role-badge.teacher {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+}
+
+.role-badge.administrator {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.access-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.access-badge.standard {
+  background-color: rgba(33, 150, 243, 0.2);
+  color: #2196f3;
+}
+
+.access-badge.elevated {
+  background-color: rgba(255, 152, 0, 0.2);
+  color: #ff9800;
+}
+
+.access-badge.restricted {
+  background-color: rgba(244, 67, 54, 0.2);
+  color: #f44336;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.status-badge.active {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.status-badge.inactive {
+  background-color: rgba(158, 158, 158, 0.2);
+  color: #9e9e9e;
+}
+
+.admin-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.edit-admin-modal,
+.add-admin-modal {
+  max-width: 800px;
+  width: 90%;
+}
+
+.admin-info {
+  padding: 0.5rem;
+  background-color: var(--dark-background);
+  border-radius: 0.25rem;
+}
+
+.permissions-list {
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 0.5rem;
+  background-color: var(--dark-background);
+  border-radius: 0.25rem;
+  border: 1px solid var(--border-color);
+}
+
+.permission-item {
+  margin-bottom: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.permission-item label {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  cursor: pointer;
+}
+
+.permission-details {
+  flex: 1;
+}
+
+.permission-name {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.permission-description {
+  font-size: 0.8rem;
+  color: #b0b0b0;
+}
+
+.no-results {
+  text-align: center;
+  padding: 2rem;
+  color: #b0b0b0;
+}
+
+.loading {
+  text-align: center;
+  padding: 2rem;
+}
+
+.primary-button-add {
+  border-radius: 10%;
+  margin: 20px 20px;
+  padding: 5px 5px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .admin-controls {
+    flex-direction: column;
+  }
+
+  .search-filter {
+    width: 100%;
+  }
+
+  .admin-table {
+    display: block;
+    overflow-x: auto;
+  }
+
+  .edit-admin-modal,
+  .add-admin-modal {
+    width: 95%;
+  }
+}

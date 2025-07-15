@@ -359,12 +359,21 @@
   font-weight: 500;
 }
 
-.status-badge {
+/* .status-badge {
   display: inline-block;
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   font-size: 0.75rem;
   font-weight: 500;
+} */
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: capitalize;
 }
 
 .status-badge.published {
@@ -598,7 +607,242 @@ input[type="checkbox"]:checked + .checkbox-custom {
   color: var(--accent-purple-light);
 }
 
+/* Teacher Table Specific Styles */
+.teacher-table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.teachers-table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.teachers-table th {
+  background-color: var(--dark-background);
+  color: var(--text-color);
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 500;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.teachers-table td {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: middle;
+  word-wrap: break-word;
+}
+
+.teachers-table tr:hover {
+  background-color: rgba(142, 77, 145, 0.05);
+}
+
+/* Column specific styles */
+.name-column {
+  width: 15%;
+}
+
+.email-column {
+  width: 15%;
+}
+
+.phone-column {
+  width: 10%;
+}
+
+.status-column {
+  width: 8%;
+}
+
+.subjects-column {
+  width: 15%;
+}
+
+.classes-column {
+  width: 12%;
+}
+
+.join-date-column {
+  width: 8%;
+}
+
+.login-column {
+  width: 12%;
+}
+
+.actions-column {
+  width: 5%;
+}
+
+/* Cell specific styles */
+.teacher-name-link {
+  color: var(--text-color);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.teacher-name-link:hover {
+  color: var(--accent-purple-light);
+  text-decoration: underline;
+}
+
+.status-cell {
+  text-align: center;
+}
+
+/* Action buttons */
+.teacher-table-action-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.view-button,
+.edit-button {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: var(--text-color);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex: 1;
+  max-width: 50px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+.view-button:hover,
+.edit-button:hover {
+  background-color: var(--primary-purple);
+  color: white;
+  border-color: var(--primary-purple);
+}
+
+/* Status badges */
+.status-badge.green {
+  background-color: rgba(46, 125, 50, 0.2);
+  color: #69f0ae;
+}
+
+.status-badge.orange {
+  background-color: rgba(245, 124, 0, 0.2);
+  color: #ffb74d;
+}
+
+.status-badge.red {
+  background-color: rgba(211, 47, 47, 0.2);
+  color: #ff8a80;
+}
+
+.status-badge.gray {
+  background-color: rgba(158, 158, 158, 0.2);
+  color: #e0e0e0;
+}
+
+/* Actions Column Specific Styles */
+.actions-column {
+  width: 120px;
+  background-color: var(--dark-background);
+  position: relative;
+}
+
+.actions-column::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--border-color);
+}
+
+/* .actions-header {
+  background-color: var(--dark-background);
+  color: var(--text-color);
+  padding: 12px 15px;
+  border-bottom: 2px solid var(--border-color);
+} */
+
+.teacher-table-actions-cell {
+  padding: 0;
+  position: relative;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.teacher-table-actions-cell::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--border-color);
+}
+
+.action-buttons-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  min-height: 57px;
+  padding: 0 8px;
+}
+
+.action-buttons-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  min-height: 57px;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.view-button,
+.edit-button {
+  padding: 5px 10px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: var(--text-color);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  transition: all 0.2s ease;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.view-button:hover,
+.edit-button:hover {
+  background-color: var(--primary-purple);
+  color: white;
+  border-color: var(--primary-purple);
+}
+
+/* Ensure buttons stay centered in taller cells */
+.teachers-table tr td.actions-cell {
+  vertical-align: middle;
+}
+
 /* Responsive adjustments */
+@media (max-width: 1200px) {
+  .teachers-table {
+    table-layout: auto;
+  }
+
+  .teachers-table th,
+  .teachers-table td {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+}
+
 @media (max-width: 768px) {
   .profile-overview {
     flex-direction: column;
@@ -634,4 +878,24 @@ input[type="checkbox"]:checked + .checkbox-custom {
   .save-button {
     width: 100%;
   }
+}
+
+.table-container {
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  overflow-x: auto;
+}
+
+.teachers-table {
+  min-width: 900px;
+}
+
+.actions-column {
+  width: 100px;
+}
+
+.view-button,
+.edit-button {
+  padding: 4px 8px;
+  font-size: 0.75rem;
 }

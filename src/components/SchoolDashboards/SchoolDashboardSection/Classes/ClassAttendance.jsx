@@ -8,7 +8,7 @@ import {
   FiTrendingUp,
   FiTrendingDown,
 } from "react-icons/fi";
-import "../Classes/classes.css";
+import "./classes.css";
 
 const ClassAttendanceSummary = ({ classId }) => {
   const [attendanceData, setAttendanceData] = useState([]);

@@ -1,9 +1,11 @@
+import { useEffect } from "react";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./services/queryClient.js";
 import { registerLicense } from "@syncfusion/ej2-base";
 registerLicense(
   "ORg4AjUWIQA/Gnt2XFhhQlJHfV5AQmBIYVp/TGpJfl96cVxMZVVBJAtUQF1hTH5Xd0VjWX5WcnZST2BeWkZ/"
 );
+import { MantineProvider } from "@mantine/core";
 import "@syncfusion/ej2-base/styles/material.css";
 import "@syncfusion/ej2-buttons/styles/material.css";
 import "@syncfusion/ej2-calendars/styles/material.css";
@@ -107,8 +109,38 @@ import MessagesInbox from "./components/SchoolDashboards/SchoolDashboardSection/
 import MessagesCompose from "./components/SchoolDashboards/SchoolDashboardSection/Messages/MessagesCompose.jsx";
 import MessagesContacts from "./components/SchoolDashboards/SchoolDashboardSection/Messages/MessagesContacts.jsx";
 import MessagesSent from "./components/SchoolDashboards/SchoolDashboardSection/Messages/MessagesSent.jsx";
+import AdminManagement from "./components/SchoolDashboards/SchoolDashboardSection/Users/AdminManagement/AdminManagement.jsx";
+import TimetablesPage from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetablesPage.jsx";
+import ViewAllTimetables from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/ViewAllTimetables.jsx";
+import CreateTimetableWrapper from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/CreateTimetableWrapper.jsx";
+import TimetableSetupStep1 from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetableSetupStep1.jsx";
+import TimetableSetupStep2 from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetableSetupStep2.jsx";
+import TimetableSetupStep3 from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetableSetupStep3.jsx";
+import TimetableSetupStep4 from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetableSetupStep4.jsx";
+import TimetableSetupStep5 from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetableSetupStep5.jsx";
+import TimetableDetailView from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetableDetailView.jsx";
+import TeacherTimetables from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TeacherTimetables.jsx";
+import SubjectsManagement from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/SubjectsManagement.jsx";
+import TimetableConstraints from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetableConstraints.jsx";
+import TimetableFeedback from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetableFeedback.jsx";
+import SubjectGroupsManagement from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/SubjectGroupsManagement.jsx";
+
+console.log("DEBUG TEST - App component mounted"); // Debug A
+console.log("Environment Variables:", {
+  VITE_API_URL: import.meta.env.VITE_API_URL,
+  NODE_ENV: import.meta.env.NODE_ENV,
+});
 
 function App() {
+  useEffect(() => {
+    console.log("Current auth status:", {
+      isLoggedIn: !!localStorage.getItem("accessToken"),
+      tokens: {
+        access: localStorage.getItem("accessToken"),
+        refresh: localStorage.getItem("refreshToken"),
+      },
+    });
+  }, []);
   const router = createBrowserRouter([
     {
       path: "/",
@@ -166,6 +198,10 @@ function App() {
         {
           path: "users/sessions",
           element: <UserSessions />,
+        },
+        {
+          path: "users/admin-management", // Add this new route
+          element: <AdminManagement />,
         },
         // Documents Section
         {
@@ -505,6 +541,75 @@ function App() {
             },
           ],
         },
+        // Timetables Section
+        {
+          path: "timetables",
+          element: <TimetablesPage />,
+          children: [
+            {
+              index: true,
+              element: <Navigate to="view-all" replace />,
+            },
+            {
+              path: "view-all",
+              element: <ViewAllTimetables />,
+            },
+            {
+              path: "create",
+              element: <CreateTimetableWrapper />,
+              children: [
+                {
+                  index: true,
+                  element: <Navigate to="step-1" replace />,
+                },
+                {
+                  path: "step-1", // Select classes and term
+                  element: <TimetableSetupStep1 />,
+                },
+                {
+                  path: "step-2", // Set timetable structure
+                  element: <TimetableSetupStep2 />,
+                },
+                {
+                  path: "step-3", // Assign subjects and teachers
+                  element: <TimetableSetupStep3 />,
+                },
+                {
+                  path: "step-4", // Set constraints
+                  element: <TimetableSetupStep4 />,
+                },
+                {
+                  path: "step-5", // Generate and review
+                  element: <TimetableSetupStep5 />,
+                },
+                {
+                  path: "subject-groups", // New route
+                  element: <SubjectGroupsManagement />,
+                },
+              ],
+            },
+            {
+              path: "teachers",
+              element: <TeacherTimetables />,
+            },
+            {
+              path: "subjects",
+              element: <SubjectsManagement />,
+            },
+            {
+              path: "constraints",
+              element: <TimetableConstraints />,
+            },
+            {
+              path: "feedback",
+              element: <TimetableFeedback />,
+            },
+            {
+              path: ":timetableId",
+              element: <TimetableDetailView />,
+            },
+          ],
+        },
         // Scheduler(Calendar) Section
         {
           path: "scheduler",
@@ -575,13 +680,15 @@ function App() {
   ]);
 
   return (
-    <UserProvider>
-      <QueryClientProvider client={queryClient}>
-        <div className="App">
-          <RouterProvider router={router} />
-        </div>
-      </QueryClientProvider>
-    </UserProvider>
+    <MantineProvider>
+      <UserProvider>
+        <QueryClientProvider client={queryClient}>
+          <div className="App">
+            <RouterProvider router={router} />
+          </div>
+        </QueryClientProvider>
+      </UserProvider>
+    </MantineProvider>
   );
 }
 

@@ -16,6 +16,7 @@ import {
   FiLayers,
   FiActivity,
   FiMail,
+  FiClock,
 } from "react-icons/fi";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -33,6 +34,7 @@ const CategorySelect = () => {
   const [schedulerExpanded, setSchedulerExpanded] = useState(false);
   const [actionLogsExpanded, setActionLogsExpanded] = useState(false);
   const [messagesExpanded, setMessagesExpanded] = useState(false);
+  const [timetablesExpanded, setTimetablesExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -57,6 +59,7 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
+      setTimetablesExpanded(false);
       return;
     }
 
@@ -73,6 +76,7 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
+      setTimetablesExpanded(false);
       return;
     }
 
@@ -89,6 +93,7 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
+      setTimetablesExpanded(false);
       return;
     }
 
@@ -105,6 +110,7 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
+      setTimetablesExpanded(false);
       return;
     }
 
@@ -121,6 +127,7 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
+      setTimetablesExpanded(false);
       return;
     }
 
@@ -137,6 +144,7 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
+      setTimetablesExpanded(false);
       return;
     }
 
@@ -153,6 +161,7 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
+      setTimetablesExpanded(false);
       return;
     }
 
@@ -169,6 +178,7 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
+      setTimetablesExpanded(false);
       return;
     }
 
@@ -185,6 +195,7 @@ const CategorySelect = () => {
       setAnalyticsExpanded(false);
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
+      setTimetablesExpanded(false);
       return;
     }
 
@@ -201,6 +212,7 @@ const CategorySelect = () => {
       setAnalyticsExpanded(false);
       setSchedulerExpanded(false);
       setMessagesExpanded(false);
+      setTimetablesExpanded(false);
       return;
     }
     if (title === "Messages") {
@@ -216,6 +228,23 @@ const CategorySelect = () => {
       setAnalyticsExpanded(false);
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
+      setTimetablesExpanded(false);
+      return;
+    }
+    if (title === "Timetables") {
+      setTimetablesExpanded(!timetablesExpanded);
+      if (!timetablesExpanded) navigate("/dashboard/timetables");
+      setUsersExpanded(false);
+      setReportsExpanded(false);
+      setDocumentsExpanded(false);
+      setClassesExpanded(false);
+      setStudentsExpanded(false);
+      setTeachersExpanded(false);
+      setParentsExpanded(false);
+      setAnalyticsExpanded(false);
+      setSchedulerExpanded(false);
+      setActionLogsExpanded(false);
+      setMessagesExpanded(false);
       return;
     }
 
@@ -289,6 +318,10 @@ const CategorySelect = () => {
     setActiveItem("Messages");
     navigate(`/dashboard/messages/${subItem}`);
   };
+  const handleTimetablesSubItemClick = (subItem) => {
+    setActiveItem("Timetables");
+    navigate(`/dashboard/timetables/${subItem}`);
+  };
 
   return (
     <div className="nav-list">
@@ -335,6 +368,11 @@ const CategorySelect = () => {
               title="Active Sessions"
               onClick={() => handleUserSubItemClick("sessions")}
               isActive={location.pathname.includes("/users/sessions")}
+            />
+            <SubRoute
+              title="Admin Management"
+              onClick={() => handleUserSubItemClick("admin-management")}
+              isActive={location.pathname.includes("/users/admin-management")}
             />
           </div>
         )}
@@ -881,6 +919,73 @@ const CategorySelect = () => {
               title="Contacts"
               onClick={() => handleMessagesSubItemClick("contacts")}
               isActive={location.pathname.includes("/messages/contacts")}
+            />
+          </div>
+        )}
+      </div>
+      {/* Timetables Section */}
+      <div
+        className={`nav-item-container ${
+          activeItem === "Timetables" ? "active" : ""
+        }`}
+      >
+        <button
+          className={`nav-item ${
+            activeItem === "Timetables"
+              ? "nav-item-selected"
+              : "nav-item-default"
+          }`}
+          onClick={() => handleItemClick("Timetables")}
+        >
+          <FiClock
+            className={activeItem === "Timetables" ? "icon-selected" : ""}
+          />
+          <span>Timetables</span>
+          {timetablesExpanded ? (
+            <FiChevronDown className="chevron-icon" />
+          ) : (
+            <FiChevronRight className="chevron-icon" />
+          )}
+        </button>
+        {timetablesExpanded && (
+          <div className="sub-nav-list">
+            <SubRoute
+              title="View All"
+              onClick={() => handleTimetablesSubItemClick("view-all")}
+              isActive={location.pathname.includes("/timetables/view-all")}
+            />
+            <SubRoute
+              title="Create New"
+              onClick={() => handleTimetablesSubItemClick("create")}
+              isActive={location.pathname.includes("/timetables/create")}
+            />
+            <SubRoute
+              title="Teachers"
+              onClick={() => handleTimetablesSubItemClick("teachers")}
+              isActive={location.pathname.includes("/timetables/teachers")}
+            />
+            <SubRoute
+              title="Subjects"
+              onClick={() => handleTimetablesSubItemClick("subjects")}
+              isActive={location.pathname.includes("/timetables/subjects")}
+            />
+            {/* Add the new Subject Groups link here - positioned near Constraints */}
+            <SubRoute
+              title="Subject Groups"
+              onClick={() => handleTimetablesSubItemClick("subject-groups")}
+              isActive={location.pathname.includes(
+                "/timetables/subject-groups"
+              )}
+            />
+            <SubRoute
+              title="Constraints"
+              onClick={() => handleTimetablesSubItemClick("constraints")}
+              isActive={location.pathname.includes("/timetables/constraints")}
+            />
+            <SubRoute
+              title="Feedback"
+              onClick={() => handleTimetablesSubItemClick("feedback")}
+              isActive={location.pathname.includes("/timetables/feedback")}
             />
           </div>
         )}
