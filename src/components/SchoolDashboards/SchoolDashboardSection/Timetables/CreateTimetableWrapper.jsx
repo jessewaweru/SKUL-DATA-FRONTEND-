@@ -4,7 +4,6 @@ import useUser from "../../../../hooks/useUser";
 import Stepper from "../../../common/SchoolTimetable/Stepper";
 import "./timetables.css";
 import { useApi } from "../../../../hooks/useApi";
-import { useOutletContext } from "react-router-dom";
 
 const steps = [
   { id: "step-1", name: "Select Classes" },

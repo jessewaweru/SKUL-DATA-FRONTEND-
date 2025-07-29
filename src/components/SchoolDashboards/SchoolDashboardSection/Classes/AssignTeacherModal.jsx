@@ -103,7 +103,7 @@ const AssignTeacherModal = ({
           )}
         </div>
 
-        {error && <div className="error-message">{error}</div>}
+        {error && <div className="fee-error-message">{error}</div>}
 
         <div className="modal-actions">
           <button className="cancel-btn" onClick={onClose} disabled={loading}>

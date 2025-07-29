@@ -61,7 +61,7 @@ const ClassCreateForm = () => {
         </button>
       </div>
 
-      {error && <div className="error-message">{error}</div>}
+      {error && <div className="fee-error-message">{error}</div>}
 
       <form onSubmit={handleSubmit}>
         <div className="form-group">

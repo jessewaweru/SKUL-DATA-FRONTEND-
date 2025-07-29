@@ -8,6 +8,8 @@
   --global-font: "Open Sans", "Raleway", "Inter";
 }
 
+@import "../components/SchoolDashboards/SchoolDashboardSection/FeeManagement/feemanagement.css";
+
 /* Base Styles */
 body {
   background-color: var(--dark-background);

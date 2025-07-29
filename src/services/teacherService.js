@@ -23,10 +23,45 @@ export const fetchTeachers = async (schoolId) => {
   }
 };
 
-export const fetchSchoolTeachersDirect = async () => {
-  try {
-    const schoolId = 1; // Still hardcoded, but should be dynamic
+// export const fetchSchoolTeachersDirect = async () => {
+//   try {
+//     const schoolId = 1; // Still hardcoded, but should be dynamic
 
+//     // Fetch teachers and classes in parallel
+//     const [teachersResponse, classesResponse] = await Promise.all([
+//       api.get(`/api/schools/${schoolId}/teachers/`),
+//       api.get(`/api/schools/classes/`, { params: { school: schoolId } }),
+//     ]);
+
+//     const classesMap = {};
+//     classesResponse.data.results?.forEach((c) => {
+//       classesMap[c.id] = c.name;
+//     });
+
+//     // Transform data for frontend
+//     return teachersResponse.data.teachers.map((teacher) => ({
+//       id: teacher.id,
+//       full_name: `${teacher.first_name} ${teacher.last_name}`,
+//       email: teacher.email,
+//       phone_number: teacher.phone_number || "-",
+//       status: teacher.status,
+//       subjects_taught: teacher.subjects_taught?.map((s) => s.name) || [],
+//       assigned_classes:
+//         teacher.assigned_classes_ids?.map((id) => ({
+//           id,
+//           name: classesMap[id] || `Class ${id}`,
+//         })) || [],
+//       hire_date: teacher.hire_date,
+//       last_login: teacher.last_login,
+//     }));
+//   } catch (error) {
+//     console.error("DIRECT Teacher Fetch Error:", error);
+//     throw error;
+//   }
+// };
+
+export const fetchSchoolTeachersDirect = async (schoolId) => {
+  try {
     // Fetch teachers and classes in parallel
     const [teachersResponse, classesResponse] = await Promise.all([
       api.get(`/api/schools/${schoolId}/teachers/`),
@@ -55,7 +90,7 @@ export const fetchSchoolTeachersDirect = async () => {
       last_login: teacher.last_login,
     }));
   } catch (error) {
-    console.error("DIRECT Teacher Fetch Error:", error);
+    console.error("Teacher fetch error:", error);
     throw error;
   }
 };

@@ -17,6 +17,8 @@ import {
   FiActivity,
   FiMail,
   FiClock,
+  FiDollarSign,
+  FiBook,
 } from "react-icons/fi";
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -35,6 +37,8 @@ const CategorySelect = () => {
   const [actionLogsExpanded, setActionLogsExpanded] = useState(false);
   const [messagesExpanded, setMessagesExpanded] = useState(false);
   const [timetablesExpanded, setTimetablesExpanded] = useState(false);
+  const [feeManagementExpanded, setFeeManagementExpanded] = useState(false);
+  const [examsExpanded, setExamsExpanded] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -60,6 +64,8 @@ const CategorySelect = () => {
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
 
@@ -77,6 +83,8 @@ const CategorySelect = () => {
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
 
@@ -94,6 +102,8 @@ const CategorySelect = () => {
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
 
@@ -111,6 +121,8 @@ const CategorySelect = () => {
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
 
@@ -128,6 +140,8 @@ const CategorySelect = () => {
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
 
@@ -145,6 +159,8 @@ const CategorySelect = () => {
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
 
@@ -162,6 +178,8 @@ const CategorySelect = () => {
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
 
@@ -179,6 +197,8 @@ const CategorySelect = () => {
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
 
@@ -196,6 +216,8 @@ const CategorySelect = () => {
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
 
@@ -213,6 +235,8 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setMessagesExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
     if (title === "Messages") {
@@ -229,6 +253,8 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
       setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
       return;
     }
     if (title === "Timetables") {
@@ -245,6 +271,46 @@ const CategorySelect = () => {
       setSchedulerExpanded(false);
       setActionLogsExpanded(false);
       setMessagesExpanded(false);
+      setFeeManagementExpanded(false);
+      setExamsExpanded(false);
+      return;
+    }
+
+    if (title === "Fee Management") {
+      setFeeManagementExpanded(!feeManagementExpanded);
+      if (!feeManagementExpanded) navigate("/dashboard/fee-management");
+      setUsersExpanded(false);
+      setReportsExpanded(false);
+      setDocumentsExpanded(false);
+      setClassesExpanded(false);
+      setStudentsExpanded(false);
+      setTeachersExpanded(false);
+      setParentsExpanded(false);
+      setAnalyticsExpanded(false);
+      setSchedulerExpanded(false);
+      setActionLogsExpanded(false);
+      setMessagesExpanded(false);
+      setTimetablesExpanded(false);
+      setExamsExpanded(false);
+      return;
+    }
+
+    if (title === "Exams") {
+      setExamsExpanded(!examsExpanded);
+      if (!examsExpanded) navigate("/dashboard/exams");
+      setUsersExpanded(false);
+      setReportsExpanded(false);
+      setDocumentsExpanded(false);
+      setClassesExpanded(false);
+      setStudentsExpanded(false);
+      setTeachersExpanded(false);
+      setParentsExpanded(false);
+      setAnalyticsExpanded(false);
+      setSchedulerExpanded(false);
+      setActionLogsExpanded(false);
+      setMessagesExpanded(false);
+      setTimetablesExpanded(false);
+      setFeeManagementExpanded(false);
       return;
     }
 
@@ -264,6 +330,7 @@ const CategorySelect = () => {
     setSchedulerExpanded(false);
     setActionLogsExpanded(false);
     setMessagesExpanded(false);
+    setFeeManagementExpanded(false);
   };
 
   const handleUserSubItemClick = (subItem) => {
@@ -321,6 +388,14 @@ const CategorySelect = () => {
   const handleTimetablesSubItemClick = (subItem) => {
     setActiveItem("Timetables");
     navigate(`/dashboard/timetables/${subItem}`);
+  };
+  const handleFeeManagementSubItemClick = (subItem) => {
+    setActiveItem("Fee Management");
+    navigate(`/dashboard/fee-management/${subItem}`);
+  };
+  const handleExamsSubItemClick = (subItem) => {
+    setActiveItem("Exams");
+    navigate(`/dashboard/exams/${subItem}`);
   };
 
   return (
@@ -986,6 +1061,135 @@ const CategorySelect = () => {
               title="Feedback"
               onClick={() => handleTimetablesSubItemClick("feedback")}
               isActive={location.pathname.includes("/timetables/feedback")}
+            />
+          </div>
+        )}
+      </div>
+      {/* Fee Management Section */}
+      <div
+        className={`nav-item-container ${
+          activeItem === "Fee Management" ? "active" : ""
+        }`}
+      >
+        <button
+          className={`nav-item ${
+            activeItem === "Fee Management"
+              ? "nav-item-selected"
+              : "nav-item-default"
+          }`}
+          onClick={() => handleItemClick("Fee Management")}
+        >
+          <FiDollarSign
+            className={activeItem === "Fee Management" ? "icon-selected" : ""}
+          />
+          <span>Fee Management</span>
+          {feeManagementExpanded ? (
+            <FiChevronDown className="chevron-icon" />
+          ) : (
+            <FiChevronRight className="chevron-icon" />
+          )}
+        </button>
+        {feeManagementExpanded && (
+          <div className="sub-nav-list">
+            <SubRoute
+              title="Dashboard"
+              onClick={() => handleFeeManagementSubItemClick("")}
+              isActive={location.pathname === "/dashboard/fee-management"}
+            />
+            <SubRoute
+              title="Upload Fees"
+              onClick={() => handleFeeManagementSubItemClick("uploads")}
+              isActive={location.pathname.includes("/fee-management/uploads")}
+            />
+            <SubRoute
+              title="Fee Records"
+              onClick={() => handleFeeManagementSubItemClick("records")}
+              isActive={location.pathname.includes("/fee-management/records")}
+            />
+            <SubRoute
+              title="Payments"
+              onClick={() => handleFeeManagementSubItemClick("payments")}
+              isActive={location.pathname.includes("/fee-management/payments")}
+            />
+            <SubRoute
+              title="Invoices"
+              onClick={() => handleFeeManagementSubItemClick("invoices")}
+              isActive={location.pathname.includes("/fee-management/invoices")}
+            />
+            <SubRoute
+              title="Reminders"
+              onClick={() => handleFeeManagementSubItemClick("reminders")}
+              isActive={location.pathname.includes("/fee-management/reminders")}
+            />
+            <SubRoute
+              title="Reports"
+              onClick={() => handleFeeManagementSubItemClick("reports")}
+              isActive={location.pathname.includes("/fee-management/reports")}
+            />
+            <SubRoute
+              title="Settings"
+              onClick={() => handleFeeManagementSubItemClick("settings")}
+              isActive={location.pathname.includes("/fee-management/settings")}
+            />
+          </div>
+        )}
+      </div>
+      {/* Exams Section */}
+      <div
+        className={`nav-item-container ${
+          activeItem === "Exams" ? "active" : ""
+        }`}
+      >
+        <button
+          className={`nav-item ${
+            activeItem === "Exams" ? "nav-item-selected" : "nav-item-default"
+          }`}
+          onClick={() => handleItemClick("Exams")}
+        >
+          <FiBook className={activeItem === "Exams" ? "icon-selected" : ""} />
+          <span>Exams</span>
+          {examsExpanded ? (
+            <FiChevronDown className="chevron-icon" />
+          ) : (
+            <FiChevronRight className="chevron-icon" />
+          )}
+        </button>
+        {examsExpanded && (
+          <div className="sub-nav-list">
+            <SubRoute
+              title="Dashboard"
+              onClick={() => handleExamsSubItemClick("")}
+              isActive={location.pathname === "/dashboard/exams"}
+            />
+            <SubRoute
+              title="Setup Exams"
+              onClick={() => handleExamsSubItemClick("setup")}
+              isActive={location.pathname.includes("/exams/setup")}
+            />
+            <SubRoute
+              title="Grading Systems"
+              onClick={() => handleExamsSubItemClick("grading-systems")}
+              isActive={location.pathname.includes("/exams/grading-systems")}
+            />
+            <SubRoute
+              title="Enter Marks"
+              onClick={() => handleExamsSubItemClick("enter-marks")}
+              isActive={location.pathname.includes("/exams/enter-marks")}
+            />
+            <SubRoute
+              title="Results"
+              onClick={() => handleExamsSubItemClick("results")}
+              isActive={location.pathname.includes("/exams/results")}
+            />
+            <SubRoute
+              title="Reports"
+              onClick={() => handleExamsSubItemClick("reports")}
+              isActive={location.pathname.includes("/exams/reports")}
+            />
+            <SubRoute
+              title="Analytics"
+              onClick={() => handleExamsSubItemClick("analytics")}
+              isActive={location.pathname.includes("/exams/analytics")}
             />
           </div>
         )}

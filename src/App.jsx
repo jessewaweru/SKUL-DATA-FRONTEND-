@@ -124,6 +124,36 @@ import SubjectsManagement from "./components/SchoolDashboards/SchoolDashboardSec
 import TimetableConstraints from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetableConstraints.jsx";
 import TimetableFeedback from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/TimetableFeedback.jsx";
 import SubjectGroupsManagement from "./components/SchoolDashboards/SchoolDashboardSection/Timetables/SubjectGroupsManagement.jsx";
+import FeeManagementPage from "./components/SchoolDashboards/SchoolDashboardSection/FeeManagement/FeeManagementPage.jsx";
+import FeeDashboard from "./components/SchoolDashboards/SchoolDashboardSection/FeeManagement/FeeDashboard.jsx";
+import FeeUploads from "./components/SchoolDashboards/SchoolDashboardSection/FeeManagement/FeeUploads.jsx";
+import FeeRecords from "./components/SchoolDashboards/SchoolDashboardSection/FeeManagement/FeeRecords.jsx";
+import FeePayments from "./components/SchoolDashboards/SchoolDashboardSection/FeeManagement/FeePayments.jsx";
+import FeeInvoices from "./components/SchoolDashboards/SchoolDashboardSection/FeeManagement/FeeInvoices.jsx";
+import FeeReminders from "./components/SchoolDashboards/SchoolDashboardSection/FeeManagement/FeeReminders.jsx";
+import FeeReports from "./components/SchoolDashboards/SchoolDashboardSection/FeeManagement/FeeReports.jsx";
+import FeeSettings from "./components/SchoolDashboards/SchoolDashboardSection/FeeManagement/FeeSettings.jsx";
+import ExamsPage from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamsPage.jsx";
+import ExamsDashboard from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamsDashboard.jsx";
+import ExamSetupWrapper from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamSetupWrapper.jsx";
+import ExamSetupStep1 from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamSetupStep1.jsx";
+import ExamSetupStep2 from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamSetupStep2.jsx";
+import ExamSetupStep3 from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamSetupStep3.jsx";
+import GradingSystemsManagement from "./components/SchoolDashboards/SchoolDashboardSection/Exams/GradingSystemsManagement.jsx";
+import EnterMarksWrapper from "./components/SchoolDashboards/SchoolDashboardSection/Exams/EnterMarksWrapper.jsx";
+import SelectExamForMarks from "./components/SchoolDashboards/SchoolDashboardSection/Exams/SelectExamForMarks.jsx";
+import EnterMarksManual from "./components/SchoolDashboards/SchoolDashboardSection/Exams/EnterMarksManual.jsx";
+import UploadMarksSheet from "./components/SchoolDashboards/SchoolDashboardSection/Exams/UploadMarksSheet.jsx";
+import ExamResultsWrapper from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamResultsWrapper.jsx";
+import ExamResultsOverview from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamResultsOverview.jsx";
+import ClassExamResults from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ClassExamResults.jsx";
+import StudentExamResults from "./components/SchoolDashboards/SchoolDashboardSection/Exams/StudentExamResults.jsx";
+import PublishExamResults from "./components/SchoolDashboards/SchoolDashboardSection/Exams/PublishExamResults.jsx";
+import ExamReportsWrapper from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamReportsWrapper.jsx";
+import ExamReportsOverview from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamReportsOverview.jsx";
+import TermExamReports from "./components/SchoolDashboards/SchoolDashboardSection/Exams/TermExamReports.jsx";
+import ConsolidatedReports from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ConsolidatedReports.jsx";
+import ExamAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamAnalytics.jsx";
 
 console.log("DEBUG TEST - App component mounted"); // Debug A
 console.log("Environment Variables:", {
@@ -607,6 +637,144 @@ function App() {
             {
               path: ":timetableId",
               element: <TimetableDetailView />,
+            },
+          ],
+        },
+        // Fee Management Section
+        {
+          path: "fee-management",
+          element: <FeeManagementPage />,
+          children: [
+            {
+              index: true,
+              element: <FeeDashboard />,
+            },
+            {
+              path: "uploads",
+              element: <FeeUploads />,
+            },
+            {
+              path: "records",
+              element: <FeeRecords />,
+            },
+            {
+              path: "payments",
+              element: <FeePayments />,
+            },
+            {
+              path: "invoices",
+              element: <FeeInvoices />,
+            },
+            {
+              path: "reminders",
+              element: <FeeReminders />,
+            },
+            {
+              path: "reports",
+              element: <FeeReports />,
+            },
+            {
+              path: "settings",
+              element: <FeeSettings />,
+            },
+          ],
+        },
+        // Exams Management Section
+        {
+          path: "exams",
+          element: <ExamsPage />,
+          children: [
+            {
+              index: true,
+              element: <ExamsDashboard />,
+            },
+            {
+              path: "setup",
+              element: <ExamSetupWrapper />,
+              children: [
+                {
+                  index: true,
+                  element: <Navigate to="step-1" replace />,
+                },
+                {
+                  path: "step-1", // Select exam type and basic info
+                  element: <ExamSetupStep1 />,
+                },
+                {
+                  path: "step-2", // Select subjects and grading
+                  element: <ExamSetupStep2 />,
+                },
+                {
+                  path: "step-3", // Set up exam schedule
+                  element: <ExamSetupStep3 />,
+                },
+              ],
+            },
+            {
+              path: "grading-systems",
+              element: <GradingSystemsManagement />,
+            },
+            {
+              path: "enter-marks",
+              element: <EnterMarksWrapper />,
+              children: [
+                {
+                  index: true,
+                  element: <SelectExamForMarks />,
+                },
+                {
+                  path: "manual/:examId/:subjectId",
+                  element: <EnterMarksManual />,
+                },
+                {
+                  path: "upload/:examId/:subjectId",
+                  element: <UploadMarksSheet />,
+                },
+              ],
+            },
+            {
+              path: "results",
+              element: <ExamResultsWrapper />,
+              children: [
+                {
+                  index: true,
+                  element: <ExamResultsOverview />,
+                },
+                {
+                  path: "class/:classId",
+                  element: <ClassExamResults />,
+                },
+                {
+                  path: "student/:studentId",
+                  element: <StudentExamResults />,
+                },
+                {
+                  path: "publish/:examId",
+                  element: <PublishExamResults />,
+                },
+              ],
+            },
+            {
+              path: "reports",
+              element: <ExamReportsWrapper />,
+              children: [
+                {
+                  index: true,
+                  element: <ExamReportsOverview />,
+                },
+                {
+                  path: "term/:termId",
+                  element: <TermExamReports />,
+                },
+                {
+                  path: "consolidated",
+                  element: <ConsolidatedReports />,
+                },
+              ],
+            },
+            {
+              path: "analytics",
+              element: <ExamAnalytics />,
             },
           ],
         },

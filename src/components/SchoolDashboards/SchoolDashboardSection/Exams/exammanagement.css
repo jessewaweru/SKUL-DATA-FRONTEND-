@@ -1,0 +1,978 @@
+/* Exams Management System Styles */
+.exams-container {
+  padding: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.exams-content {
+  background-color: #1e1e1e;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.exams-dashboard h2 {
+  color: #6a1b9a;
+  margin-bottom: 20px;
+  font-size: 24px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.recent-exams-section {
+  margin-top: 30px;
+}
+
+.exams-table {
+  overflow-x: auto;
+}
+
+.exams-table table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 15px;
+}
+
+.exams-table th,
+.exams-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #333;
+}
+
+.exams-table th {
+  background-color: #2a2a2a;
+  color: #6a1b9a;
+  font-weight: 600;
+}
+
+.exams-table tr:hover {
+  background-color: #2a2a2a;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.status-badge.upcoming {
+  background-color: #ff9800;
+  color: #000;
+}
+
+.status-badge.ongoing {
+  background-color: #4caf50;
+  color: #fff;
+}
+
+.status-badge.completed {
+  background-color: #2196f3;
+  color: #fff;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  margin-right: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.view-btn {
+  background-color: #6a1b9a;
+  color: white;
+}
+
+.view-btn:hover {
+  background-color: #4a0e4e;
+}
+
+.publish-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.publish-btn:hover {
+  background-color: #3d8b40;
+}
+
+/* Exam Setup Wizard Styles */
+.exam-setup-wizard {
+  background-color: #252525;
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 20px;
+}
+
+.wizard-steps {
+  display: flex;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 10px;
+}
+
+.wizard-step {
+  padding: 10px 20px;
+  margin-right: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  position: relative;
+}
+
+.wizard-step.active {
+  background-color: #6a1b9a;
+  color: white;
+}
+
+.wizard-step.completed {
+  background-color: #4caf50;
+  color: white;
+}
+
+.wizard-step.disabled {
+  color: #666;
+  cursor: not-allowed;
+}
+
+.wizard-content {
+  padding: 20px;
+}
+
+/* Grading System Styles */
+.grading-system-card {
+  background-color: #252525;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 20px;
+  border-left: 4px solid #6a1b9a;
+}
+
+.grading-system-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+.grade-range-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.grade-range-table th,
+.grade-range-table td {
+  padding: 10px;
+  border: 1px solid #333;
+  text-align: center;
+}
+
+.grade-range-table th {
+  background-color: #2a2a2a;
+}
+
+/* Marks Entry Styles */
+.marks-entry-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.marks-entry-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.marks-entry-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.marks-entry-table th,
+.marks-entry-table td {
+  padding: 12px;
+  border: 1px solid #333;
+}
+
+.marks-entry-table th {
+  background-color: #2a2a2a;
+}
+
+.marks-entry-table input {
+  width: 80px;
+  padding: 8px;
+  background-color: #333;
+  border: 1px solid #444;
+  color: white;
+  border-radius: 4px;
+}
+
+.marks-entry-table textarea {
+  width: 100%;
+  padding: 8px;
+  background-color: #333;
+  border: 1px solid #444;
+  color: white;
+  border-radius: 4px;
+  resize: vertical;
+}
+
+.marks-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Exam Setup Wizard Styles */
+.exam-setup-form {
+  background-color: #252525;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 20px;
+}
+
+.exam-setup-form h3 {
+  color: #6a1b9a;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 8px 12px;
+  background-color: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+}
+
+.form-row {
+  display: flex;
+  gap: 15px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.subjects-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.subject-card {
+  padding: 10px;
+  background-color: #333;
+  border-radius: 4px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.subject-card.selected {
+  background-color: #6a1b9a;
+  color: white;
+}
+
+.grade-ranges-preview {
+  margin-top: 10px;
+  background-color: #2a2a2a;
+  padding: 10px;
+  border-radius: 4px;
+}
+
+.grade-ranges-preview table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.grade-ranges-preview th,
+.grade-ranges-preview td {
+  padding: 8px;
+  border: 1px solid #444;
+  text-align: center;
+}
+
+.exam-summary {
+  margin-top: 20px;
+  background-color: #2a2a2a;
+  padding: 15px;
+  border-radius: 4px;
+}
+
+.exam-summary h4 {
+  margin-top: 0;
+  color: #6a1b9a;
+}
+
+/* Grading Systems Styles */
+.grading-systems-container {
+  padding: 20px;
+}
+
+.grading-systems-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.grading-systems-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.grading-system-card {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.grading-system-card.default-system {
+  border-left: 4px solid #4caf50;
+}
+
+.grading-system-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.grading-system-header h3 {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.default-badge {
+  background-color: #4caf50;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.grading-system-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.grade-ranges-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.grade-ranges-table th,
+.grade-ranges-table td {
+  padding: 8px;
+  border: 1px solid #444;
+  text-align: center;
+}
+
+.create-grading-system {
+  background-color: #252525;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.grade-ranges-section table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+}
+
+.grade-ranges-section th,
+.grade-ranges-section td {
+  padding: 8px;
+  border: 1px solid #444;
+  text-align: center;
+}
+
+/* Marks Entry Styles */
+.enter-marks-container {
+  padding: 20px;
+}
+
+.marks-header {
+  margin-bottom: 20px;
+}
+
+.marks-subheader {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+}
+
+.marks-table-container {
+  overflow-x: auto;
+}
+
+.marks-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.marks-table th,
+.marks-table td {
+  padding: 10px;
+  border: 1px solid #444;
+}
+
+.marks-table input[type="number"],
+.marks-table input[type="checkbox"] {
+  width: auto;
+}
+
+.marks-table textarea {
+  min-width: 200px;
+}
+
+.marks-actions {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.upload-marks-container {
+  padding: 20px;
+}
+
+.upload-instructions {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.upload-form {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.file-preview {
+  margin-top: 15px;
+}
+
+.file-preview table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.file-preview th,
+.file-preview td {
+  padding: 8px;
+  border: 1px solid #444;
+}
+
+.validation-errors {
+  color: #f44336;
+  margin-top: 10px;
+}
+
+/* Results Management Styles */
+.results-overview-container {
+  padding: 20px;
+}
+
+.results-filters {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.exams-results-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.exam-result-card {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.exam-result-info h3 {
+  margin-top: 0;
+}
+
+.exam-result-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.class-results-container {
+  padding: 20px;
+}
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.results-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.summary-card {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+.summary-card h3 {
+  margin-top: 0;
+  font-size: 16px;
+}
+
+.summary-card p {
+  margin-bottom: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.results-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.results-table th,
+.results-table td {
+  padding: 10px;
+  border: 1px solid #444;
+  text-align: center;
+}
+
+.results-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.publish-results-container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.publish-warning {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.publish-confirmation {
+  margin: 20px 0;
+}
+
+.publish-confirmation input {
+  width: 100%;
+  padding: 10px;
+  background-color: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+  margin-top: 10px;
+}
+
+/* Reports Styles */
+.reports-overview-container {
+  padding: 20px;
+}
+
+.reports-options {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.report-card {
+  background-color: #252525;
+  padding: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.report-card:hover {
+  background-color: #2a2a2a;
+}
+
+.report-card h3 {
+  margin-top: 0;
+  color: #6a1b9a;
+}
+
+.terms-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.terms-list li {
+  padding: 10px;
+  background-color: #252525;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.terms-list li:hover {
+  background-color: #2a2a2a;
+}
+
+.term-reports-container {
+  padding: 20px;
+}
+
+.term-exams-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.term-exams-list li {
+  padding: 8px;
+  background-color: #252525;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+
+.class-selector {
+  margin: 20px 0;
+}
+
+.class-selector select {
+  width: 100%;
+  padding: 8px;
+  background-color: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+}
+
+.class-report-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+}
+
+.student-report-card {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.term-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.consolidated-reports-container {
+  padding: 20px;
+}
+
+.consolidation-rules {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+  margin: 20px 0;
+}
+
+.consolidation-rules table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 15px;
+}
+
+.consolidation-rules th,
+.consolidation-rules td {
+  padding: 8px;
+  border: 1px solid #444;
+  text-align: left;
+}
+
+/* Analytics Styles */
+.exam-analytics-container {
+  padding: 20px;
+}
+
+.analytics-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.time-range-selector select {
+  padding: 8px;
+  background-color: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+}
+
+.analytics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.analytics-card {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.analytics-card h3 {
+  margin-top: 0;
+}
+
+.analytics-export {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Student Exam Results Styles */
+.student-results-container {
+  padding: 20px;
+}
+
+.student-results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.student-info {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.term-selector {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.term-selector select {
+  padding: 8px;
+  background-color: #333;
+  border: 1px solid #444;
+  border-radius: 4px;
+  color: white;
+}
+
+.performance-chart {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.detailed-results {
+  margin-bottom: 20px;
+}
+
+.exam-result-card {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.exam-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.exam-result-header h4 {
+  margin: 0;
+}
+
+.subject-results-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.subject-results-table th,
+.subject-results-table td {
+  padding: 10px;
+  border: 1px solid #444;
+}
+
+.subject-results-table th {
+  background-color: #2a2a2a;
+}
+
+.results-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Exam Stats Card Styles */
+.exam-stats-card {
+  background-color: #252525;
+  padding: 15px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.stats-icon {
+  background-color: #6a1b9a;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stats-icon svg {
+  color: white;
+}
+
+.stats-content h3 {
+  margin: 0 0 5px 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.stats-content p {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .student-results-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .exam-result-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .exam-stats-card {
+    flex-direction: column;
+    text-align: center;
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .reports-options {
+    grid-template-columns: 1fr;
+  }
+
+  .analytics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .wizard-steps {
+    flex-direction: column;
+  }
+
+  .wizard-step {
+    margin-bottom: 5px;
+    margin-right: 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .exams-table th,
+  .exams-table td {
+    padding: 8px;
+  }
+
+  .action-btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+}

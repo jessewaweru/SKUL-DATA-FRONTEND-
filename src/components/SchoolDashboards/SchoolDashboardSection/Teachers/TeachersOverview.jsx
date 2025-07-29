@@ -3,8 +3,10 @@ import TeacherTable from "./TeacherTable";
 import { fetchSchoolTeachersDirect } from "../../../../services/teacherService";
 import StatCard from "../../../common/StatCard/StatCard";
 import { FiUser, FiCalendar, FiClock } from "react-icons/fi";
+import useUser from "../../../../hooks/useUser"; // Import useUser hook
 
 const TeachersOverview = () => {
+  const { user } = useUser(); // Get user from context
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,7 +23,12 @@ const TeachersOverview = () => {
         setLoading(true);
         setError(null);
 
-        const teachers = await fetchSchoolTeachersDirect();
+        // Check if user/school exists
+        if (!user || !user.school) {
+          throw new Error("User school information not available");
+        }
+
+        const teachers = await fetchSchoolTeachersDirect(user.school.id);
         setTeachers(teachers);
 
         // Calculate stats
@@ -37,15 +44,17 @@ const TeachersOverview = () => {
         };
         setStats(statsData);
       } catch (err) {
-        console.error("Final Load Error:", err);
-        setError("Failed to load teachers. Please check console for details.");
+        console.error("Failed to load teachers:", err);
+        setError(err.message || "Failed to load teachers");
       } finally {
         setLoading(false);
       }
     };
 
-    loadTeachers();
-  }, []);
+    if (user?.school?.id) {
+      loadTeachers();
+    }
+  }, [user]);
 
   if (loading) return <div>Loading teachers (please wait)...</div>;
   if (error) return <div className="error">{error}</div>;
