@@ -15,10 +15,14 @@ const DocumentTemplates = () => {
   const fetchTemplates = async () => {
     try {
       setIsLoading(true);
-      const response = await api.get("/documents/?is_template=true");
-      setTemplates(response.data);
+      // Change the endpoint to fetch actual template documents
+      const response = await api.get(
+        "/api/documents/documents/?is_template=true"
+      );
+      setTemplates(response.data.results || response.data); // Handle both paginated and non-paginated responses
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch templates");
+      console.error("Error fetching templates:", err);
     } finally {
       setIsLoading(false);
     }

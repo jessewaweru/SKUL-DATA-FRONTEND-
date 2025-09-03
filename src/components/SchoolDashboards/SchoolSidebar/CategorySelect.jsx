@@ -1162,6 +1162,11 @@ const CategorySelect = () => {
               isActive={location.pathname === "/dashboard/exams"}
             />
             <SubRoute
+              title="KCSE Management"
+              onClick={() => handleExamsSubItemClick("kcse")}
+              isActive={location.pathname.includes("/exams/kcse")}
+            />
+            <SubRoute
               title="Setup Exams"
               onClick={() => handleExamsSubItemClick("setup")}
               isActive={location.pathname.includes("/exams/setup")}

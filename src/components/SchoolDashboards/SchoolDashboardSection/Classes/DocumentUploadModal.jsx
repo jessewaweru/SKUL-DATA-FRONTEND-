@@ -31,7 +31,7 @@ const DocumentUploadModal = ({ classId, onClose, onSuccess }) => {
       data.append("file", formData.file);
       data.append("school_class", classId);
 
-      const response = await api.post("/class-documents/", data);
+      const response = await api.post("/api/schools/class-documents/", data);
       onSuccess(response.data);
     } catch (err) {
       setError(err.response?.data?.error || "Failed to upload document");

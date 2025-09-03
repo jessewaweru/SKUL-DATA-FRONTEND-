@@ -29,6 +29,10 @@ const DocumentList = ({
     return <div className="loading-spinner">Loading documents...</div>;
   }
 
+  if (!documents || !Array.isArray(documents)) {
+    return <div className="empty-state">No documents available</div>;
+  }
+
   if (documents.length === 0) {
     return <div className="empty-state">No documents found</div>;
   }

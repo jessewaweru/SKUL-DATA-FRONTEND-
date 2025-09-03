@@ -18,14 +18,13 @@ const DocumentCategories = () => {
     try {
       setIsLoading(true);
       const response = await api.get("/documents/categories/");
-      setCategories(response.data);
+      setCategories(response.data.results); // Access the results array
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch categories");
     } finally {
       setIsLoading(false);
     }
   };
-
   const handleAddCategory = async (e) => {
     e.preventDefault();
     if (!newCategory.trim()) return;
@@ -35,7 +34,7 @@ const DocumentCategories = () => {
         name: newCategory,
         is_custom: true,
       });
-      setCategories([...categories, response.data]);
+      setCategories([...categories, response.data]); // This assumes the POST returns the single category object
       setNewCategory("");
     } catch (err) {
       setError(err.response?.data?.message || "Failed to add category");

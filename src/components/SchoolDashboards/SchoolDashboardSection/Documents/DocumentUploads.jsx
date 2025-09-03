@@ -20,7 +20,7 @@ const DocumentUploads = () => {
     try {
       setIsLoading(true);
       const response = await api.get("/documents/?recent_uploads=true");
-      setRecentUploads(response.data);
+      setRecentUploads(response.data.results || []); // Use results array or fallback to empty array
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch recent uploads");
     } finally {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { useApi } from "../../../../hooks/useApi";
 
@@ -91,7 +91,7 @@ const ClassExamResults = () => {
       </div>
 
       <div className="results-summary">
-        <div className="summary-card">
+        <div className="exams-summary-card">
           <h3>Class Average</h3>
           <p>
             {results.length > 0
@@ -102,7 +102,7 @@ const ClassExamResults = () => {
               : 0}
           </p>
         </div>
-        <div className="summary-card">
+        <div className="exams-summary-card">
           <h3>Top Student</h3>
           <p>
             {results.length > 0
@@ -110,7 +110,7 @@ const ClassExamResults = () => {
               : "-"}
           </p>
         </div>
-        <div className="summary-card">
+        <div className="exams-summary-card">
           <h3>Students Count</h3>
           <p>{results.length}</p>
         </div>

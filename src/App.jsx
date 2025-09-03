@@ -154,6 +154,15 @@ import ExamReportsOverview from "./components/SchoolDashboards/SchoolDashboardSe
 import TermExamReports from "./components/SchoolDashboards/SchoolDashboardSection/Exams/TermExamReports.jsx";
 import ConsolidatedReports from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ConsolidatedReports.jsx";
 import ExamAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Exams/ExamAnalytics.jsx";
+import KCSEDashboard from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSEDashboard";
+import KCSETemplateDownload from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSETemplateDownload";
+import KCSEUploadResults from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSEUploadResults";
+import KCSEResultsView from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSEResultsView";
+import KCSESchoolPerformance from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSESchoolPerformance";
+import KCSESubjectAnalysis from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSESubjectAnalysis";
+import KCSEComparativeAnalysis from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSEComparativeAnalysis";
+import KCSETeacherPerformance from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSETeacherPerformance";
+import KCSEManagement from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSEManagement.jsx";
 
 console.log("DEBUG TEST - App component mounted"); // Debug A
 console.log("Environment Variables:", {
@@ -465,7 +474,7 @@ function App() {
               element: <ClassAttendanceSummary />,
             },
             {
-              path: "documents",
+              path: "documents/:classId",
               element: <ClassDocumentsPage />,
             },
             {
@@ -473,7 +482,7 @@ function App() {
               element: <ClassTimetablesPage />,
             },
             {
-              path: "analytics",
+              path: "analytics/:classId",
               element: <ClassAnalytics />,
             },
           ],
@@ -687,6 +696,49 @@ function App() {
             {
               index: true,
               element: <ExamsDashboard />,
+            },
+            // KCSE Management Routes
+            {
+              path: "kcse",
+              element: <KCSEManagement />,
+              children: [
+                {
+                  index: true,
+                  element: <Navigate to="dashboard" replace />,
+                },
+                {
+                  path: "dashboard",
+                  element: <KCSEDashboard />,
+                },
+                {
+                  path: "download-template",
+                  element: <KCSETemplateDownload />,
+                },
+                {
+                  path: "upload-results",
+                  element: <KCSEUploadResults />,
+                },
+                {
+                  path: "results",
+                  element: <KCSEResultsView />,
+                },
+                {
+                  path: "school-performance",
+                  element: <KCSESchoolPerformance />,
+                },
+                {
+                  path: "subject-analysis",
+                  element: <KCSESubjectAnalysis />,
+                },
+                {
+                  path: "comparative-analysis",
+                  element: <KCSEComparativeAnalysis />,
+                },
+                {
+                  path: "teacher-performance",
+                  element: <KCSETeacherPerformance />,
+                },
+              ],
             },
             {
               path: "setup",

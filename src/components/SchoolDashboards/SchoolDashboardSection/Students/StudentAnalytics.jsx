@@ -1,4 +1,3 @@
-// components/SchoolDashboard/Students/StudentAnalytics.jsx
 import { useState, useEffect } from "react";
 import { useApi } from "../../../../hooks/useApi";
 import { FiBarChart2, FiUsers, FiBook } from "react-icons/fi";
@@ -23,9 +22,11 @@ const StudentAnalytics = () => {
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const response = await api.get("/students/analytics/");
+        // Fixed URL: Changed from "/students/analytics/" to "/students/students/analytics/"
+        const response = await api.get("/students/students/analytics/");
         setAnalyticsData(response.data);
       } catch (err) {
+        console.error("Analytics fetch error:", err);
         setError("Failed to load analytics data");
       } finally {
         setLoading(false);
@@ -37,6 +38,8 @@ const StudentAnalytics = () => {
 
   if (loading) return <div className="loading">Loading analytics...</div>;
   if (error) return <div className="error-message">{error}</div>;
+  if (!analyticsData)
+    return <div className="error-message">No data available</div>;
 
   return (
     <div className="student-analytics">
@@ -52,7 +55,7 @@ const StudentAnalytics = () => {
             <FiUsers />
             <h3>Total Students</h3>
           </div>
-          <div className="card-value">{analyticsData.total_students}</div>
+          <div className="card-value">{analyticsData.total_students || 0}</div>
         </div>
 
         <div className="analytics-card">
@@ -62,7 +65,7 @@ const StudentAnalytics = () => {
           </div>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={analyticsData.students_by_class}>
+              <BarChart data={analyticsData.students_by_class || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="student_class__name" />
                 <YAxis />
@@ -81,7 +84,7 @@ const StudentAnalytics = () => {
           </div>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={analyticsData.gender_distribution}>
+              <BarChart data={analyticsData.gender_distribution || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="gender" />
                 <YAxis />
@@ -100,13 +103,52 @@ const StudentAnalytics = () => {
           </div>
           <div className="chart-container">
             <ResponsiveContainer width="100%" height={300}>
-              <BarChart data={analyticsData.performance_distribution}>
+              <BarChart data={analyticsData.performance_distribution || []}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="performance_tier" />
                 <YAxis />
                 <Tooltip />
                 <Legend />
                 <Bar dataKey="count" fill="#ffc658" name="Students" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Additional analytics cards */}
+        <div className="analytics-card">
+          <div className="card-header">
+            <FiUsers />
+            <h3>Students by Status</h3>
+          </div>
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={analyticsData.students_by_status || []}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="status" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="count" fill="#ff7300" name="Students" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        <div className="analytics-card">
+          <div className="card-header">
+            <FiUsers />
+            <h3>Age Distribution</h3>
+          </div>
+          <div className="chart-container">
+            <ResponsiveContainer width="100%" height={300}>
+              <BarChart data={analyticsData.age_distribution || []}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="age" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Bar dataKey="count" fill="#8dd1e1" name="Students" />
               </BarChart>
             </ResponsiveContainer>
           </div>

@@ -44,10 +44,10 @@ const AdminManagement = () => {
         setLoading(true);
         const [adminsRes, permsRes] = await Promise.all([
           axios
-            .get("/users/administrators/")
+            .get("/api/administrators/")
             .then((res) => (Array.isArray(res.data) ? res.data : [])),
           axios
-            .get("/users/administrators/permissions_options/")
+            .get("/api/administrators/permissions-options/")
             .then((res) => (Array.isArray(res.data) ? res.data : [])),
         ]);
 

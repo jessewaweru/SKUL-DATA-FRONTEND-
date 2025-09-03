@@ -1,4 +1,3 @@
-// components/SchoolDashboard/Students/StudentDirectory.jsx
 import { useState, useEffect } from "react";
 import { useApi } from "../../../../hooks/useApi";
 import { FiEdit2, FiUser, FiTrash2, FiRefreshCw } from "react-icons/fi";
@@ -10,15 +9,36 @@ const StudentDirectory = () => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showInactive, setShowInactive] = useState(false);
+  const [error, setError] = useState(null);
 
   const fetchStudents = async () => {
     try {
       setLoading(true);
-      const params = { show_inactive: showInactive };
-      const response = await api.get("/students/", { params });
-      setStudents(response.data);
+      setError(null);
+
+      // Make sure to include the school ID if needed
+      const params = {
+        show_inactive: showInactive,
+        // Add any other required params here
+      };
+
+      const response = await api.get("/students/students/", { params });
+      console.log("API Response:", response); // Debug log
+
+      // Handle both paginated and non-paginated responses
+      let data = response.data?.results || response.data;
+
+      if (Array.isArray(data)) {
+        setStudents(data);
+      } else {
+        console.error("Unexpected data format:", response.data);
+        setError("Unexpected data format from server");
+        setStudents([]);
+      }
     } catch (error) {
       console.error("Error fetching students:", error);
+      setError("Failed to load students. Please try again.");
+      setStudents([]);
     } finally {
       setLoading(false);
     }
@@ -26,29 +46,48 @@ const StudentDirectory = () => {
 
   useEffect(() => {
     fetchStudents();
-  }, [showInactive]);
+  }, [showInactive]); // Refetch when showInactive changes
 
   const handleDeactivate = async (studentId) => {
     if (!window.confirm("Are you sure you want to deactivate this student?"))
       return;
 
     try {
-      await api.post(`/students/${studentId}/deactivate/`, {
+      await api.post(`/students/students/${studentId}/deactivate/`, {
         reason: "Deactivated by admin",
       });
-      fetchStudents();
+      fetchStudents(); // Refresh the list
     } catch (error) {
       console.error("Error deactivating student:", error);
+      alert("Failed to deactivate student");
     }
   };
 
   const handleRestore = async (studentId) => {
     try {
-      await api.post(`/students/${studentId}/restore/`);
-      fetchStudents();
+      await api.post(`/students/students/${studentId}/restore/`);
+      fetchStudents(); // Refresh the list
     } catch (error) {
       console.error("Error restoring student:", error);
+      alert("Failed to restore student");
     }
+  };
+
+  // Helper function to render student status
+  const renderStatus = (status) => {
+    const statusMap = {
+      ACTIVE: { class: "active", label: "Active" },
+      GRADUATED: { class: "graduated", label: "Graduated" },
+      LEFT: { class: "left", label: "Left" },
+      SUSPENDED: { class: "suspended", label: "Suspended" },
+    };
+
+    const statusInfo = statusMap[status] || { class: "unknown", label: status };
+    return (
+      <span className={`status-badge ${statusInfo.class}`}>
+        {statusInfo.label}
+      </span>
+    );
   };
 
   return (
@@ -64,7 +103,7 @@ const StudentDirectory = () => {
             />
             Show Inactive Students
           </label>
-          <button onClick={fetchStudents}>
+          <button onClick={fetchStudents} disabled={loading}>
             <FiRefreshCw /> Refresh
           </button>
         </div>
@@ -72,8 +111,17 @@ const StudentDirectory = () => {
 
       <StudentFilters onFilter={fetchStudents} />
 
+      {error && (
+        <div className="error-message">
+          {error}
+          <button onClick={fetchStudents}>Retry</button>
+        </div>
+      )}
+
       {loading ? (
         <div className="loading">Loading students...</div>
+      ) : students.length === 0 ? (
+        <div className="no-results">No students found</div>
       ) : (
         <div className="students-table-container">
           <table className="students-table">
@@ -107,13 +155,7 @@ const StudentDirectory = () => {
                   <td>
                     {new Date(student.admission_date).toLocaleDateString()}
                   </td>
-                  <td>
-                    <span
-                      className={`status-badge ${student.status.toLowerCase()}`}
-                    >
-                      {student.status}
-                    </span>
-                  </td>
+                  <td>{renderStatus(student.status)}</td>
                   <td className="actions">
                     <a
                       href={`#/dashboard/students/edit/${student.id}`}

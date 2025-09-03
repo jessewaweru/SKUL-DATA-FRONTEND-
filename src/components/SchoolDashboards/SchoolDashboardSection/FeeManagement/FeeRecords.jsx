@@ -9,6 +9,13 @@ const FeeRecords = () => {
   const [records, setRecords] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [pagination, setPagination] = useState({
+    count: 0,
+    next: null,
+    previous: null,
+    current_page: 1,
+    total_pages: 1,
+  });
   const [filters, setFilters] = useState({
     class: "",
     term: "",
@@ -31,29 +38,96 @@ const FeeRecords = () => {
         const response = await api.get(
           `/api/fees/fee-records?${params.toString()}`
         );
-        setRecords(response.data);
+
+        // Handle paginated response
+        if (response.data && response.data.results) {
+          setRecords(response.data.results);
+          setPagination({
+            count: response.data.count,
+            next: response.data.next,
+            previous: response.data.previous,
+            current_page: 1, // You can calculate this from the URL if needed
+            total_pages: Math.ceil(response.data.count / 25), // Assuming 25 per page
+          });
+        } else {
+          // Handle non-paginated response (fallback)
+          setRecords(Array.isArray(response.data) ? response.data : []);
+        }
       } catch (err) {
-        setError(err.message || "Failed to fetch fee records");
+        console.error("Error fetching fee records:", err);
+        setError(
+          err.response?.data?.detail ||
+            err.message ||
+            "Failed to fetch fee records"
+        );
       } finally {
         setLoading(false);
       }
     };
 
     fetchRecords();
-  }, [filters]);
+  }, [filters, api]);
 
   const handleFilterChange = (newFilters) => {
     setFilters(newFilters);
   };
 
-  if (loading) return <div className="loading-spinner">Loading...</div>;
-  if (error) return <div className="error-message">{error}</div>;
+  const loadMore = async (url) => {
+    if (!url) return;
+
+    try {
+      const response = await api.get(
+        url.replace("http://localhost:8000/api/", "/api/")
+      );
+      if (response.data && response.data.results) {
+        setRecords(response.data.results);
+        setPagination({
+          count: response.data.count,
+          next: response.data.next,
+          previous: response.data.previous,
+          current_page:
+            pagination.current_page + (url === pagination.next ? 1 : -1),
+          total_pages: Math.ceil(response.data.count / 25),
+        });
+      }
+    } catch (err) {
+      console.error("Error loading page:", err);
+      setError("Failed to load page");
+    }
+  };
+
+  if (loading)
+    return <div className="loading-spinner">Loading fee records...</div>;
+  if (error) return <div className="error-message">Error: {error}</div>;
 
   return (
     <div className="fee-records">
-      <h2>Fee Records</h2>
+      <h2>Fee Records ({pagination.count} total)</h2>
       <FeeRecordFilter filters={filters} onChange={handleFilterChange} />
       <FeeRecordsTable records={records} />
+
+      {/* Pagination Controls */}
+      {(pagination.previous || pagination.next) && (
+        <div className="pagination-controls">
+          <button
+            onClick={() => loadMore(pagination.previous)}
+            disabled={!pagination.previous}
+            className="pagination-btn"
+          >
+            Previous
+          </button>
+          <span className="pagination-info">
+            Page {pagination.current_page} of {pagination.total_pages}
+          </span>
+          <button
+            onClick={() => loadMore(pagination.next)}
+            disabled={!pagination.next}
+            className="pagination-btn"
+          >
+            Next
+          </button>
+        </div>
+      )}
     </div>
   );
 };

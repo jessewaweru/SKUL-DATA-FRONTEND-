@@ -7,6 +7,9 @@ const ParentTable = ({ parents, isLoading }) => {
 
   if (isLoading) return <div className="loading-spinner">Loading...</div>;
 
+  // Ensure parents is always an array
+  const safeParents = Array.isArray(parents) ? parents : [];
+
   return (
     <div className="parent-table-container">
       <table className="data-table">
@@ -22,7 +25,7 @@ const ParentTable = ({ parents, isLoading }) => {
           </tr>
         </thead>
         <tbody>
-          {parents?.map((parent) => (
+          {safeParents.map((parent) => (
             <tr key={parent.id}>
               <td>
                 {parent.user.first_name} {parent.user.last_name}
@@ -79,6 +82,13 @@ const ParentTable = ({ parents, isLoading }) => {
               </td>
             </tr>
           ))}
+          {safeParents.length === 0 && (
+            <tr>
+              <td colSpan="7" style={{ textAlign: "center" }}>
+                No parents found
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

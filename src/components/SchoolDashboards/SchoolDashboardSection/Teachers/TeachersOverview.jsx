@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react";
 import TeacherTable from "./TeacherTable";
-import { fetchSchoolTeachersDirect } from "../../../../services/teacherService";
+import {
+  fetchSchoolTeachersDirect,
+  fetchTeachers,
+} from "../../../../services/teacherService";
 import StatCard from "../../../common/StatCard/StatCard";
 import { FiUser, FiCalendar, FiClock } from "react-icons/fi";
-import useUser from "../../../../hooks/useUser"; // Import useUser hook
+import useUser from "../../../../hooks/useUser";
 
 const TeachersOverview = () => {
-  const { user } = useUser(); // Get user from context
+  const { user, schoolId } = useUser();
   const [teachers, setTeachers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -23,25 +26,53 @@ const TeachersOverview = () => {
         setLoading(true);
         setError(null);
 
+        console.log("Loading teachers with schoolId:", schoolId);
+
         // Check if user/school exists
-        if (!user || !user.school) {
-          throw new Error("User school information not available");
+        if (!schoolId) {
+          throw new Error(
+            "School ID not available. Please check your user profile."
+          );
         }
 
-        const teachers = await fetchSchoolTeachersDirect(user.school.id);
-        setTeachers(teachers);
+        // Try the direct API call to /api/users/teachers/ first
+        let teachersData = [];
+        try {
+          console.log("Attempting to fetch teachers from /api/users/teachers/");
+          teachersData = await fetchTeachers(schoolId);
+          console.log("Teachers data received:", teachersData);
+        } catch (directError) {
+          console.warn(
+            "Direct fetch failed, trying alternative method:",
+            directError
+          );
+
+          // Fallback to the alternative method if needed
+          try {
+            teachersData = await fetchSchoolTeachersDirect(schoolId);
+            console.log("Alternative fetch successful:", teachersData);
+          } catch (altError) {
+            console.error("Both fetch methods failed:", altError);
+            throw altError;
+          }
+        }
+
+        setTeachers(teachersData);
 
         // Calculate stats
         const currentYear = new Date().getFullYear();
         const statsData = {
-          total: teachers.length,
-          active: teachers.filter((t) => t.status === "ACTIVE").length,
-          onLeave: teachers.filter((t) => t.status === "ON_LEAVE").length,
-          newThisYear: teachers.filter((t) => {
+          total: teachersData.length,
+          active: teachersData.filter((t) => t.status === "ACTIVE").length,
+          onLeave: teachersData.filter((t) => t.status === "ON_LEAVE").length,
+          newThisYear: teachersData.filter((t) => {
+            if (!t.hire_date) return false;
             const hireYear = new Date(t.hire_date).getFullYear();
             return hireYear === currentYear;
           }).length,
         };
+
+        console.log("Calculated stats:", statsData);
         setStats(statsData);
       } catch (err) {
         console.error("Failed to load teachers:", err);
@@ -51,13 +82,18 @@ const TeachersOverview = () => {
       }
     };
 
-    if (user?.school?.id) {
+    // Only load if we have a school ID and it's not already loading
+    if (schoolId && !loading) {
       loadTeachers();
+    } else if (!schoolId && user) {
+      // If we have a user but no school ID, show a more specific error
+      setError("Unable to determine school. Please contact support.");
+      setLoading(false);
     }
-  }, [user]);
+  }, [schoolId]); // Only depend on schoolId, not the entire user object
 
   if (loading) return <div>Loading teachers (please wait)...</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (error) return <div className="error">Error: {error}</div>;
 
   return (
     <div className="teachers-overview">

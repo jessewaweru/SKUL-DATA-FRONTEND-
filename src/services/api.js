@@ -74,7 +74,51 @@ const api = axios.create({
   withCredentials: true,
 });
 
-// Enhanced request interceptor
+// // Enhanced request interceptor
+// api.interceptors.request.use(
+//   (config) => {
+//     const token = localStorage.getItem("accessToken");
+
+//     // Skip auth for token endpoints
+//     if (config.url.includes("/token/")) {
+//       return config;
+//     }
+
+//     // Redirect to login if no token (except for token endpoints)
+//     if (!token) {
+//       console.error("No token - redirecting to login");
+//       if (window.location.pathname !== "/login") {
+//         window.location.href = "/login";
+//       }
+//       return Promise.reject(new Error("No token available"));
+//     }
+
+//     // Add auth header if token exists
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+
+//     // Add /api/ prefix to all non-token endpoints
+//     if (!config.url.startsWith("/api/") && !config.url.includes("/token/")) {
+//       config.url = `/api${config.url.startsWith("/") ? "" : "/"}${config.url}`;
+//     }
+
+//     // Log request for debugging
+//     console.log(`Making request to ${config.baseURL}${config.url}`, {
+//       method: config.method,
+//       data: config.data,
+//       params: config.params,
+//     });
+
+//     return config;
+//   },
+//   (error) => {
+//     console.error("Request interceptor error:", error);
+//     return Promise.reject(error);
+//   }
+// );
+
+// services/api.js
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("accessToken");
@@ -84,36 +128,29 @@ api.interceptors.request.use(
       return config;
     }
 
-    // Redirect to login if no token (except for token endpoints)
-    if (!token) {
-      console.error("No token - redirecting to login");
-      if (window.location.pathname !== "/login") {
-        window.location.href = "/login";
-      }
-      return Promise.reject(new Error("No token available"));
+    // Ensure /api/ prefix is added correctly
+    if (
+      !config.url.startsWith("http") &&
+      !config.url.startsWith("/api/") &&
+      !config.url.includes("/token/")
+    ) {
+      config.url = `/api${config.url.startsWith("/") ? "" : "/"}${config.url}`;
     }
 
-    // Add auth header if token exists
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    // Add /api/ prefix to all non-token endpoints
-    if (!config.url.startsWith("/api/") && !config.url.includes("/token/")) {
-      config.url = `/api${config.url.startsWith("/") ? "" : "/"}${config.url}`;
-    }
-
-    // Log request for debugging
-    console.log(`Making request to ${config.baseURL}${config.url}`, {
+    console.log("Request config:", {
+      url: config.url,
       method: config.method,
-      data: config.data,
-      params: config.params,
+      headers: config.headers,
     });
 
     return config;
   },
   (error) => {
-    console.error("Request interceptor error:", error);
+    console.error("Request error:", error);
     return Promise.reject(error);
   }
 );

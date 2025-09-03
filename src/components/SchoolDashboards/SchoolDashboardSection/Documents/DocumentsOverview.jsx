@@ -42,10 +42,14 @@ const DocumentsPage = () => {
         if (value) params.append(key, value);
       });
 
-      const response = await api.get(`/documents/?${params.toString()}`);
-      setDocuments(response.data);
+      // Change this endpoint to fetch the actual documents
+      const response = await api.get(
+        `/api/documents/documents/?${params.toString()}`
+      );
+      setDocuments(response.data.results || response.data); // Handle both paginated and non-paginated responses
     } catch (err) {
       setError(err.response?.data?.message || "Failed to fetch documents");
+      console.error("Error fetching documents:", err);
     } finally {
       setIsLoading(false);
     }
@@ -53,8 +57,8 @@ const DocumentsPage = () => {
 
   const fetchCategories = async () => {
     try {
-      const response = await api.get("/documents/categories/");
-      setCategories(response.data);
+      const response = await api.get("/api/documents/categories/");
+      setCategories(response.data.results || response.data); // Handle both paginated and non-paginated responses
     } catch (err) {
       console.error("Failed to fetch categories", err);
     }
@@ -64,7 +68,7 @@ const DocumentsPage = () => {
     if (user?.user_type === "teacher") {
       try {
         const response = await api.get(`/classes/?teacher=${user.id}`);
-        setClasses(response.data);
+        setClasses(response.data.results || response.data);
       } catch (err) {
         console.error("Failed to fetch classes", err);
       }
@@ -73,7 +77,7 @@ const DocumentsPage = () => {
         const response = await api.get(
           `/classes/?school=${user.superuser_profile.school}`
         );
-        setClasses(response.data);
+        setClasses(response.data.results || response.data);
       } catch (err) {
         console.error("Failed to fetch classes", err);
       }

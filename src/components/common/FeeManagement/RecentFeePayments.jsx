@@ -15,11 +15,21 @@ const RecentFeePayments = () => {
           "/api/fees/fee-payments?limit=5&ordering=-payment_date"
         );
 
-        // Ensure we always set an array, even if response.data is null/undefined
-        setPayments(Array.isArray(response?.data) ? response.data : []);
+        // Handle paginated response structure
+        let paymentsData = [];
+        if (response?.data?.results) {
+          // Paginated response
+          paymentsData = response.data.results;
+        } else if (Array.isArray(response?.data)) {
+          // Direct array response
+          paymentsData = response.data;
+        }
+
+        setPayments(paymentsData);
       } catch (err) {
+        console.error("Error fetching payments:", err);
         setError(err.message || "Failed to fetch recent payments");
-        setPayments([]); // Reset to empty array on error
+        setPayments([]);
       } finally {
         setLoading(false);
       }
@@ -30,58 +40,116 @@ const RecentFeePayments = () => {
 
   const formatDate = (dateString) => {
     try {
-      return dateString ? new Date(dateString).toLocaleDateString() : "N/A";
+      if (!dateString) return "N/A";
+      return new Date(dateString).toLocaleDateString("en-KE", {
+        year: "numeric",
+        month: "short",
+        day: "numeric",
+      });
     } catch {
       return "N/A";
     }
   };
 
   const formatCurrency = (amount) => {
+    const numAmount = parseFloat(amount) || 0;
     return new Intl.NumberFormat("en-KE", {
       style: "currency",
       currency: "KES",
-    }).format(amount || 0);
+    }).format(numAmount);
   };
 
-  if (loading) return <div className="loading">Loading recent payments...</div>;
-  if (error) return <div className="error">{error}</div>;
+  const getPaymentMethodDisplay = (method) => {
+    const methodMap = {
+      mpesa: "M-PESA",
+      bank: "Bank Transfer",
+      cash: "Cash",
+      cheque: "Cheque",
+      other: "Other",
+    };
+    return methodMap[method?.toLowerCase()] || method || "N/A";
+  };
+
+  if (loading) {
+    return (
+      <div className="recent-payments">
+        <h3>Recent Payments</h3>
+        <div className="loading">Loading recent payments...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="recent-payments">
+        <h3>Recent Payments</h3>
+        <div className="error">Error: {error}</div>
+      </div>
+    );
+  }
 
   return (
     <div className="recent-payments">
-      <h3>Recent Payments</h3>
+      <div className="recent-payments-header">
+        <h3>Recent Payments</h3>
+        <span className="payment-count">({payments.length} payments)</span>
+      </div>
+
       {!payments || payments.length === 0 ? (
-        <p>No recent payments found</p>
+        <div className="no-payments">
+          <p>No recent payments found</p>
+        </div>
       ) : (
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Student</th>
-              <th>Amount</th>
-              <th>Method</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {payments.map((payment) => (
-              <tr key={payment.id}>
-                <td>{formatDate(payment?.payment_date)}</td>
-                <td>{payment?.fee_record?.student?.full_name || "N/A"}</td>
-                <td>{formatCurrency(payment?.amount)}</td>
-                <td>{payment?.payment_method || "N/A"}</td>
-                <td>
-                  <span
-                    className={`fee-status-badge ${
-                      payment?.is_confirmed ? "status-paid" : "status-pending"
-                    }`}
-                  >
-                    {payment?.is_confirmed ? "Confirmed" : "Pending"}
-                  </span>
-                </td>
+        <div className="payments-table-container">
+          <table className="payments-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Student</th>
+                <th>Amount</th>
+                <th>Method</th>
+                <th>Reference</th>
+                <th>Status</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {payments.map((payment, index) => (
+                <tr key={payment.id || index}>
+                  <td className="payment-date">
+                    {formatDate(payment?.payment_date)}
+                  </td>
+                  <td className="student-name">
+                    {payment?.fee_record?.student?.full_name ||
+                      payment?.fee_record?.student?.name ||
+                      "N/A"}
+                  </td>
+                  <td className="payment-amount">
+                    <strong>{formatCurrency(payment?.amount)}</strong>
+                  </td>
+                  <td className="payment-method">
+                    {getPaymentMethodDisplay(payment?.payment_method)}
+                  </td>
+                  <td className="transaction-ref">
+                    {payment?.transaction_reference ||
+                      payment?.receipt_number ||
+                      "N/A"}
+                  </td>
+                  <td className="payment-status">
+                    <span
+                      className={`status-badge ${
+                        payment?.is_confirmed
+                          ? "status-confirmed"
+                          : "status-pending"
+                      }`}
+                    >
+                      {payment?.is_confirmed ? "Confirmed" : "Pending"}
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </div>
   );

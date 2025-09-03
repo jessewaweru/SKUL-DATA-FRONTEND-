@@ -5,6 +5,7 @@ import {
   FiMail,
   FiLock,
   FiArrowLeft,
+  FiShield,
   FiSave,
   FiBook,
   FiUsers,

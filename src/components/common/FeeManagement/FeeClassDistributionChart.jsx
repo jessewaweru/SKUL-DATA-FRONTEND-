@@ -9,11 +9,37 @@ import {
 import "../../SchoolDashboards/SchoolDashboardSection/FeeManagement/feemanagement.css";
 
 const FeeClassDistributionChart = ({ data }) => {
-  // Transform data for the chart
-  const chartData = data.map((item) => ({
-    name: item.school_class.name,
-    value: item.total_expected,
-  }));
+  // Handle null/undefined data
+  if (!data || !Array.isArray(data) || data.length === 0) {
+    return (
+      <div className="fee-chart-wrapper">
+        <h3>Fee Distribution by Class</h3>
+        <div className="no-data">No fee data available for chart display</div>
+      </div>
+    );
+  }
+
+  // Group data by class name and aggregate amounts
+  const classData = {};
+  data.forEach((item) => {
+    const className = item?.school_class?.name || "Unknown Class";
+    const expectedAmount = parseFloat(item?.total_expected || 0);
+
+    if (classData[className]) {
+      classData[className] += expectedAmount;
+    } else {
+      classData[className] = expectedAmount;
+    }
+  });
+
+  // Transform aggregated data for the chart
+  const chartData = Object.entries(classData)
+    .map(([name, value]) => ({
+      name,
+      value,
+    }))
+    .filter((item) => item.value > 0) // Only show classes with fees
+    .sort((a, b) => b.value - a.value); // Sort by value descending
 
   const COLORS = [
     "#0088FE",
@@ -22,11 +48,63 @@ const FeeClassDistributionChart = ({ data }) => {
     "#FF8042",
     "#8884D8",
     "#82CA9D",
+    "#FFC658",
+    "#FF7C7C",
+    "#8DD1E1",
+    "#D084D0",
   ];
+
+  const formatCurrency = (value) => {
+    return new Intl.NumberFormat("en-KE", {
+      style: "currency",
+      currency: "KES",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(value);
+  };
+
+  const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+      const data = payload[0];
+      return (
+        <div className="custom-tooltip">
+          <p className="label">{data.name}</p>
+          <p className="value">Amount: {formatCurrency(data.value)}</p>
+          <p className="percentage">
+            (
+            {(
+              (data.value /
+                chartData.reduce((sum, item) => sum + item.value, 0)) *
+              100
+            ).toFixed(1)}
+            %)
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
+  if (chartData.length === 0) {
+    return (
+      <div className="fee-chart-wrapper">
+        <h3>Fee Distribution by Class</h3>
+        <div className="no-data">No fee data available for classes</div>
+      </div>
+    );
+  }
 
   return (
     <div className="fee-chart-wrapper">
       <h3>Fee Distribution by Class</h3>
+      <div className="chart-stats">
+        <span className="total-classes">{chartData.length} Classes</span>
+        <span className="total-amount">
+          Total:{" "}
+          {formatCurrency(chartData.reduce((sum, item) => sum + item.value, 0))}
+        </span>
+      </div>
+
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -38,7 +116,7 @@ const FeeClassDistributionChart = ({ data }) => {
             fill="#8884d8"
             dataKey="value"
             label={({ name, percent }) =>
-              `${name}: ${(percent * 100).toFixed(0)}%`
+              percent > 5 ? `${name}: ${(percent * 100).toFixed(0)}%` : ""
             }
           >
             {chartData.map((entry, index) => (
@@ -48,10 +126,15 @@ const FeeClassDistributionChart = ({ data }) => {
               />
             ))}
           </Pie>
-          <Tooltip
-            formatter={(value) => [`KES ${value.toLocaleString()}`, "Amount"]}
+          <Tooltip content={<CustomTooltip />} />
+          <Legend
+            wrapperStyle={{ fontSize: "12px" }}
+            formatter={(value, entry) => (
+              <span style={{ color: entry.color }}>
+                {value} ({formatCurrency(entry.payload.value)})
+              </span>
+            )}
           />
-          <Legend />
         </PieChart>
       </ResponsiveContainer>
     </div>

@@ -1,6 +1,5 @@
-// components/SchoolDashboard/Teachers/TeacherProfileDetail.jsx
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
   FiArrowLeft,
   FiEdit,
@@ -14,11 +13,13 @@ import {
 import { fetchTeacherById } from "../../../../services/teacherService";
 import StatusBadge from "../../../common/StatusBadge";
 import TabNavigation from "../../../common/TabNavigation";
+import TeacherDocuments from "./TeacherDocuments";
 import "../Teachers/teachers.css";
 
 const TeacherProfileDetail = () => {
-  const { id } = useParams();
+  const { id, tab } = useParams(); // Get both id and tab from URL
   const navigate = useNavigate();
+  const location = useLocation();
   const [teacher, setTeacher] = useState(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("profile");
@@ -32,29 +33,83 @@ const TeacherProfileDetail = () => {
     { id: "activity", label: "Activity" },
   ];
 
+  // Set active tab based on URL parameter
+  useEffect(() => {
+    if (tab && tabs.find((t) => t.id === tab)) {
+      setActiveTab(tab);
+    } else {
+      setActiveTab("profile");
+    }
+  }, [tab]);
+
   useEffect(() => {
     const loadTeacher = async () => {
+      console.log("=== TeacherProfileDetail Debug ===");
+      console.log("Teacher ID from params:", id);
+      console.log("Tab from params:", tab);
+      console.log("Current location:", location.pathname);
+
+      if (!id) {
+        console.error("No teacher ID in URL params");
+        navigate("/dashboard/teachers/profiles", { replace: true });
+        return;
+      }
+
       try {
+        setLoading(true);
+        console.log("Loading teacher with ID:", id);
         const data = await fetchTeacherById(id);
+        console.log("Teacher data loaded:", data);
         setTeacher(data);
       } catch (error) {
         console.error("Failed to fetch teacher:", error);
+        alert(`Failed to load teacher: ${error.message}`);
         navigate("/dashboard/teachers/profiles", { replace: true });
       } finally {
         setLoading(false);
       }
     };
 
-    loadTeacher();
+    if (id) {
+      loadTeacher();
+    } else {
+      setLoading(false);
+    }
   }, [id, navigate]);
 
+  // Handle tab changes with URL updates
+  const handleTabChange = (newTab) => {
+    console.log("Changing tab to:", newTab);
+    setActiveTab(newTab);
+
+    // Update URL without navigation
+    const newPath = `/dashboard/teachers/profiles/${id}/${newTab}`;
+    window.history.pushState(null, "", newPath);
+  };
+
   if (loading) {
-    return <div className="loading-spinner">Loading teacher profile...</div>;
+    return (
+      <div className="loading-spinner">
+        <p>Loading teacher profile (ID: {id})...</p>
+      </div>
+    );
   }
 
   if (!teacher) {
-    return <div>Teacher not found</div>;
+    return (
+      <div className="error-state">
+        <p>Teacher not found (ID: {id})</p>
+        <button onClick={() => navigate("/dashboard/teachers/profiles")}>
+          Back to Teachers
+        </button>
+      </div>
+    );
   }
+
+  console.log("=== Render TeacherProfileDetail ===");
+  console.log("Teacher ID:", id);
+  console.log("Active tab:", activeTab);
+  console.log("Teacher data:", teacher);
 
   return (
     <div className="teacher-profile-detail">
@@ -75,8 +130,8 @@ const TeacherProfileDetail = () => {
       <div className="profile-overview">
         <div className="teacher-avatar-section">
           <div className="teacher-avatar">
-            {teacher.first_name.charAt(0)}
-            {teacher.last_name.charAt(0)}
+            {teacher.first_name?.charAt(0) || "T"}
+            {teacher.last_name?.charAt(0) || "T"}
           </div>
           <div className="status-badge">
             <StatusBadge status={teacher.status} />
@@ -98,7 +153,10 @@ const TeacherProfileDetail = () => {
             <div className="info-item">
               <FiCalendar className="info-icon" />
               <span>
-                Joined {new Date(teacher.hire_date).toLocaleDateString()}
+                Joined{" "}
+                {teacher.hire_date
+                  ? new Date(teacher.hire_date).toLocaleDateString()
+                  : "Unknown"}
               </span>
             </div>
             <div className="info-item">
@@ -117,68 +175,204 @@ const TeacherProfileDetail = () => {
         </div>
       </div>
 
-      <TabNavigation
-        tabs={tabs}
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        basePath={`/dashboard/teachers/profiles/${id}`}
-      />
+      {/* Custom tab navigation without automatic routing */}
+      <div className="tab-navigation">
+        {tabs.map((tabItem) => (
+          <button
+            key={tabItem.id}
+            className={`tab ${activeTab === tabItem.id ? "active" : ""}`}
+            onClick={() => handleTabChange(tabItem.id)}
+          >
+            {tabItem.label}
+          </button>
+        ))}
+      </div>
 
       <div className="tab-content">
         {activeTab === "profile" && (
           <div className="profile-content">
-            <div className="bio-section">
-              <h3>Bio</h3>
-              <p>{teacher.bio || "No bio provided"}</p>
-            </div>
-            <div className="details-section">
-              <div className="detail-card">
-                <h4>Specialization</h4>
-                <p>{teacher.specialization || "Not specified"}</p>
+            <div className="profile-details-grid">
+              <div className="detail-section">
+                <h3>Personal Information</h3>
+                <div className="detail-card">
+                  <div className="detail-item">
+                    <span className="detail-label">Full Name:</span>
+                    <span className="detail-value">
+                      {teacher.first_name} {teacher.last_name}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Email:</span>
+                    <span className="detail-value">{teacher.email}</span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Phone:</span>
+                    <span className="detail-value">
+                      {teacher.phone_number || "Not provided"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Status:</span>
+                    <span className="detail-value">
+                      <StatusBadge status={teacher.status} />
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="detail-card">
-                <h4>Years of Experience</h4>
-                <p>{teacher.years_of_experience || "0"}</p>
+
+              <div className="detail-section">
+                <h3>Professional Information</h3>
+                <div className="detail-card">
+                  <div className="detail-item">
+                    <span className="detail-label">Qualification:</span>
+                    <span className="detail-value">
+                      {teacher.qualification || "Not specified"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Specialization:</span>
+                    <span className="detail-value">
+                      {teacher.specialization || "Not specified"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Years of Experience:</span>
+                    <span className="detail-value">
+                      {teacher.years_of_experience || "0"} years
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Hire Date:</span>
+                    <span className="detail-value">
+                      {teacher.hire_date
+                        ? new Date(teacher.hire_date).toLocaleDateString()
+                        : "Not available"}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="detail-card">
-                <h4>Office Location</h4>
-                <p>{teacher.office_location || "Not specified"}</p>
+
+              <div className="detail-section">
+                <h3>Office Information</h3>
+                <div className="detail-card">
+                  <div className="detail-item">
+                    <span className="detail-label">Office Location:</span>
+                    <span className="detail-value">
+                      {teacher.office_location || "Not specified"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Office Hours:</span>
+                    <span className="detail-value">
+                      {teacher.office_hours || "Not specified"}
+                    </span>
+                  </div>
+                </div>
               </div>
-              <div className="detail-card">
-                <h4>Office Hours</h4>
-                <p>{teacher.office_hours || "Not specified"}</p>
+
+              <div className="detail-section">
+                <h3>Roles & Responsibilities</h3>
+                <div className="detail-card">
+                  <div className="detail-item">
+                    <span className="detail-label">Class Teacher:</span>
+                    <span className="detail-value">
+                      {teacher.is_class_teacher ? "Yes" : "No"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Department Head:</span>
+                    <span className="detail-value">
+                      {teacher.is_department_head ? "Yes" : "No"}
+                    </span>
+                  </div>
+                  <div className="detail-item">
+                    <span className="detail-label">Administrator:</span>
+                    <span className="detail-value">
+                      {teacher.is_administrator ? "Yes" : "No"}
+                    </span>
+                  </div>
+                </div>
               </div>
+
+              {teacher.bio && (
+                <div className="detail-section full-width">
+                  <h3>Bio</h3>
+                  <div className="detail-card">
+                    <p className="bio-text">{teacher.bio}</p>
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         )}
+
         {activeTab === "classes" && (
           <div className="classes-content">
-            {/* Class assignments content */}
-            <p>Class assignments will be displayed here</p>
+            <h3>Assigned Classes</h3>
+            {teacher.assigned_classes_ids?.length > 0 ? (
+              <div className="classes-grid">
+                {teacher.assigned_classes_ids.map((classId, index) => (
+                  <div key={classId} className="class-card">
+                    <h4>Class {classId}</h4>
+                    <p>Class details will be displayed here</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <p>No classes assigned to this teacher</p>
+              </div>
+            )}
           </div>
         )}
+
         {activeTab === "subjects" && (
           <div className="subjects-content">
-            {/* Subjects taught content */}
-            <p>Subjects taught will be displayed here</p>
+            <h3>Subjects Taught</h3>
+            {teacher.subjects_taught?.length > 0 ? (
+              <div className="subjects-grid">
+                {teacher.subjects_taught.map((subject, index) => (
+                  <div key={index} className="subject-card">
+                    <h4>{subject.name || subject}</h4>
+                    <p>Subject details will be displayed here</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <p>No subjects assigned to this teacher</p>
+              </div>
+            )}
           </div>
         )}
+
         {activeTab === "reports" && (
           <div className="reports-content">
-            {/* Reports content */}
-            <p>Teacher reports will be displayed here</p>
+            <h3>Teacher Reports</h3>
+            <div className="empty-state">
+              <p>Teacher reports will be displayed here</p>
+            </div>
           </div>
         )}
+
         {activeTab === "documents" && (
           <div className="documents-content">
-            {/* Documents content */}
-            <p>Teacher documents will be displayed here</p>
+            <h3>
+              Documents for {teacher.first_name} {teacher.last_name}
+            </h3>
+            <p className="debug-info">
+              Passing Teacher ID: {id} (Type: {typeof id})
+            </p>
+            <TeacherDocuments teacherId={id} />
           </div>
         )}
+
         {activeTab === "activity" && (
           <div className="activity-content">
-            {/* Activity logs content */}
-            <p>Teacher activity logs will be displayed here</p>
+            <h3>Activity Logs</h3>
+            <div className="empty-state">
+              <p>Teacher activity logs will be displayed here</p>
+            </div>
           </div>
         )}
       </div>

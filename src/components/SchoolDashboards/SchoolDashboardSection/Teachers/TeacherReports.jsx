@@ -1,4 +1,3 @@
-// components/SchoolDashboard/Teachers/TeacherReports.jsx
 import { useState } from "react";
 import { FiFileText, FiDownload, FiEye, FiFilter } from "react-icons/fi";
 import TabNavigation from "../../../common/TabNavigation";

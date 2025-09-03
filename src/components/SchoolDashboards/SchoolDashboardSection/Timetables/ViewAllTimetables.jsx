@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTimetableApi } from "../../../../hooks/useTimetableApi";
 import useUser from "../../../../hooks/useUser";
 import TimetableCard from "../../../common/SchoolTimetable/TimetableCard";
@@ -16,58 +16,134 @@ const ViewAllTimetables = () => {
     isActive: false,
   });
 
+  // Memoize the fetch function to prevent unnecessary re-renders
+  const fetchTimetables = useCallback(async () => {
+    if (!user?.school?.id) {
+      console.log("No user school ID found:", user);
+      setTimetables([]);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      console.log("Fetching timetables for school ID:", user.school.id);
+      const response = await api.getTimetables(user.school.id);
+
+      console.log("Raw API response:", response);
+
+      // Handle paginated response - the actual data is in response.data.results
+      let timetableData = [];
+      if (response?.data) {
+        // Check if it's a paginated response (has results field)
+        if (response.data.results && Array.isArray(response.data.results)) {
+          timetableData = response.data.results;
+          console.log(
+            "Found paginated results:",
+            timetableData.length,
+            "timetables"
+          );
+        }
+        // Check if it's a direct array
+        else if (Array.isArray(response.data)) {
+          timetableData = response.data;
+          console.log(
+            "Found direct array:",
+            timetableData.length,
+            "timetables"
+          );
+        }
+        // Single object response
+        else if (response.data && typeof response.data === "object") {
+          timetableData = [response.data];
+          console.log("Found single object, wrapped in array");
+        }
+      }
+
+      console.log("Processed timetable data:", timetableData);
+      setTimetables(timetableData);
+    } catch (err) {
+      console.error("Error fetching timetables:", err);
+      setError(
+        "Failed to load timetables: " + (err.message || "Unknown error")
+      );
+      setTimetables([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [user?.school?.id, api]);
+
   useEffect(() => {
-    const fetchTimetables = async () => {
-      // Add this check before making the API call
-      if (!user?.school?.id) {
-        return;
-      }
-
-      try {
-        setLoading(true);
-        const response = await api.getTimetables(user.school.id);
-        setTimetables(response.data);
-      } catch (err) {
-        setError("Failed to load timetables");
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchTimetables();
-  }, [user?.school?.id, api]); // Use optional chaining in dependency array
+  }, [fetchTimetables]);
 
-  const filteredTimetables = timetables.filter((timetable) => {
-    return (
-      (filter.academicYear === "" ||
-        timetable.academic_year.includes(filter.academicYear)) &&
-      (filter.term === "" || timetable.term.toString() === filter.term) &&
-      (!filter.isActive || timetable.is_active)
-    );
-  });
+  // Safe filtering with array check and optional chaining
+  const filteredTimetables = Array.isArray(timetables)
+    ? timetables.filter((timetable) => {
+        const matchesYear =
+          filter.academicYear === "" ||
+          timetable?.academic_year?.includes(filter.academicYear);
+        const matchesTerm =
+          filter.term === "" || timetable?.term?.toString() === filter.term;
+        const matchesActive = !filter.isActive || timetable?.is_active === true;
+
+        return matchesYear && matchesTerm && matchesActive;
+      })
+    : [];
 
   const handleActivate = async (timetableId) => {
     try {
       await api.activateTimetable(timetableId);
-      setTimetables(
-        timetables.map((t) => ({
+      // Update the local state to reflect the changes
+      setTimetables((prevTimetables) =>
+        prevTimetables.map((t) => ({
           ...t,
           is_active: t.id === timetableId ? true : false,
         }))
       );
     } catch (err) {
       console.error("Failed to activate timetable:", err);
+      setError(
+        "Failed to activate timetable: " + (err.message || "Unknown error")
+      );
     }
   };
 
-  // Show loading while user data is loading
-  if (!user || loading)
+  // Debug logging
+  console.log("Current state:", {
+    user: user?.email,
+    schoolId: user?.school?.id,
+    timetablesCount: timetables.length,
+    filteredCount: filteredTimetables.length,
+    loading,
+    error,
+  });
+
+  // Show loading while user data is loading or timetables are loading
+  if (!user || loading) {
     return <div className="loading">Loading timetables...</div>;
-  if (error) return <div className="error">{error}</div>;
+  }
+
+  // Show error if there's an error
+  if (error) {
+    return (
+      <div className="error">
+        <p>{error}</p>
+        <button onClick={fetchTimetables}>Retry</button>
+      </div>
+    );
+  }
 
   return (
     <div className="view-all-timetables">
+      <div className="header">
+        <h2>All Timetables</h2>
+        <button onClick={fetchTimetables} disabled={loading}>
+          {loading ? "Loading..." : "Refresh"}
+        </button>
+      </div>
       <div className="filters">
         <div className="filter-group">
           <label>Academic Year:</label>
@@ -105,10 +181,19 @@ const ViewAllTimetables = () => {
           </label>
         </div>
       </div>
-
+      <div className="timetables-info">
+        <p>
+          Showing {filteredTimetables.length} of {timetables.length} timetables
+          {user?.school?.id && ` for School ID: ${user.school.id}`}
+        </p>
+      </div>
       <div className="timetables-grid">
         {filteredTimetables.length === 0 ? (
-          <div className="no-results">No timetables found</div>
+          <div className="no-results">
+            {timetables.length === 0
+              ? "No timetables found for this school. Create some timetables to get started."
+              : "No timetables match the current filters."}
+          </div>
         ) : (
           filteredTimetables.map((timetable) => (
             <TimetableCard
@@ -119,6 +204,32 @@ const ViewAllTimetables = () => {
           ))
         )}
       </div>
+      {/* Debug section - remove in production */}
+      {/* {import.meta.env.MODE === "development" && (
+        <div
+          className="debug-info"
+          style={{
+            marginTop: "20px",
+            padding: "10px",
+            backgroundColor: "#f5f5f5",
+            fontSize: "12px",
+          }}
+        >
+          <h4>Debug Information:</h4>
+          <pre>
+            {JSON.stringify(
+              {
+                userSchoolId: user?.school?.id,
+                timetablesCount: timetables.length,
+                firstTimetable: timetables[0] || "None",
+                filteredCount: filteredTimetables.length,
+              },
+              null,
+              2
+            )}
+          </pre>
+        </div> */}
+      )}
     </div>
   );
 };

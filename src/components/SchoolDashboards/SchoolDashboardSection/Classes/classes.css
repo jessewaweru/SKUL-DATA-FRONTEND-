@@ -149,6 +149,31 @@
   font-size: 0.9rem;
 }
 
+/* Add to your existing classes.css */
+.class-card-container {
+  position: relative;
+}
+
+.analytics-link {
+  display: block;
+  padding: 8px 12px;
+  background-color: #8e4d91;
+  color: white;
+  text-align: center;
+  border-radius: 0 0 8px 8px;
+  text-decoration: none;
+  transition: background-color 0.2s;
+}
+
+.analytics-link:hover {
+  background-color: #5a1b5d;
+}
+
+.analytics-link svg {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
 /* Stream management */
 .streams-management {
   display: flex;
@@ -187,6 +212,10 @@
   gap: 0.5rem;
 }
 
+.stream-info {
+  flex: 1;
+}
+
 .stream-info h3 {
   margin: 0;
   font-size: 1.1rem;
@@ -198,8 +227,15 @@
   color: #b0b0b0;
 }
 
+.stream-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
 .edit-btn {
-  align-self: flex-end;
+  /* align-self: flex-end; */
   background-color: transparent;
   border: 1px solid var(--border-color);
   color: var(--text-color);
@@ -211,6 +247,21 @@
 
 .edit-btn:hover {
   background-color: var(--hover-color);
+}
+
+.edit-btn {
+  background-color: rgba(74, 108, 247, 0.1);
+  color: #4a6cf7;
+}
+
+.delete-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8rem;
 }
 
 /* Class Details */
@@ -641,19 +692,19 @@
   cursor: pointer;
 }
 
-.documents-table {
+.class-documents-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-.documents-table th,
-.documents-table td {
+.class-documents-table th,
+.class-documents-table td {
   padding: 0.75rem;
   text-align: left;
   border-bottom: 1px solid var(--border-color);
 }
 
-.documents-table th {
+.class-documents-table th {
   color: var(--accent-purple-light);
   font-weight: 500;
 }
@@ -747,7 +798,7 @@
   margin-bottom: 2rem;
 }
 
-.summary-card {
+.classes-summary-card {
   background-color: var(--card-background);
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -755,7 +806,7 @@
   text-align: center;
 }
 
-.summary-value {
+.classes-summary-value {
   font-size: 2rem;
   font-weight: 600;
   color: var(--highlight-text);
@@ -1071,16 +1122,6 @@
   border-radius: 4px;
   border: none;
   cursor: pointer;
-}
-
-.edit-btn {
-  background-color: rgba(74, 108, 247, 0.1);
-  color: #4a6cf7;
-}
-
-.delete-btn {
-  background-color: rgba(220, 38, 38, 0.1);
-  color: #dc2626;
 }
 
 .status-btn {

@@ -33,14 +33,19 @@ const ReportAnalytics = () => {
     try {
       const params = new URLSearchParams();
       if (filters.report_type)
-        params.append("report_type", filters.report_type);
-      if (filters.date_from) params.append("date_from", filters.date_from);
-      if (filters.date_to) params.append("date_to", filters.date_to);
+        params.append("report_type__template_type", filters.report_type);
+      if (filters.date_from)
+        params.append("generated_at__gte", filters.date_from);
+      if (filters.date_to) params.append("generated_at__lte", filters.date_to);
 
       const response = await api.get(
-        `/api/reports/analytics/?${params.toString()}`
+        `/api/reports/generated/?${params.toString()}`
       );
-      setAnalyticsData(response.data);
+      // Handle both array response and paginated response
+      const data = Array.isArray(response.data)
+        ? response.data
+        : response.data.results || response.data.data || [];
+      setAnalyticsData(data);
     } catch (error) {
       console.error("Error fetching analytics:", error);
     } finally {
@@ -53,9 +58,12 @@ const ReportAnalytics = () => {
   };
 
   const prepareChartData = () => {
+    if (!Array.isArray(analyticsData)) return [];
+    if (analyticsData.length === 0) return [];
+
     // Group by report type
     const byType = analyticsData.reduce((acc, report) => {
-      const type = report.report_type.template_type;
+      const type = report.report_type?.template_type || "Unknown";
       if (!acc[type]) acc[type] = 0;
       acc[type]++;
       return acc;
@@ -68,8 +76,13 @@ const ReportAnalytics = () => {
   };
 
   const prepareUsageData = () => {
+    if (!Array.isArray(analyticsData)) return [];
+    if (analyticsData.length === 0) return [];
+
     // Group by month
     const byMonth = analyticsData.reduce((acc, report) => {
+      if (!report.generated_at) return acc;
+
       const date = new Date(report.generated_at);
       const month = `${date.getFullYear()}-${String(
         date.getMonth() + 1
@@ -105,8 +118,8 @@ const ReportAnalytics = () => {
               <option value="">All Types</option>
               <option value="ACADEMIC">Academic</option>
               <option value="ATTENDANCE">Attendance</option>
-              <option value="PAYROLL">Payroll</option>
-              <option value="ENROLLMENT">Enrollment</option>
+              <option value="BEHAVIOR">Behavior</option>
+              <option value="FINANCE">Finance</option>
             </select>
           </div>
 
@@ -141,13 +154,21 @@ const ReportAnalytics = () => {
           <div className="analytics-grid">
             <div className="analytics-card">
               <h3>Total Reports Generated</h3>
-              <p className="stat-value">{analyticsData.length}</p>
+              <p className="stat-value">
+                {Array.isArray(analyticsData) ? analyticsData.length : 0}
+              </p>
             </div>
 
             <div className="analytics-card">
               <h3>Most Active User</h3>
               <p className="stat-value">
                 {(() => {
+                  if (
+                    !Array.isArray(analyticsData) ||
+                    analyticsData.length === 0
+                  )
+                    return "No data";
+
                   const userCounts = analyticsData.reduce((acc, report) => {
                     const user = report.generated_by?.username || "System";
                     if (!acc[user]) acc[user] = 0;
@@ -155,7 +176,6 @@ const ReportAnalytics = () => {
                     return acc;
                   }, {});
 
-                  // Find the user with the highest count
                   const mostActive = Object.entries(userCounts).reduce(
                     (max, [user, count]) =>
                       count > max.count ? { user, count } : max,
@@ -170,33 +190,45 @@ const ReportAnalytics = () => {
             </div>
           </div>
 
-          <div className="chart-container">
-            <h3>Reports by Type</h3>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={prepareChartData()}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="count" fill="#3498db" name="Number of Reports" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+          {Array.isArray(analyticsData) && analyticsData.length > 0 && (
+            <>
+              <div className="chart-container">
+                <h3>Reports by Type</h3>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={prepareChartData()}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar
+                      dataKey="count"
+                      fill="#3498db"
+                      name="Number of Reports"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
 
-          <div className="chart-container">
-            <h3>Report Generation Over Time</h3>
-            <ResponsiveContainer width="100%" height={400}>
-              <BarChart data={prepareUsageData()}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis />
-                <Tooltip />
-                <Legend />
-                <Bar dataKey="count" fill="#8e44ad" name="Reports per Month" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
+              <div className="chart-container">
+                <h3>Report Generation Over Time</h3>
+                <ResponsiveContainer width="100%" height={400}>
+                  <BarChart data={prepareUsageData()}>
+                    <CartesianGrid strokeDasharray="3 3" />
+                    <XAxis dataKey="name" />
+                    <YAxis />
+                    <Tooltip />
+                    <Legend />
+                    <Bar
+                      dataKey="count"
+                      fill="#8e44ad"
+                      name="Reports per Month"
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </>
+          )}
         </>
       )}
     </div>

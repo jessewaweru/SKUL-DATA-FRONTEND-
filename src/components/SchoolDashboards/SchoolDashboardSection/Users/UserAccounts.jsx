@@ -1,22 +1,22 @@
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "../Users/users.css";
-import { useEffect, useState } from "react";
+import { useApi } from "../../../../hooks/useApi";
 import {
   FiUsers,
-  FiSearch,
-  FiFilter,
   FiPlus,
-  FiUser,
-  FiMail,
   FiEdit2,
-  FiEyeOff,
-  FiEye,
-  FiRefreshCw,
   FiTrash2,
   FiShield,
+  FiEye,
+  FiEyeOff,
+  FiMail,
+  FiUser,
+  FiSearch,
 } from "react-icons/fi";
 
 const UserAccounts = () => {
+  const api = useApi();
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,135 +28,184 @@ const UserAccounts = () => {
   const [filters, setFilters] = useState({
     role: "",
     status: "",
-    school: "",
     isAdministrator: "",
   });
 
-  const navigate = useNavigate();
+  // Fetch users from API - FIXED TO USE CORRECT ENDPOINT
+  const fetchUsers = async () => {
+    try {
+      setLoading(true);
+      const response = await api.get("/api/users/"); // Changed from /api/users/me/
+      console.log("Raw API response:", response.data);
 
+      // Ensure we always set an array, even if response.data is not one
+      const userData = Array.isArray(response.data) ? response.data : [];
+
+      // Transform backend data to match frontend expectations
+      const transformedUsers = userData.map((user) => ({
+        id: user.id,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        email: user.email,
+        user_type: user.user_type.toUpperCase(), // Convert to uppercase to match frontend expectations
+        is_active: user.is_active,
+        is_administrator: user.is_administrator || false,
+        last_login: user.last_login || null,
+        username: user.username,
+        user_tag: user.user_tag,
+        is_staff: user.is_staff || false,
+        role: user.role,
+        // Add computed properties for compatibility
+        name: `${user.first_name} ${user.last_name}`,
+        status: user.is_active ? "Active" : "Inactive",
+        isAdministrator:
+          user.is_administrator || user.user_type === "administrator",
+      }));
+
+      console.log("Transformed users:", transformedUsers);
+      setUsers(transformedUsers);
+      setFilteredUsers(transformedUsers);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+      // Set empty arrays on error
+      setUsers([]);
+      setFilteredUsers([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Load users on component mount
   useEffect(() => {
-    // Mock data with administrator examples
-    const mockUsers = [
-      {
-        id: 1,
-        name: "John Doe",
-        email: "john@peponi.school",
-        role: "Teacher",
-        isAdministrator: true,
-        status: "Active",
-        lastLogin: "2023-06-15T10:30:00",
-        school: "Peponi School",
-      },
-      {
-        id: 2,
-        name: "Mary Smith",
-        email: "mary.smith@peponi.school",
-        role: "Parent",
-        isAdministrator: false,
-        status: "Active",
-        lastLogin: "2023-06-18T14:15:00",
-        school: "Peponi School",
-      },
-      {
-        id: 3,
-        name: "David Johnson",
-        email: "d.johnson@peponi.school",
-        role: "Administrator",
-        isAdministrator: true,
-        status: "Active",
-        lastLogin: "2023-06-20T09:10:00",
-        school: "Peponi School",
-      },
-      {
-        id: 4,
-        name: "Sarah Williams",
-        email: "sarahw@peponi.school",
-        role: "School Owner",
-        isAdministrator: true,
-        status: "Active",
-        lastLogin: "2023-06-20T09:10:00",
-        school: "Peponi School",
-      },
-    ];
-    setUsers(mockUsers);
-    setFilteredUsers(mockUsers);
-    setLoading(false);
+    fetchUsers();
   }, []);
 
+  // FIXED filtering logic with proper guards
   useEffect(() => {
-    let result = users;
+    console.log("Filtering users. Total users:", users.length);
+
+    // Ensure users is always treated as an array
+    let result = Array.isArray(users) ? [...users] : [];
+
+    // Apply search filter
     if (searchTerm) {
       result = result.filter(
         (user) =>
-          user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          user.email.toLowerCase().includes(searchTerm.toLowerCase())
+          `${user.first_name || ""} ${user.last_name || ""}`
+            .toLowerCase()
+            .includes(searchTerm.toLowerCase()) ||
+          (user.email || "").toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
+
     // Apply role filter
     if (filters.role) {
-      result = result.filter((user) => user.role === filters.role);
+      result = result.filter(
+        (user) => getUserRoleDisplay(user) === filters.role
+      );
     }
 
     // Apply status filter
     if (filters.status) {
-      result = result.filter((user) => user.status === filters.status);
+      const isActiveFilter = filters.status === "Active";
+      result = result.filter((user) => user.is_active === isActiveFilter);
     }
 
     // Apply administrator filter
     if (filters.isAdministrator !== "") {
-      result = result.filter((user) =>
-        filters.isAdministrator === "true"
-          ? user.isAdministrator
-          : !user.isAdministrator
+      const isAdminFilter = filters.isAdministrator === "true";
+      result = result.filter(
+        (user) =>
+          (user.is_administrator || user.user_type === "ADMINISTRATOR") ===
+          isAdminFilter
       );
     }
 
+    console.log("Filtered result:", result);
     setFilteredUsers(result);
   }, [users, searchTerm, filters]);
 
+  // Handle user status toggle - FIXED API endpoint
+  const handleToggleStatus = async (userId) => {
+    try {
+      const user = users.find((u) => u.id === userId);
+      const newStatus = !user.is_active;
+
+      await api.patch(`/api/users/${userId}/`, { is_active: newStatus });
+
+      setUsers((prev) =>
+        prev.map((u) =>
+          u.id === userId
+            ? {
+                ...u,
+                is_active: newStatus,
+                status: newStatus ? "Active" : "Inactive",
+              }
+            : u
+        )
+      );
+    } catch (error) {
+      console.error("Error updating user status:", error);
+    }
+  };
+
+  // Handle user deletion - FIXED API endpoint
+  const handleDeleteUser = async () => {
+    try {
+      await api.delete(`/api/users/${selectedUser.id}/`);
+      setUsers((prev) => prev.filter((u) => u.id !== selectedUser.id));
+      setShowDeleteModal(false);
+    } catch (error) {
+      console.error("Error deleting user:", error);
+    }
+  };
+
+  // Handle admin status toggle - FIXED API endpoints
+  const handleToggleAdministrator = async () => {
+    try {
+      const user = selectedUser;
+      const isAdmin =
+        user.is_administrator || user.user_type === "ADMINISTRATOR";
+
+      if (isAdmin) {
+        await api.post(`/api/users/${user.id}/remove-administrator/`);
+      } else {
+        await api.post(`/api/users/${user.id}/make-administrator/`);
+      }
+
+      // Refresh user list
+      await fetchUsers();
+      setShowAdminModal(false);
+    } catch (error) {
+      console.error("Error updating admin status:", error);
+    }
+  };
+
+  // Handle user creation options
   const handleCreateUser = (type) => {
     if (type === "direct") {
       navigate("/dashboard/users/create");
     } else {
-      console.log("Generate invite link");
+      // Generate invite link logic
+      console.log("Generate invite link functionality would go here");
+      // In a real implementation, you might call an API endpoint to generate an invite
     }
   };
 
-  const handleEditUser = (userId) => {
-    navigate(`/dashboard/users/edit/${userId}`);
-  };
-
-  const handleToggleStatus = (userId) => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === userId
-          ? {
-              ...user,
-              status: user.status === "Active" ? "Inactive" : "Active",
-            }
-          : user
-      )
-    );
-  };
-
-  const handleDeleteUser = () => {
-    setUsers((prev) => prev.filter((user) => user.id !== selectedUser.id));
-    setShowDeleteModal(false);
-  };
-
-  const handleResetPassword = (userId) => {
-    console.log("Reset password for user:", userId);
-  };
-
-  const handleToggleAdministrator = () => {
-    setUsers((prev) =>
-      prev.map((user) =>
-        user.id === selectedUser.id
-          ? { ...user, isAdministrator: !user.isAdministrator }
-          : user
-      )
-    );
-    setShowAdminModal(false);
+  // FIXED Helper function to display user roles nicely
+  const getUserRoleDisplay = (user) => {
+    switch (user.user_type) {
+      case "SCHOOL_ADMIN":
+        return "School Admin";
+      case "ADMINISTRATOR":
+        return "Administrator";
+      case "TEACHER":
+        return "Teacher";
+      case "PARENT":
+        return "Parent";
+      default:
+        return "Other";
+    }
   };
 
   return (
@@ -186,10 +235,11 @@ const UserAccounts = () => {
               onChange={(e) => setFilters({ ...filters, role: e.target.value })}
             >
               <option value="">All Roles</option>
-              <option value="School Owner">School Owner</option>
+              <option value="School Admin">School Admin</option>
               <option value="Administrator">Administrator</option>
               <option value="Teacher">Teacher</option>
               <option value="Parent">Parent</option>
+              <option value="Other">Other</option>
             </select>
 
             <select
@@ -213,10 +263,6 @@ const UserAccounts = () => {
               <option value="true">Administrators Only</option>
               <option value="false">Non-Administrators</option>
             </select>
-
-            <button className="filter-button">
-              <FiFilter /> More Filters
-            </button>
           </div>
         </div>
         <div className="action-buttons">
@@ -243,7 +289,6 @@ const UserAccounts = () => {
                 <th>Admin</th>
                 <th>Status</th>
                 <th>Last Login</th>
-                <th>School</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -251,19 +296,22 @@ const UserAccounts = () => {
               {filteredUsers.length > 0 ? (
                 filteredUsers.map((user) => (
                   <tr key={user.id}>
-                    <td>{user.name}</td>
+                    <td>
+                      {user.first_name} {user.last_name}
+                    </td>
                     <td>{user.email}</td>
                     <td>
                       <span
-                        className={`role-badge ${user.role
+                        className={`role-badge ${user.user_type
                           .toLowerCase()
-                          .replace(" ", "-")}`}
+                          .replace("_", "-")}`}
                       >
-                        {user.role}
+                        {getUserRoleDisplay(user)}
                       </span>
                     </td>
                     <td>
-                      {user.isAdministrator && (
+                      {(user.is_administrator ||
+                        user.user_type === "ADMINISTRATOR") && (
                         <span className="admin-badge">
                           <FiShield /> Admin
                         </span>
@@ -271,17 +319,24 @@ const UserAccounts = () => {
                     </td>
                     <td>
                       <span
-                        className={`status-badge ${user.status.toLowerCase()}`}
+                        className={`status-badge ${
+                          user.is_active ? "active" : "inactive"
+                        }`}
                       >
-                        {user.status}
+                        {user.is_active ? "Active" : "Inactive"}
                       </span>
                     </td>
-                    <td>{new Date(user.lastLogin).toLocaleString()}</td>
-                    <td>{user.school}</td>
+                    <td>
+                      {user.last_login
+                        ? new Date(user.last_login).toLocaleString()
+                        : "Never"}
+                    </td>
                     <td className="actions-cell">
                       <button
                         className="icon-button"
-                        onClick={() => handleEditUser(user.id)}
+                        onClick={() =>
+                          navigate(`/dashboard/users/edit/${user.id}`)
+                        }
                         title="Edit"
                       >
                         <FiEdit2 />
@@ -289,13 +344,11 @@ const UserAccounts = () => {
                       <button
                         className="icon-button"
                         onClick={() => handleToggleStatus(user.id)}
-                        title={
-                          user.status === "Active" ? "Deactivate" : "Activate"
-                        }
+                        title={user.is_active ? "Deactivate" : "Activate"}
                       >
-                        {user.status === "Active" ? <FiEyeOff /> : <FiEye />}
+                        {user.is_active ? <FiEyeOff /> : <FiEye />}
                       </button>
-                      {user.role !== "School Owner" && (
+                      {user.user_type !== "SCHOOL_ADMIN" && (
                         <button
                           className="icon-button"
                           onClick={() => {
@@ -303,22 +356,23 @@ const UserAccounts = () => {
                             setShowAdminModal(true);
                           }}
                           title={
-                            user.isAdministrator ? "Remove Admin" : "Make Admin"
+                            user.is_administrator ||
+                            user.user_type === "ADMINISTRATOR"
+                              ? "Remove Admin"
+                              : "Make Admin"
                           }
                         >
                           <FiShield
-                            color={user.isAdministrator ? "#4CAF50" : "#9E9E9E"}
+                            color={
+                              user.is_administrator ||
+                              user.user_type === "ADMINISTRATOR"
+                                ? "#4CAF50"
+                                : "#9E9E9E"
+                            }
                           />
                         </button>
                       )}
-                      <button
-                        className="icon-button"
-                        onClick={() => handleResetPassword(user.id)}
-                        title="Reset Password"
-                      >
-                        <FiRefreshCw />
-                      </button>
-                      {user.role !== "School Owner" && (
+                      {user.user_type !== "SCHOOL_ADMIN" && (
                         <button
                           className="icon-button danger"
                           onClick={() => {
@@ -335,7 +389,7 @@ const UserAccounts = () => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="8" className="no-results">
+                  <td colSpan="7" className="no-results">
                     No users found matching your criteria
                   </td>
                 </tr>
@@ -394,8 +448,8 @@ const UserAccounts = () => {
           <div className="modal">
             <h3>Confirm Deletion</h3>
             <p>
-              Are you sure you want to delete {selectedUser?.name}? This action
-              cannot be undone.
+              Are you sure you want to delete {selectedUser?.first_name}{" "}
+              {selectedUser?.last_name}? This action cannot be undone.
             </p>
 
             <div className="modal-footer">
@@ -418,17 +472,20 @@ const UserAccounts = () => {
         <div className="modal-overlay">
           <div className="modal">
             <h3>
-              {selectedUser?.isAdministrator
+              {selectedUser?.is_administrator ||
+              selectedUser?.user_type === "ADMINISTRATOR"
                 ? "Remove Administrator Privileges"
                 : "Grant Administrator Privileges"}
             </h3>
             <p>
-              {selectedUser?.isAdministrator
-                ? `Are you sure you want to remove ${selectedUser.name}'s administrator privileges?`
-                : `Are you sure you want to make ${selectedUser.name} an administrator?`}
+              {selectedUser?.is_administrator ||
+              selectedUser?.user_type === "ADMINISTRATOR"
+                ? `Are you sure you want to remove ${selectedUser?.first_name} ${selectedUser?.last_name}'s administrator privileges?`
+                : `Are you sure you want to make ${selectedUser?.first_name} ${selectedUser?.last_name} an administrator?`}
             </p>
             <p>
-              {selectedUser?.isAdministrator
+              {selectedUser?.is_administrator ||
+              selectedUser?.user_type === "ADMINISTRATOR"
                 ? "They will lose access to administrative features."
                 : "They will gain access to administrative features based on their role permissions."}
             </p>
@@ -442,13 +499,17 @@ const UserAccounts = () => {
               </button>
               <button
                 className={
-                  selectedUser?.isAdministrator
+                  selectedUser?.is_administrator ||
+                  selectedUser?.user_type === "ADMINISTRATOR"
                     ? "danger-button"
                     : "primary-button"
                 }
                 onClick={handleToggleAdministrator}
               >
-                {selectedUser?.isAdministrator ? "Remove Admin" : "Make Admin"}
+                {selectedUser?.is_administrator ||
+                selectedUser?.user_type === "ADMINISTRATOR"
+                  ? "Remove Admin"
+                  : "Make Admin"}
               </button>
             </div>
           </div>

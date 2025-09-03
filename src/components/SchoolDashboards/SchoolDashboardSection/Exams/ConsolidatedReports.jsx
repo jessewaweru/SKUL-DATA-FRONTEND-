@@ -9,19 +9,28 @@ const ConsolidatedReports = () => {
   const [selectedTerm, setSelectedTerm] = useState("");
   const [consolidationRules, setConsolidationRules] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        setError(null);
         const [termsRes, rulesRes] = await Promise.all([
           get("/exams/terms/"),
           get("/exams/consolidation-rules/"),
         ]);
 
-        setTerms(termsRes.data);
-        setConsolidationRules(rulesRes.data);
+        // Ensure we have arrays, fallback to empty arrays if not
+        setTerms(Array.isArray(termsRes?.data) ? termsRes.data : []);
+        setConsolidationRules(
+          Array.isArray(rulesRes?.data) ? rulesRes.data : []
+        );
       } catch (error) {
         console.error("Error fetching data:", error);
+        setError("Failed to load data. Please try again.");
+        // Set fallback empty arrays
+        setTerms([]);
+        setConsolidationRules([]);
       } finally {
         setLoading(false);
       }
@@ -29,7 +38,30 @@ const ConsolidatedReports = () => {
     fetchData();
   }, []);
 
+  // Calculate total weight safely
+  const getTotalWeight = () => {
+    if (!Array.isArray(consolidationRules)) return 0;
+    return consolidationRules.reduce((sum, rule) => {
+      const weight = typeof rule?.weight === "number" ? rule.weight : 0;
+      return sum + weight;
+    }, 0);
+  };
+
   if (loading) return <div className="loading-spinner">Loading...</div>;
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <div className="error-message">{error}</div>
+        <button
+          className="btn-primary"
+          onClick={() => window.location.reload()}
+        >
+          Retry
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="consolidated-reports-container">
@@ -65,41 +97,45 @@ const ConsolidatedReports = () => {
         {selectedTerm && (
           <div className="consolidation-rules">
             <h3>Consolidation Rules</h3>
-            <table>
-              <thead>
-                <tr>
-                  <th>Exam Type</th>
-                  <th>Weight (%)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {consolidationRules.map((rule) => (
-                  <tr key={rule.exam_type}>
-                    <td>{rule.exam_type}</td>
-                    <td>{rule.weight}%</td>
-                  </tr>
-                ))}
-                <tr>
-                  <td>
-                    <strong>Total</strong>
-                  </td>
-                  <td>
-                    {consolidationRules.reduce(
-                      (sum, rule) => sum + rule.weight,
-                      0
-                    )}
-                    %
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-
-            <button className="btn-secondary">Edit Rules</button>
+            {consolidationRules.length > 0 ? (
+              <>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Exam Type</th>
+                      <th>Weight (%)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {consolidationRules.map((rule, index) => (
+                      <tr key={rule?.exam_type || `rule-${index}`}>
+                        <td>{rule?.exam_type || "Unknown"}</td>
+                        <td>{rule?.weight || 0}%</td>
+                      </tr>
+                    ))}
+                    <tr>
+                      <td>
+                        <strong>Total</strong>
+                      </td>
+                      <td>
+                        <strong>{getTotalWeight()}%</strong>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+                <button className="btn-secondary">Edit Rules</button>
+              </>
+            ) : (
+              <div className="no-data-message">
+                No consolidation rules found. Please set up consolidation rules
+                first.
+              </div>
+            )}
           </div>
         )}
       </div>
 
-      {selectedTerm && (
+      {selectedTerm && consolidationRules.length > 0 && (
         <div className="consolidated-results">
           <h3>Consolidated Results</h3>
           <div className="results-actions">

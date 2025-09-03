@@ -1,4 +1,3 @@
-// components/SchoolDashboard/Teachers/TeacherProfiles.jsx
 import { Outlet } from "react-router-dom";
 import TeacherTable from "./TeacherTable";
 import { fetchTeachers } from "../../../../services/teacherService";

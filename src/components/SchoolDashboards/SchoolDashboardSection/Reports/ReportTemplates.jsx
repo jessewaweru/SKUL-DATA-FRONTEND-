@@ -1,4 +1,3 @@
-// src/components/SchoolDashboard/Reports/ReportTemplates.jsx
 import React, { useState, useEffect } from "react";
 import { FiPlus, FiEdit2, FiTrash2, FiDownload, FiEye } from "react-icons/fi";
 import { useApi } from "../../../../hooks/useApi";
@@ -13,26 +12,52 @@ const ReportTemplates = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [showEditor, setShowEditor] = useState(false);
   const [filter, setFilter] = useState("all");
+  const [error, setError] = useState(null);
   const api = useApi();
 
   useEffect(() => {
     const fetchTemplates = async () => {
       try {
+        setIsLoading(true);
+        setError(null);
         const response = await api.get("/reports/templates/");
-        setTemplates(response.data);
-        setIsLoading(false);
-      } catch (error) {
-        console.error("Error fetching templates:", error);
+
+        // Handle different possible response structures
+        const responseData = response?.data;
+        let templatesData = [];
+
+        if (Array.isArray(responseData)) {
+          templatesData = responseData;
+        } else if (
+          responseData?.results &&
+          Array.isArray(responseData.results)
+        ) {
+          templatesData = responseData.results;
+        } else if (responseData?.data && Array.isArray(responseData.data)) {
+          templatesData = responseData.data;
+        }
+
+        setTemplates(templatesData);
+      } catch (err) {
+        console.error("Error fetching templates:", err);
+        setError("Failed to load templates. Please try again.");
+        setTemplates([]);
+      } finally {
         setIsLoading(false);
       }
     };
-    fetchTemplates();
-  }, []);
 
-  const filteredTemplates = templates.filter((template) => {
-    if (filter === "all") return true;
-    return template.template_type === filter;
-  });
+    fetchTemplates();
+  }, [api]);
+
+  // Safe filtering with fallbacks
+  const filteredTemplates = (Array.isArray(templates) ? templates : []).filter(
+    (template) => {
+      if (!template) return false;
+      if (filter === "all") return true;
+      return template.template_type === filter;
+    }
+  );
 
   const handlePreview = (template) => {
     setSelectedTemplate(template);
@@ -48,9 +73,12 @@ const ReportTemplates = () => {
     if (window.confirm("Are you sure you want to delete this template?")) {
       try {
         await api.delete(`/api/reports/templates/${templateId}/`);
-        setTemplates(templates.filter((t) => t.id !== templateId));
+        setTemplates((prev) =>
+          Array.isArray(prev) ? prev.filter((t) => t?.id !== templateId) : []
+        );
       } catch (error) {
         console.error("Error deleting template:", error);
+        alert("Failed to delete template");
       }
     }
   };
@@ -61,13 +89,17 @@ const ReportTemplates = () => {
   };
 
   const handleSaveTemplate = (savedTemplate) => {
-    if (selectedTemplate) {
-      setTemplates(
-        templates.map((t) => (t.id === savedTemplate.id ? savedTemplate : t))
-      );
-    } else {
-      setTemplates([...templates, savedTemplate]);
-    }
+    if (!savedTemplate?.id) return;
+
+    setTemplates((prev) => {
+      const prevTemplates = Array.isArray(prev) ? prev : [];
+      if (selectedTemplate?.id) {
+        return prevTemplates.map((t) =>
+          t?.id === savedTemplate.id ? savedTemplate : t
+        );
+      }
+      return [...prevTemplates, savedTemplate];
+    });
     setShowEditor(false);
   };
 
@@ -94,56 +126,68 @@ const ReportTemplates = () => {
         </div>
       </div>
 
+      {error && <div className="error-message">{error}</div>}
+
       {isLoading ? (
         <div className="loading-spinner">Loading...</div>
       ) : (
         <div className="templates-grid">
-          {filteredTemplates.map((template) => (
-            <div key={template.id} className="template-card">
-              <div className="template-header">
-                <h3>{template.name}</h3>
-                <span
-                  className={`template-type ${template.template_type.toLowerCase()}`}
-                >
-                  {template.template_type}
-                </span>
-              </div>
-              <p className="template-description">
-                {template.description || "No description provided"}
-              </p>
-              <div className="template-footer">
-                <div className="template-meta">
-                  <span>
-                    Created:{" "}
-                    {new Date(template.created_at).toLocaleDateString()}
+          {filteredTemplates.length > 0 ? (
+            filteredTemplates.map((template) => (
+              <div key={template?.id} className="template-card">
+                <div className="template-header">
+                  <h3>{template?.name || "Unnamed Template"}</h3>
+                  <span
+                    className={`template-type ${
+                      template?.template_type?.toLowerCase() || "unknown"
+                    }`}
+                  >
+                    {template?.template_type || "UNKNOWN"}
                   </span>
                 </div>
-                <div className="template-actions">
-                  <button
-                    className="btn-icon"
-                    onClick={() => handlePreview(template)}
-                    title="Preview"
-                  >
-                    <FiEye />
-                  </button>
-                  <button
-                    className="btn-icon"
-                    onClick={() => handleEdit(template)}
-                    title="Edit"
-                  >
-                    <FiEdit2 />
-                  </button>
-                  <button
-                    className="btn-icon danger"
-                    onClick={() => handleDelete(template.id)}
-                    title="Delete"
-                  >
-                    <FiTrash2 />
-                  </button>
+                <p className="template-description">
+                  {template?.description || "No description provided"}
+                </p>
+                <div className="template-footer">
+                  <div className="template-meta">
+                    <span>
+                      Created:{" "}
+                      {template?.created_at
+                        ? new Date(template.created_at).toLocaleDateString()
+                        : "Unknown date"}
+                    </span>
+                  </div>
+                  <div className="template-actions">
+                    <button
+                      className="btn-icon"
+                      onClick={() => handlePreview(template)}
+                      title="Preview"
+                    >
+                      <FiEye />
+                    </button>
+                    <button
+                      className="btn-icon"
+                      onClick={() => handleEdit(template)}
+                      title="Edit"
+                    >
+                      <FiEdit2 />
+                    </button>
+                    <button
+                      className="btn-icon danger"
+                      onClick={() => template?.id && handleDelete(template.id)}
+                      title="Delete"
+                    >
+                      <FiTrash2 />
+                    </button>
+                  </div>
                 </div>
               </div>
+            ))
+          ) : (
+            <div className="no-templates">
+              No templates found. Create your first template!
             </div>
-          ))}
+          )}
         </div>
       )}
 

@@ -18,7 +18,9 @@ const MessageListItem = ({
         <span className="sender">
           {variant === "inbox"
             ? message.sender?.name || "System Notification"
-            : `To: ${message.recipients.map((r) => r.name).join(", ")}`}
+            : `To: ${
+                message.recipients?.map((r) => r.name).join(", ") || "Recipient"
+              }`}
         </span>
         <span className="time">
           {formatDistanceToNow(new Date(message.created_at), {
@@ -31,7 +33,8 @@ const MessageListItem = ({
         {message.subject || "No subject"}
       </div>
       <div className="message-item-preview">
-        {message.body.substring(0, 100)}...
+        {/* Fixed: Add optional chaining and fallback for undefined body */}
+        {message.body?.substring(0, 100) || "No message content"}...
       </div>
 
       {/* Added status display for sent messages */}
