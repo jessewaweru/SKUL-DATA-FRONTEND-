@@ -188,9 +188,14 @@ export const useTimetableApi = () => {
       },
 
       // Timetable structure endpoints
+      // getTimetableStructures: (schoolId) => {
+      //   const url = `/api/school_timetables/timetable-structures/?school=${schoolId}`;
+      //   logApiCall("GET", url);
+      //   return api.get(url);
+      // },
       getTimetableStructures: (schoolId) => {
-        const url = `/api/school_timetables/timetable-structures/?school=${schoolId}`;
-        logApiCall("GET", url);
+        const url = `/school_timetables/timetable-structures/?school=${schoolId}`;
+        console.log("[TimetableAPI] Fetching structures for school:", schoolId);
         return api.get(url);
       },
       createTimetableStructure: (data) => {
@@ -217,17 +222,41 @@ export const useTimetableApi = () => {
       },
 
       // School data endpoints
-      getSubjects: (schoolCode) => {
-        const url = `/api/students/subjects/?school_id=${schoolCode}`;
-        logApiCall("GET", url);
+      // getSubjects: (schoolCode) => {
+      //   const url = `/api/students/subjects/?school_id=${schoolCode}`;
+      //   logApiCall("GET", url);
+      //   return api.get(url);
+      // },
+      getSubjects: (schoolId) => {
+        // Try both school and school_id parameters
+        const url = `/students/subjects/?school=${schoolId}`;
+        console.log("[TimetableAPI] Fetching subjects for school:", schoolId);
         return api.get(url);
       },
-      getTeachers: (schoolIdentifier) => {
-        const isNumeric =
-          !isNaN(schoolIdentifier) && !isNaN(parseFloat(schoolIdentifier));
-        const param = isNumeric ? "school" : "school_code";
-        const url = `/api/users/teachers/?${param}=${schoolIdentifier}`;
-        logApiCall("GET", url);
+      // getTeachers: (schoolIdentifier) => {
+      //   const isNumeric =
+      //     !isNaN(schoolIdentifier) && !isNaN(parseFloat(schoolIdentifier));
+      //   const param = isNumeric ? "school" : "school_code";
+      //   const url = `/api/users/teachers/?${param}=${schoolIdentifier}`;
+      //   logApiCall("GET", url);
+      //   return api.get(url);
+      // },
+      getTeachers: (schoolId) => {
+        // First try the users/teachers endpoint
+        const url = `/users/teachers/?school=${schoolId}`;
+        console.log(
+          "[TimetableAPI] Fetching teachers from users endpoint:",
+          url
+        );
+        return api.get(url);
+      },
+      // Add this method for the schools endpoint as fallback
+      getSchoolTeachers: (schoolId) => {
+        const url = `/schools/${schoolId}/teachers/`;
+        console.log(
+          "[TimetableAPI] Fetching teachers from schools endpoint:",
+          url
+        );
         return api.get(url);
       },
       getClasses: (schoolId) => {

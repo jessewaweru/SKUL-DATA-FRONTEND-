@@ -5,9 +5,10 @@ import { useNavigate } from "react-router-dom";
 import ClassSelectionCard from "../../../common/SchoolTimetable/ClassSelectionCard";
 import "./timetables.css";
 import useUser from "../../../../hooks/useUser";
+import { useCallback } from "react";
 
+// TimetableSetupStep1.jsx - Updated with better school ID handling
 const TimetableSetupStep1 = () => {
-  // Get context from parent Outlet
   const { timetableData, updateData } = useOutletContext();
   const { user } = useUser();
   const api = useTimetableApi();
@@ -16,25 +17,54 @@ const TimetableSetupStep1 = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Set school from user context if not provided
+  // Helper function to get school ID
+  const getSchoolId = useCallback(() => {
+    if (!user) return null;
+
+    return (
+      user.school_id ||
+      user.school?.id ||
+      user.school_admin_profile?.school?.id ||
+      user.administrator_profile?.school?.id ||
+      user.roleSchool
+    );
+  }, [user]);
+
+  // Set school from user context
   useEffect(() => {
-    if (!timetableData || !user) return;
-
-    // Get school ID from user's profile
-    const schoolId =
-      user?.school_admin_profile?.school?.id ||
-      user?.administrator_profile?.school?.id ||
-      user?.teacher_profile?.school?.id;
-
-    if (schoolId && !timetableData.school) {
-      updateData({ school: schoolId });
+    if (!user) {
+      console.log("Waiting for user data...");
+      return;
     }
-  }, [user, timetableData, updateData]);
+
+    const schoolId = getSchoolId();
+
+    if (!schoolId) {
+      console.error("No school ID found in user:", user);
+      setError("School information not available. Please contact support.");
+      setLoading(false);
+      return;
+    }
+
+    console.log("Found school ID:", schoolId);
+
+    if (!timetableData.school || timetableData.school !== schoolId) {
+      updateData({
+        school: schoolId,
+        classes: [],
+        academicYear: new Date().getFullYear().toString(),
+        term: "1",
+      });
+    }
+  }, [user, getSchoolId, timetableData, updateData]);
 
   // Fetch classes for the school
   useEffect(() => {
     const fetchClasses = async () => {
-      if (!timetableData?.school) {
+      const schoolId = getSchoolId();
+
+      if (!schoolId) {
+        console.log("No school ID available yet");
         setLoading(false);
         return;
       }
@@ -43,56 +73,75 @@ const TimetableSetupStep1 = () => {
         setLoading(true);
         setError(null);
 
-        const response = await api.getClasses(timetableData.school);
-        setClasses(response.data.results || response.data);
+        console.log("Fetching classes for school:", schoolId);
+        const response = await api.getClasses(schoolId);
+
+        console.log("Classes API response:", response);
+
+        let classesData = [];
+        if (response.data) {
+          if (response.data.results && Array.isArray(response.data.results)) {
+            classesData = response.data.results;
+          } else if (Array.isArray(response.data)) {
+            classesData = response.data;
+          } else if (typeof response.data === "object") {
+            classesData = [response.data];
+          }
+        }
+
+        console.log("Loaded classes:", classesData.length);
+        setClasses(classesData);
       } catch (err) {
         console.error("Failed to load classes:", err);
-        setError(
-          err.response?.data?.detail || err.message || "Failed to load classes"
-        );
-
-        if (err.response?.status === 401) {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-        }
+        const errorMessage =
+          err.response?.data?.error ||
+          err.response?.data?.detail ||
+          err.message ||
+          "Failed to load classes";
+        setError(errorMessage);
+        setClasses([]);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchClasses();
-  }, [timetableData?.school]);
+    if (user) {
+      fetchClasses();
+    }
+  }, [user, getSchoolId, api]);
 
   const handleClassToggle = (classId) => {
-    if (!timetableData) return;
-
-    const updatedClasses = timetableData.classes.includes(classId)
+    const updatedClasses = timetableData.classes?.includes(classId)
       ? timetableData.classes.filter((id) => id !== classId)
-      : [...timetableData.classes, classId];
+      : [...(timetableData.classes || []), classId];
+
     updateData({ classes: updatedClasses });
   };
 
   const handleNext = () => {
-    if (!timetableData || timetableData.classes.length === 0) {
+    if (!timetableData.classes || timetableData.classes.length === 0) {
       alert("Please select at least one class");
       return;
     }
-    navigate("/school_timetables/timetables/create/step-2");
+
+    if (!timetableData.academicYear) {
+      alert("Please enter an academic year");
+      return;
+    }
+
+    navigate("/dashboard/timetables/create/step-2");
   };
 
-  // Loading and error states
-  if (!timetableData) {
-    return <div className="timetable-step-1">Loading timetable data...</div>;
-  }
-
-  if (loading) {
+  // Show loading state
+  if (!user || loading) {
     return (
       <div className="timetable-step-1">
-        <div className="loading">Loading classes...</div>
+        <div className="loading">Loading...</div>
       </div>
     );
   }
 
+  // Show error state
   if (error) {
     return (
       <div className="timetable-step-1">
@@ -106,6 +155,8 @@ const TimetableSetupStep1 = () => {
 
   return (
     <div className="timetable-step-1">
+      <h3>Create New Timetable - Step 1: Basic Information</h3>
+
       <div className="form-group">
         <label>Academic Year:</label>
         <input
@@ -113,6 +164,7 @@ const TimetableSetupStep1 = () => {
           value={timetableData.academicYear || ""}
           onChange={(e) => updateData({ academicYear: e.target.value })}
           placeholder="e.g. 2024"
+          required
         />
       </div>
 
@@ -128,12 +180,12 @@ const TimetableSetupStep1 = () => {
         </select>
       </div>
 
-      <h3>Select Classes</h3>
+      <h4>Select Classes for Timetable</h4>
 
       {classes.length === 0 ? (
         <div className="no-classes">
           <p>No classes available for this school.</p>
-          <button onClick={() => window.location.reload()}>Refresh</button>
+          <p>Please create classes first in the Classes section.</p>
         </div>
       ) : (
         <div className="classes-grid">
@@ -148,12 +200,21 @@ const TimetableSetupStep1 = () => {
         </div>
       )}
 
+      <div className="step-info">
+        <p>
+          <strong>Selected:</strong> {timetableData.classes?.length || 0}{" "}
+          classes
+        </p>
+      </div>
+
       <div className="step-actions">
         <button
           className="btn-next"
           onClick={handleNext}
           disabled={
-            !timetableData.classes || timetableData.classes.length === 0
+            !timetableData.classes ||
+            timetableData.classes.length === 0 ||
+            !timetableData.academicYear
           }
         >
           Next: Set Structure
@@ -164,87 +225,3 @@ const TimetableSetupStep1 = () => {
 };
 
 export default TimetableSetupStep1;
-
-// const TimetableSetupStep1 = () => {
-//   const navigate = useNavigate();
-//   const { timetableData, updateData } = useOutletContext(); // Get data from outlet context
-
-//   const [classes, setClasses] = useState([
-//     {
-//       id: 101,
-//       name: "Grade 1 A",
-//       grade_level: "Grade 1",
-//       students_count: 25,
-//       level: "PRIMARY",
-//     },
-//     {
-//       id: 102,
-//       name: "Grade 1 B",
-//       grade_level: "Grade 1",
-//       students_count: 28,
-//       level: "PRIMARY",
-//     },
-//   ]);
-
-//   const handleClassToggle = (classId) => {
-//     const updatedClasses = timetableData.classes.includes(classId)
-//       ? timetableData.classes.filter((id) => id !== classId)
-//       : [...timetableData.classes, classId];
-//     updateData({ classes: updatedClasses });
-//   };
-
-//   const handleNext = () => {
-//     if (timetableData.classes.length === 0) {
-//       alert("Please select at least one class");
-//       return;
-//     }
-//     navigate("/dashboard/timetables/create/step-2");
-//   };
-
-//   return (
-//     <div className="timetable-step-1">
-//       <div className="form-group">
-//         <label>Academic Year:</label>
-//         <input
-//           type="text"
-//           value={timetableData.academicYear}
-//           onChange={(e) => updateData({ academicYear: e.target.value })}
-//           placeholder="e.g. 2024"
-//         />
-//       </div>
-//       <div className="form-group">
-//         <label>Term:</label>
-//         <select
-//           value={timetableData.term}
-//           onChange={(e) => updateData({ term: e.target.value })}
-//         >
-//           <option value="1">Term 1</option>
-//           <option value="2">Term 2</option>
-//           <option value="3">Term 3</option>
-//         </select>
-//       </div>
-//       <h3>Select Classes</h3>
-//       <div className="classes-grid">
-//         {classes.map((cls) => (
-//           <ClassSelectionCard
-//             key={cls.id}
-//             cls={cls}
-//             selected={timetableData.classes.includes(cls.id)}
-//             onToggle={handleClassToggle}
-//           />
-//         ))}
-//       </div>
-//       <div className="step-actions">
-//         <button
-//           className="btn-next"
-//           onClick={handleNext}
-//           disabled={timetableData.classes.length === 0}
-//         >
-//           Next: Set Structure
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TimetableSetupStep1;

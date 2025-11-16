@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useTimetableApi } from "../../../../hooks/useTimetableApi";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useOutletContext } from "react-router-dom";
 import ConstraintCard from "../../../common/SchoolTimetable/ConstraintCard";
 import "./timetables.css";
 
-const TimetableSetupStep4 = ({ timetableData, updateData }) => {
+const TimetableSetupStep4 = () => {
+  const { timetableData, updateData } = useOutletContext();
   const api = useTimetableApi();
   const navigate = useNavigate();
   const [constraints, setConstraints] = useState([]);
@@ -17,61 +18,114 @@ const TimetableSetupStep4 = ({ timetableData, updateData }) => {
     parameters: {},
   });
 
-  useEffect(() => {
-    const fetchConstraints = async () => {
-      try {
-        const response = await api.getConstraints(timetableData.school);
-        setConstraints(response.data);
+  // Memoize the fetch functions to prevent infinite re-renders
+  const fetchConstraints = useCallback(async () => {
+    if (!timetableData?.school) {
+      setLoading(false);
+      return;
+    }
 
-        // Initialize with default constraints if none exist
-        if (response.data.length === 0) {
-          const defaultConstraints = [
-            {
-              constraint_type: "NO_TEACHER_CLASH",
-              is_hard_constraint: true,
-              description: "Teachers cannot be scheduled in two places at once",
-            },
-            {
-              constraint_type: "NO_CLASS_CLASH",
-              is_hard_constraint: true,
-              description: "Classes cannot have two subjects at the same time",
-            },
-          ];
-          setConstraints(defaultConstraints);
+    try {
+      setLoading(true);
+      setError(null);
+
+      const response = await api.getConstraints(timetableData.school);
+      console.log("Constraints API response:", response);
+
+      let constraintsData = [];
+      if (response?.data) {
+        if (Array.isArray(response.data)) {
+          constraintsData = response.data;
+        } else if (
+          response.data.results &&
+          Array.isArray(response.data.results)
+        ) {
+          constraintsData = response.data.results;
+        } else {
+          constraintsData = [];
         }
-      } catch (err) {
-        setError("Failed to load constraints");
-        console.error(err);
-      } finally {
-        setLoading(false);
       }
-    };
 
-    // Fetch subject groups when component mounts
-    const fetchSubjectGroups = async () => {
-      try {
-        const response = await api.getSubjectGroups(timetableData.school);
-        setSubjectGroups(response.data);
-      } catch (err) {
-        console.error("Failed to load subject groups", err);
+      setConstraints(constraintsData);
+
+      // Only update parent data if we have actual constraints from API
+      if (constraintsData.length > 0) {
+        updateData({ constraints: constraintsData });
       }
-    };
+    } catch (err) {
+      console.error("Failed to load constraints:", err);
+      const errorMessage =
+        err.response?.data?.error ||
+        err.response?.data?.detail ||
+        err.message ||
+        "Failed to load constraints";
+      setError(errorMessage);
+    } finally {
+      setLoading(false);
+    }
+  }, [timetableData?.school, api, updateData]);
 
-    fetchConstraints();
-    fetchSubjectGroups();
-  }, [timetableData.school]);
+  const fetchSubjectGroups = useCallback(async () => {
+    if (!timetableData?.school) return;
+
+    try {
+      const response = await api.getSubjectGroups(timetableData.school);
+      console.log("Subject groups API response:", response);
+
+      let subjectGroupsData = [];
+      if (response?.data) {
+        if (Array.isArray(response.data)) {
+          subjectGroupsData = response.data;
+        } else if (
+          response.data.results &&
+          Array.isArray(response.data.results)
+        ) {
+          subjectGroupsData = response.data.results;
+        } else {
+          subjectGroupsData = [];
+        }
+      }
+
+      setSubjectGroups(subjectGroupsData);
+    } catch (err) {
+      console.error("Failed to load subject groups", err);
+    }
+  }, [timetableData?.school, api]);
+
+  useEffect(() => {
+    // Only fetch if we have school data and we're not already loading
+    if (timetableData?.school && loading) {
+      console.log(
+        "Fetching constraints and subject groups for school:",
+        timetableData.school
+      );
+      fetchConstraints();
+      fetchSubjectGroups();
+    }
+  }, [timetableData?.school, fetchConstraints, fetchSubjectGroups, loading]);
+
+  // Reset loading state when school changes
+  useEffect(() => {
+    setLoading(true);
+  }, [timetableData?.school]);
 
   const handleAddConstraint = () => {
     // For subject grouping, ensure parameters include subject_group_id
-    if (newConstraint.constraint_type === "SUBJECT_GROUPING") {
-      newConstraint.parameters = {
-        subject_group: newConstraint.parameters.subject_group || null,
+    const constraintToAdd = { ...newConstraint };
+    if (constraintToAdd.constraint_type === "SUBJECT_GROUPING") {
+      constraintToAdd.parameters = {
+        subject_group: constraintToAdd.parameters.subject_group || null,
       };
     }
 
-    const updatedConstraints = [...constraints, newConstraint];
+    const updatedConstraints = [
+      ...constraints,
+      { ...constraintToAdd, id: Date.now() },
+    ];
     setConstraints(updatedConstraints);
     updateData({ constraints: updatedConstraints });
+
+    // Reset form
     setNewConstraint({
       constraint_type: "NO_TEACHER_CLASH",
       is_hard_constraint: true,
@@ -86,28 +140,91 @@ const TimetableSetupStep4 = ({ timetableData, updateData }) => {
   };
 
   const handleNext = () => {
-    navigate("/school_timetables/timetables/create/step-5");
+    navigate("/dashboard/timetables/create/step-5");
   };
 
   const handlePrev = () => {
-    navigate("/school_timetables/timetables/create/step-3");
+    navigate("/dashboard/timetables/create/step-3");
   };
 
-  if (loading) return <div className="loading">Loading constraints...</div>;
-  if (error) return <div className="error">{error}</div>;
+  // Show error if timetableData is not available
+  if (!timetableData) {
+    return (
+      <div className="error">
+        <p>Timetable data not available. Please start over from Step 1.</p>
+        <button onClick={() => navigate("/dashboard/timetables/create/step-1")}>
+          Go to Step 1
+        </button>
+      </div>
+    );
+  }
+
+  if (loading) {
+    return (
+      <div className="loading">
+        <p>Loading constraints...</p>
+        <div className="loading-spinner"></div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error">
+        <h4>Error Loading Constraints</h4>
+        <p>{error}</p>
+        <div className="error-actions">
+          <button onClick={fetchConstraints}>Try Again</button>
+          <button onClick={handlePrev}>Go Back</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="timetable-step-4">
       <h3>Set Timetable Constraints</h3>
 
+      <div className="constraints-info">
+        <p>
+          Constraints are rules that guide how the timetable is generated.
+          <strong> Hard constraints</strong> must be followed, while{" "}
+          <strong>soft constraints</strong> are preferred but not required.
+        </p>
+      </div>
+
       <div className="constraints-list">
-        {constraints.map((constraint, index) => (
-          <ConstraintCard
-            key={index}
-            constraint={constraint}
-            onRemove={() => handleRemoveConstraint(index)}
-          />
-        ))}
+        {constraints.length === 0 ? (
+          <div className="no-constraints">
+            <p>
+              No constraints set yet. Add some constraints to guide timetable
+              generation.
+            </p>
+            <p>Common constraints include:</p>
+            <ul>
+              <li>
+                <strong>No Teacher Double Booking</strong> - Teachers can't be
+                in two classes at once
+              </li>
+              <li>
+                <strong>No Class Subject Overlap</strong> - One subject per
+                class at a time
+              </li>
+              <li>
+                <strong>Core Subjects in Morning</strong> - Math, English,
+                Kiswahili before lunch
+              </li>
+            </ul>
+          </div>
+        ) : (
+          constraints.map((constraint, index) => (
+            <ConstraintCard
+              key={constraint.id || index}
+              constraint={constraint}
+              onRemove={() => handleRemoveConstraint(index)}
+            />
+          ))
+        )}
       </div>
 
       <div className="add-constraint">
@@ -147,6 +264,8 @@ const TimetableSetupStep4 = ({ timetableData, updateData }) => {
             </option>
             <option value="SUBJECT_GROUPING">Subject Grouping</option>
             <option value="MANDATORY_BREAKS">Mandatory Breaks</option>
+            <option value="INCLUDE_GAMES">Include Games Period</option>
+            <option value="INCLUDE_PREPS">Include Preps Period</option>
           </select>
         </div>
 
@@ -172,11 +291,17 @@ const TimetableSetupStep4 = ({ timetableData, updateData }) => {
                 </option>
               ))}
             </select>
+            {subjectGroups.length === 0 && (
+              <p className="no-groups-warning">
+                No subject groups found. Create subject groups first in the
+                Subject Groups section.
+              </p>
+            )}
           </div>
         )}
 
-        <div className="form-group">
-          <label>
+        <div className="form-group checkbox-group">
+          <label className="checkbox-label">
             <input
               type="checkbox"
               checked={newConstraint.is_hard_constraint}
@@ -187,9 +312,11 @@ const TimetableSetupStep4 = ({ timetableData, updateData }) => {
                 })
               }
             />
+            <span className="checkmark"></span>
             Hard Constraint (Must be enforced)
           </label>
         </div>
+
         <button className="btn-add" onClick={handleAddConstraint}>
           Add Constraint
         </button>
@@ -208,119 +335,3 @@ const TimetableSetupStep4 = ({ timetableData, updateData }) => {
 };
 
 export default TimetableSetupStep4;
-
-// const TimetableSetupStep4 = ({ timetableData, updateData }) => {
-//   const navigate = useNavigate();
-
-//   const [constraints, setConstraints] = useState([
-//     {
-//       constraint_type: "NO_TEACHER_CLASH",
-//       is_hard_constraint: true,
-//       description: "Teachers cannot be scheduled in two places at once",
-//       parameters: {},
-//     },
-//     {
-//       constraint_type: "NO_CLASS_CLASH",
-//       is_hard_constraint: true,
-//       description: "Classes cannot have two subjects at the same time",
-//       parameters: {},
-//     },
-//   ]);
-
-//   const [newConstraint, setNewConstraint] = useState({
-//     constraint_type: "NO_TEACHER_CLASH",
-//     is_hard_constraint: true,
-//     parameters: {},
-//   });
-
-//   const handleAddConstraint = () => {
-//     const updatedConstraints = [...constraints, newConstraint];
-//     setConstraints(updatedConstraints);
-//     updateData({ constraints: updatedConstraints });
-//     setNewConstraint({
-//       constraint_type: "NO_TEACHER_CLASH",
-//       is_hard_constraint: true,
-//       parameters: {},
-//     });
-//   };
-
-//   const handleRemoveConstraint = (index) => {
-//     const updatedConstraints = constraints.filter((_, i) => i !== index);
-//     setConstraints(updatedConstraints);
-//     updateData({ constraints: updatedConstraints });
-//   };
-
-//   const handleNext = () => {
-//     navigate("/dashboard/timetables/create/step-5");
-//   };
-
-//   const handlePrev = () => {
-//     navigate("/dashboard/timetables/create/step-3");
-//   };
-
-//   return (
-//     <div className="timetable-step-4">
-//       <h3>Set Timetable Constraints</h3>
-
-//       <div className="constraints-list">
-//         {constraints.map((constraint, index) => (
-//           <ConstraintCard
-//             key={index}
-//             constraint={constraint}
-//             onRemove={() => handleRemoveConstraint(index)}
-//           />
-//         ))}
-//       </div>
-
-//       <div className="add-constraint">
-//         <h4>Add New Constraint</h4>
-//         <div className="form-group">
-//           <label>Constraint Type:</label>
-//           <select
-//             value={newConstraint.constraint_type}
-//             onChange={(e) =>
-//               setNewConstraint({
-//                 ...newConstraint,
-//                 constraint_type: e.target.value,
-//               })
-//             }
-//           >
-//             <option value="NO_TEACHER_CLASH">No Teacher Double Booking</option>
-//             <option value="NO_CLASS_CLASH">No Class Subject Overlap</option>
-//             <option value="SUBJECT_PAIRING">Subject Pairing</option>
-//             <option value="SCIENCE_DOUBLE">Science Double Period</option>
-//           </select>
-//         </div>
-//         <div className="form-group">
-//           <label>
-//             <input
-//               type="checkbox"
-//               checked={newConstraint.is_hard_constraint}
-//               onChange={(e) =>
-//                 setNewConstraint({
-//                   ...newConstraint,
-//                   is_hard_constraint: e.target.checked,
-//                 })
-//               }
-//             />
-//             Hard Constraint (Must be enforced)
-//           </label>
-//         </div>
-//         <button className="btn-add" onClick={handleAddConstraint}>
-//           Add Constraint
-//         </button>
-//       </div>
-
-//       <div className="step-actions">
-//         <button className="btn-prev" onClick={handlePrev}>
-//           Back: Assign Subjects
-//         </button>
-//         <button className="btn-next" onClick={handleNext}>
-//           Next: Generate & Review
-//         </button>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default TimetableSetupStep4;

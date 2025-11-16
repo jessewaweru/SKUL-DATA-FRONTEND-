@@ -8,6 +8,20 @@ const SubjectAssignmentCard = ({
   onTeacherChange,
   onPeriodsChange,
 }) => {
+  const getTeacherDisplayName = (teacher) => {
+    // Handle different teacher data structures
+    if (teacher.user) {
+      return `${teacher.user.first_name} ${teacher.user.last_name}`;
+    } else if (teacher.first_name && teacher.last_name) {
+      return `${teacher.first_name} ${teacher.last_name}`;
+    } else if (teacher.full_name) {
+      return teacher.full_name;
+    } else if (teacher.username) {
+      return teacher.username;
+    }
+    return `Teacher ${teacher.id}`;
+  };
+
   return (
     <div className="subject-assignment-card">
       <div className="subject-info">
@@ -23,14 +37,22 @@ const SubjectAssignmentCard = ({
             onChange={(e) => onTeacherChange(e.target.value)}
           >
             <option value="">Select teacher</option>
-            {teachers
-              .filter((teacher) => teacher.subjects_taught.includes(subject.id))
-              .map((teacher) => (
-                <option key={teacher.id} value={teacher.id}>
-                  {teacher.user.first_name} {teacher.user.last_name}
-                </option>
-              ))}
+            {teachers.map((teacher) => (
+              <option key={teacher.id} value={teacher.id}>
+                {getTeacherDisplayName(teacher)}
+              </option>
+            ))}
           </select>
+          {teachers.length === 0 && (
+            <p className="no-teachers-warning">
+              No teachers available for this subject
+            </p>
+          )}
+          {teachers.length > 0 && (
+            <p className="teachers-count">
+              {teachers.length} teacher(s) available
+            </p>
+          )}
         </div>
 
         <div className="form-group">
