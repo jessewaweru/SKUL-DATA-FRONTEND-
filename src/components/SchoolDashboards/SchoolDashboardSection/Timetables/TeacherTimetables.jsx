@@ -1,207 +1,347 @@
 import { useState, useEffect } from "react";
 import { useTimetableApi } from "../../../../hooks/useTimetableApi";
 import useUser from "../../../../hooks/useUser";
-import TimetablePreview from "../../../common/SchoolTimetable/TimetablePreview";
+import {
+  FiUser,
+  FiBook,
+  FiClock,
+  FiMapPin,
+  FiRefreshCw,
+  FiUsers,
+} from "react-icons/fi";
 import "./timetables.css";
 
 const TeacherTimetables = () => {
-  const { user, schoolId, school } = useUser();
+  const { user, schoolId } = useUser();
   const api = useTimetableApi();
+
   const [teachers, setTeachers] = useState([]);
-  const [selectedTeacher, setSelectedTeacher] = useState(null);
-  const [teacherLessons, setTeacherLessons] = useState([]);
+  const [selectedTeacherId, setSelectedTeacherId] = useState(null);
+  const [teacherSchedule, setTeacherSchedule] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [teachersLoading, setTeachersLoading] = useState(true);
-  const [lessonsLoading, setLessonsLoading] = useState(false);
+  const [timetables, setTimetables] = useState({}); // Store timetable-class mapping
 
+  // Helper function to get teacher display name
+  const getTeacherDisplayName = (teacher) => {
+    if (!teacher) return "Select a teacher";
+
+    if (teacher.user) {
+      const firstName = teacher.user.first_name || "";
+      const lastName = teacher.user.last_name || "";
+      return (
+        `${firstName} ${lastName}`.trim() ||
+        teacher.user.username ||
+        "Unknown Teacher"
+      );
+    }
+
+    if (teacher.first_name || teacher.last_name) {
+      return `${teacher.first_name || ""} ${teacher.last_name || ""}`.trim();
+    }
+
+    if (teacher.full_name) {
+      return teacher.full_name;
+    }
+
+    return teacher.username || `Teacher ${teacher.id}`;
+  };
+
+  // Enhanced helper to extract class name from lesson with timetable lookup
+  const getClassName = (lesson) => {
+    // First, check if we have the timetable in our lookup
+    const timetableId = lesson.timetable;
+    if (timetableId && timetables[timetableId]) {
+      return timetables[timetableId];
+    }
+
+    // Fallback: Try multiple paths to get class name from lesson data
+    if (lesson.timetable_details?.school_class_details?.name) {
+      return lesson.timetable_details.school_class_details.name;
+    }
+    if (lesson.timetable_details?.school_class?.name) {
+      return lesson.timetable_details.school_class.name;
+    }
+    if (lesson.school_class_details?.name) {
+      return lesson.school_class_details.name;
+    }
+    if (lesson.school_class?.name) {
+      return lesson.school_class.name;
+    }
+    if (lesson.class_name) {
+      return lesson.class_name;
+    }
+
+    return "Unknown Class";
+  };
+
+  // Fetch teachers when component mounts
   useEffect(() => {
-    console.log("TeacherTimetables - Full user context:", {
-      user,
-      schoolId,
-      school,
-    });
-
-    // Get school identifier - try multiple approaches
-    let schoolIdentifier = null;
-
-    // Method 1: Direct schoolId from useUser
-    if (schoolId) {
-      schoolIdentifier = schoolId;
-      console.log("Using schoolId from useUser:", schoolId);
-    }
-    // Method 2: School object from useUser
-    else if (school?.id) {
-      schoolIdentifier = school.id;
-      console.log("Using school.id from useUser:", school.id);
-    }
-    // Method 3: Role-based school from user.role.school
-    else if (user?.role?.school) {
-      schoolIdentifier = user.role.school;
-      console.log("Using user.role.school:", user.role.school);
-    }
-    // Method 4: Try to extract from user object structure
-    else if (user?.school_admin_profile?.school?.id) {
-      schoolIdentifier = user.school_admin_profile.school.id;
-      console.log(
-        "Using user.school_admin_profile.school.id:",
-        user.school_admin_profile.school.id
-      );
-    }
-
-    if (!schoolIdentifier) {
-      console.error("No school identifier found. Available data:", {
-        user,
-        schoolId,
-        school,
-        userRole: user?.role,
-        userSchoolAdmin: user?.school_admin_profile,
-      });
-      setError(
-        "School information not found. Please ensure you're properly logged in as a school administrator."
-      );
-      setTeachersLoading(false);
+    if (!schoolId) {
+      console.log("Waiting for school ID...");
       return;
     }
 
     const fetchTeachers = async () => {
-      setTeachersLoading(true);
-      setError(null);
-
       try {
-        console.log(
-          "Fetching teachers for school identifier:",
-          schoolIdentifier
-        );
+        setLoading(true);
+        setError(null);
 
-        // Use the school identifier to fetch teachers
-        const response = await api.getTeachers(schoolIdentifier);
-        console.log("Teachers API response:", response);
+        console.log("Fetching teachers for school:", schoolId);
 
-        if (response.data && Array.isArray(response.data)) {
-          setTeachers(response.data);
-          if (response.data.length > 0) {
-            setSelectedTeacher(response.data[0].id);
-            console.log("Selected first teacher:", response.data[0]);
-          } else {
-            console.warn("No teachers found for school:", schoolIdentifier);
-            setError("No teachers found for this school.");
+        const response = await api.getSchoolTeachers(schoolId);
+        console.log("Teachers response:", response);
+
+        let teachersData = [];
+        if (response?.data) {
+          if (response.data.teachers && Array.isArray(response.data.teachers)) {
+            teachersData = response.data.teachers;
+          } else if (Array.isArray(response.data)) {
+            teachersData = response.data;
+          } else if (
+            response.data.results &&
+            Array.isArray(response.data.results)
+          ) {
+            teachersData = response.data.results;
           }
+        }
+
+        console.log("Extracted teachers data:", teachersData);
+
+        if (teachersData.length > 0) {
+          setTeachers(teachersData);
+          setSelectedTeacherId(teachersData[0].id);
+          console.log("Loaded teachers:", teachersData.length);
         } else {
-          console.error("Invalid teachers response format:", response);
-          setError("Invalid response format from teachers API.");
+          setError("No teachers found for this school");
         }
       } catch (err) {
-        console.error("Error fetching teachers:", {
-          message: err.message,
-          response: err.response,
-          status: err.response?.status,
-          data: err.response?.data,
-          config: err.config,
-        });
-
-        // More specific error messages
-        if (err.response?.status === 404) {
-          setError(
-            "Teachers endpoint not found. Please check your API configuration."
-          );
-        } else if (err.response?.status === 403) {
-          setError(
-            "You don't have permission to view teachers. Please check your role permissions."
-          );
-        } else if (err.response?.status === 401) {
-          setError("Authentication required. Please log in again.");
-        } else {
-          setError(
-            err.response?.data?.detail ||
-              err.message ||
-              "Failed to load teachers"
-          );
-        }
+        console.error("Error fetching teachers:", err);
+        console.error("Error response:", err.response?.data);
+        setError(
+          err.response?.data?.detail || err.message || "Failed to load teachers"
+        );
       } finally {
-        setTeachersLoading(false);
+        setLoading(false);
       }
     };
 
     fetchTeachers();
-  }, [user, schoolId, school, api]);
+  }, [schoolId, api]);
 
+  // Fetch timetables to build timetable-class mapping
   useEffect(() => {
-    if (selectedTeacher && schoolId) {
-      const fetchTeacherLessons = async () => {
-        setLessonsLoading(true);
+    if (!schoolId) return;
+
+    const fetchTimetablesForMapping = async () => {
+      try {
+        console.log("Fetching timetables for class mapping...");
+        const response = await api.getTimetables(schoolId);
+
+        let timetableData = [];
+        if (response?.data) {
+          if (response.data.results && Array.isArray(response.data.results)) {
+            timetableData = response.data.results;
+          } else if (Array.isArray(response.data)) {
+            timetableData = response.data;
+          } else if (typeof response.data === "object") {
+            timetableData = [response.data];
+          }
+        }
+
+        // Create a mapping of timetable ID to class name
+        const timetableMap = {};
+        timetableData.forEach((timetable) => {
+          if (timetable.id && timetable.school_class_details?.name) {
+            timetableMap[timetable.id] = timetable.school_class_details.name;
+          } else if (timetable.id && timetable.school_class?.name) {
+            timetableMap[timetable.id] = timetable.school_class.name;
+          }
+        });
+
+        console.log("Timetable-class mapping:", timetableMap);
+        setTimetables(timetableMap);
+      } catch (err) {
+        console.error("Error fetching timetables for mapping:", err);
+        // Continue without timetable mapping - we'll use fallbacks
+      }
+    };
+
+    fetchTimetablesForMapping();
+  }, [schoolId, api]);
+
+  // Fetch teacher schedule when teacher is selected
+  useEffect(() => {
+    if (!selectedTeacherId || !schoolId) return;
+
+    const fetchTeacherSchedule = async () => {
+      try {
+        setLoading(true);
         setError(null);
 
-        try {
-          console.log("Fetching lessons for teacher:", selectedTeacher);
+        console.log("Fetching schedule for teacher:", selectedTeacherId);
 
-          // Fetch lessons directly since there's no specific teacher timetable endpoint
-          // We'll get all lessons and filter by teacher
-          const response = await api.getLessons();
-          console.log("All lessons response:", response);
+        // Fetch ALL lessons from all timetables with expanded data
+        const response = await api.getLessons();
+        console.log("All lessons response:", response);
 
-          if (response.data && Array.isArray(response.data)) {
-            // Filter lessons for the selected teacher
-            const teacherLessons = response.data.filter(
-              (lesson) =>
-                lesson.teacher === parseInt(selectedTeacher) ||
-                lesson.teacher_details?.id === parseInt(selectedTeacher)
-            );
-
-            console.log("Filtered teacher lessons:", teacherLessons);
-            setTeacherLessons(teacherLessons);
-          } else {
-            console.error("Invalid lessons response format:", response);
-            setTeacherLessons([]);
+        let allLessons = [];
+        if (response?.data) {
+          if (Array.isArray(response.data)) {
+            allLessons = response.data;
+          } else if (
+            response.data.results &&
+            Array.isArray(response.data.results)
+          ) {
+            allLessons = response.data.results;
           }
-        } catch (err) {
-          console.error("Failed to load teacher lessons:", err);
-          setTeacherLessons([]);
-          // Don't set error here as it's not critical - just show empty state
-        } finally {
-          setLessonsLoading(false);
         }
-      };
 
-      fetchTeacherLessons();
-    } else {
-      setTeacherLessons([]);
-    }
-  }, [selectedTeacher, schoolId, api]);
+        console.log("Total lessons fetched:", allLessons.length);
 
-  // Helper function to organize lessons by day and time
-  const organizeLessons = (lessons) => {
+        // Filter lessons for selected teacher
+        const teacherLessons = allLessons.filter((lesson) => {
+          const teacherId = lesson.teacher || lesson.teacher_details?.id;
+          return teacherId === selectedTeacherId;
+        });
+
+        console.log("Teacher lessons found:", teacherLessons.length);
+
+        // DEBUG: Log lessons with class info
+        if (teacherLessons.length > 0) {
+          console.log("=== Teacher Lessons with Class Info ===");
+          teacherLessons.forEach((lesson, idx) => {
+            const className = getClassName(lesson);
+            console.log(`Lesson ${idx + 1}:`, {
+              id: lesson.id,
+              subject: lesson.subject_details?.name,
+              timetable_id: lesson.timetable,
+              class_name: className,
+              teacher:
+                lesson.teacher_details?.user?.first_name +
+                " " +
+                lesson.teacher_details?.user?.last_name,
+            });
+          });
+        }
+
+        if (teacherLessons.length > 0) {
+          const schedule = organizeSchedule(teacherLessons);
+          setTeacherSchedule(schedule);
+        } else {
+          setTeacherSchedule({
+            days: [],
+            timeSlots: [],
+            grid: {},
+            totalLessons: 0,
+          });
+        }
+      } catch (err) {
+        console.error("Error fetching teacher schedule:", err);
+        setError(
+          err.response?.data?.detail ||
+            err.message ||
+            "Failed to load teacher schedule"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchTeacherSchedule();
+  }, [selectedTeacherId, schoolId, api, timetables]); // Add timetables to dependencies
+
+  // Organize lessons into a schedule grid
+  const organizeSchedule = (lessons) => {
     const days = ["MON", "TUE", "WED", "THU", "FRI"];
-    const organizedLessons = {};
+    const dayNames = {
+      MON: "Monday",
+      TUE: "Tuesday",
+      WED: "Wednesday",
+      THU: "Thursday",
+      FRI: "Friday",
+    };
 
-    days.forEach((day) => {
-      organizedLessons[day] = [];
-    });
+    // Extract unique time slots
+    const timeSlotsMap = new Map();
 
     lessons.forEach((lesson) => {
-      const dayOfWeek = lesson.time_slot_details?.day_of_week;
-      if (dayOfWeek && organizedLessons[dayOfWeek]) {
-        organizedLessons[dayOfWeek].push(lesson);
+      const timeSlot = lesson.time_slot_details || lesson.time_slot;
+      if (timeSlot && timeSlot.start_time && timeSlot.end_time) {
+        const key = `${timeSlot.start_time}-${timeSlot.end_time}`;
+        if (!timeSlotsMap.has(key)) {
+          timeSlotsMap.set(key, {
+            start: timeSlot.start_time,
+            end: timeSlot.end_time,
+            order: timeSlot.order || 0,
+          });
+        }
       }
     });
 
-    // Sort lessons by time within each day
-    Object.keys(organizedLessons).forEach((day) => {
-      organizedLessons[day].sort((a, b) => {
-        const timeA = a.time_slot_details?.start_time || "00:00";
-        const timeB = b.time_slot_details?.start_time || "00:00";
-        return timeA.localeCompare(timeB);
+    // Sort time slots by start time
+    const sortedSlots = Array.from(timeSlotsMap.keys()).sort((a, b) => {
+      const [startA] = a.split("-");
+      const [startB] = b.split("-");
+      return startA.localeCompare(startB);
+    });
+
+    // Initialize grid
+    const grid = {};
+    days.forEach((day) => {
+      grid[day] = {};
+      sortedSlots.forEach((slot) => {
+        grid[day][slot] = null;
       });
     });
 
-    return organizedLessons;
+    // Fill grid with lessons
+    lessons.forEach((lesson) => {
+      const timeSlot = lesson.time_slot_details || lesson.time_slot;
+      if (timeSlot && timeSlot.start_time && timeSlot.end_time) {
+        const day = timeSlot.day_of_week;
+        const slotKey = `${timeSlot.start_time}-${timeSlot.end_time}`;
+
+        if (grid[day] && slotKey in grid[day]) {
+          grid[day][slotKey] = lesson;
+        }
+      }
+    });
+
+    return {
+      days: days.map((code) => ({ code, name: dayNames[code] })),
+      timeSlots: sortedSlots,
+      grid,
+      totalLessons: lessons.length,
+    };
   };
 
-  if (teachersLoading) {
+  const selectedTeacher = teachers.find((t) => t.id === selectedTeacherId);
+
+  const handleRefresh = () => {
+    if (selectedTeacherId && schoolId) {
+      setTeacherSchedule(null);
+      setLoading(true);
+    }
+  };
+
+  if (!schoolId) {
     return (
       <div className="teacher-timetables-container">
         <h2>Teacher Timetables</h2>
-        <div className="loading">Loading teachers...</div>
+        <div className="loading">Loading school information...</div>
+      </div>
+    );
+  }
+
+  if (loading && !teacherSchedule) {
+    return (
+      <div className="teacher-timetables-container">
+        <h2>Teacher Timetables</h2>
+        <div className="loading">
+          <div className="loading-spinner"></div>
+          <p>Loading teachers and schedules...</p>
+        </div>
       </div>
     );
   }
@@ -210,28 +350,12 @@ const TeacherTimetables = () => {
     return (
       <div className="teacher-timetables-container">
         <h2>Teacher Timetables</h2>
-        <div
-          className="error-message"
-          style={{
-            color: "red",
-            padding: "20px",
-            border: "1px solid red",
-            borderRadius: "4px",
-            backgroundColor: "#ffeaea",
-          }}
-        >
-          <h3>Error:</h3>
+        <div className="error-message">
+          <h3>Error</h3>
           <p>{error}</p>
-          <div style={{ marginTop: "10px", fontSize: "0.9em", color: "#666" }}>
-            <strong>Debug Info:</strong>
-            <pre>
-              {JSON.stringify(
-                { user: !!user, schoolId, school: !!school },
-                null,
-                2
-              )}
-            </pre>
-          </div>
+          <button onClick={handleRefresh} className="btn-refresh">
+            <FiRefreshCw /> Try Again
+          </button>
         </div>
       </div>
     );
@@ -242,248 +366,165 @@ const TeacherTimetables = () => {
       <div className="teacher-timetables-container">
         <h2>Teacher Timetables</h2>
         <div className="no-teachers">
-          <p>No teachers found for this school.</p>
-          <p>Please ensure teachers are properly registered in the system.</p>
+          <h3>No Teachers Found</h3>
+          <p>No teachers are registered in the system.</p>
+          <p>Please add teachers first in the Teachers section.</p>
         </div>
       </div>
     );
   }
 
-  const organizedLessons = organizeLessons(teacherLessons);
-  const selectedTeacherDetails = teachers.find(
-    (t) => t.id === parseInt(selectedTeacher)
-  );
-
   return (
     <div className="teacher-timetables-container">
-      <h2>Teacher Timetables</h2>
+      <div className="header">
+        <h2>Teacher Timetables</h2>
+        <button onClick={handleRefresh} className="btn-refresh">
+          <FiRefreshCw /> Refresh
+        </button>
+      </div>
 
-      <div className="teacher-selector" style={{ marginBottom: "20px" }}>
-        <label
-          htmlFor="teacher-select"
-          style={{ marginRight: "10px", fontWeight: "bold" }}
-        >
-          Select Teacher:
-        </label>
+      {/* Teacher Selector Card */}
+      <div className="teacher-selector-card">
+        <div className="selector-header">
+          <FiUser size={24} />
+          <label>Select Teacher:</label>
+        </div>
         <select
-          id="teacher-select"
-          value={selectedTeacher || ""}
-          onChange={(e) => setSelectedTeacher(e.target.value)}
-          style={{ padding: "8px", minWidth: "200px" }}
+          value={selectedTeacherId || ""}
+          onChange={(e) => setSelectedTeacherId(parseInt(e.target.value))}
+          className="teacher-select"
         >
+          <option value="">Select a teacher...</option>
           {teachers.map((teacher) => (
             <option key={teacher.id} value={teacher.id}>
-              {teacher.user?.first_name} {teacher.user?.last_name}
+              {getTeacherDisplayName(teacher)}
               {teacher.employee_number && ` (${teacher.employee_number})`}
             </option>
           ))}
         </select>
-      </div>
 
-      {lessonsLoading && (
-        <div
-          className="loading"
-          style={{ textAlign: "center", padding: "20px" }}
-        >
-          Loading timetable...
-        </div>
-      )}
-
-      {selectedTeacherDetails && !lessonsLoading && (
-        <div className="teacher-timetable-content">
-          <div
-            className="teacher-info"
-            style={{
-              marginBottom: "20px",
-              padding: "15px",
-              backgroundColor: "#f5f5f5",
-              borderRadius: "5px",
-            }}
-          >
-            <h3>
-              {selectedTeacherDetails.user?.first_name}{" "}
-              {selectedTeacherDetails.user?.last_name}
-            </h3>
-            {selectedTeacherDetails.employee_number && (
-              <p>
-                <strong>Employee Number:</strong>{" "}
-                {selectedTeacherDetails.employee_number}
+        {selectedTeacher && (
+          <div className="teacher-info">
+            <h3>{getTeacherDisplayName(selectedTeacher)}</h3>
+            {selectedTeacher.employee_number && (
+              <p className="employee-number">
+                Employee #: {selectedTeacher.employee_number}
               </p>
             )}
-            {selectedTeacherDetails.subjects_taught &&
-              selectedTeacherDetails.subjects_taught.length > 0 && (
-                <p>
-                  <strong>Subjects:</strong>{" "}
-                  {selectedTeacherDetails.subjects_taught
-                    .map((s) => s.name)
-                    .join(", ")}
-                </p>
-              )}
-            <p>
-              <strong>Total Lessons:</strong> {teacherLessons.length}
-            </p>
+            {teacherSchedule && (
+              <p className="lesson-count">
+                <FiBook /> {teacherSchedule.totalLessons} lessons per week
+              </p>
+            )}
           </div>
+        )}
+      </div>
 
-          {teacherLessons.length > 0 ? (
-            <div
-              className="timetable-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(6, 1fr)",
-                gap: "10px",
-                marginTop: "20px",
-              }}
-            >
-              <div
-                style={{
-                  fontWeight: "bold",
-                  padding: "10px",
-                  backgroundColor: "#e0e0e0",
-                }}
-              >
-                Time
-              </div>
-              {["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"].map(
-                (day) => (
-                  <div
-                    key={day}
-                    style={{
-                      fontWeight: "bold",
-                      padding: "10px",
-                      backgroundColor: "#e0e0e0",
-                      textAlign: "center",
-                    }}
-                  >
-                    {day}
-                  </div>
-                )
-              )}
-
-              {/* Generate time slots and lessons */}
-              {(() => {
-                // Get all unique time slots from lessons
-                const timeSlots = new Set();
-                teacherLessons.forEach((lesson) => {
-                  if (lesson.time_slot_details) {
-                    timeSlots.add(
-                      `${lesson.time_slot_details.start_time}-${lesson.time_slot_details.end_time}`
-                    );
-                  }
-                });
-
-                const sortedTimeSlots = Array.from(timeSlots).sort();
-
-                return sortedTimeSlots.map((timeSlot) => {
-                  const [startTime, endTime] = timeSlot.split("-");
+      {/* Timetable Grid */}
+      {teacherSchedule && teacherSchedule.timeSlots.length > 0 ? (
+        <div className="timetable-card">
+          <div className="timetable-scroll">
+            <table className="teacher-timetable-grid">
+              <thead>
+                <tr>
+                  <th className="time-header">
+                    <FiClock /> Time
+                  </th>
+                  {teacherSchedule.days.map((day) => (
+                    <th key={day.code} className="day-header">
+                      {day.name}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {teacherSchedule.timeSlots.map((slot) => {
+                  const [startTime, endTime] = slot.split("-");
 
                   return (
-                    <React.Fragment key={timeSlot}>
-                      <div
-                        style={{
-                          padding: "10px",
-                          backgroundColor: "#f9f9f9",
-                          fontSize: "0.9em",
-                          textAlign: "center",
-                        }}
-                      >
-                        {startTime}
-                        <br />-<br />
-                        {endTime}
-                      </div>
+                    <tr key={slot}>
+                      <td className="time-cell">
+                        <div className="time-start">{startTime}</div>
+                        <div className="time-end">{endTime}</div>
+                      </td>
 
-                      {["MON", "TUE", "WED", "THU", "FRI"].map((dayCode) => {
-                        const dayLessons = organizedLessons[dayCode] || [];
-                        const lesson = dayLessons.find(
-                          (l) =>
-                            l.time_slot_details?.start_time === startTime &&
-                            l.time_slot_details?.end_time === endTime
-                        );
+                      {teacherSchedule.days.map((day) => {
+                        const lesson = teacherSchedule.grid[day.code][slot];
 
                         return (
-                          <div
-                            key={`${timeSlot}-${dayCode}`}
-                            style={{
-                              padding: "8px",
-                              border: "1px solid #ddd",
-                              backgroundColor: lesson ? "#e8f5e8" : "#fafafa",
-                              minHeight: "60px",
-                              fontSize: "0.85em",
-                            }}
+                          <td
+                            key={`${day.code}-${slot}`}
+                            className={`lesson-cell ${
+                              lesson ? "has-lesson" : "free-period"
+                            }`}
                           >
                             {lesson ? (
-                              <div>
-                                <strong>{lesson.subject_details?.name}</strong>
-                                <br />
-                                <small>
-                                  {lesson.timetable_details?.school_class
-                                    ?.name || "Unknown Class"}
-                                </small>
+                              <div className="lesson-content">
+                                <div className="lesson-subject">
+                                  {lesson.subject_details?.name ||
+                                    lesson.subject?.name ||
+                                    "Subject"}
+                                </div>
+                                <div className="lesson-class">
+                                  <FiUsers
+                                    size={12}
+                                    style={{ marginRight: "4px" }}
+                                  />
+                                  {getClassName(lesson)}
+                                </div>
                                 {lesson.room && (
-                                  <div>
-                                    <small>Room: {lesson.room}</small>
+                                  <div className="lesson-room">
+                                    <FiMapPin size={12} />
+                                    {lesson.room}
                                   </div>
+                                )}
+                                {lesson.is_double_period && (
+                                  <span className="double-badge">Double</span>
                                 )}
                               </div>
                             ) : (
-                              <span style={{ color: "#ccc" }}>Free</span>
+                              <span className="free-text">Free</span>
                             )}
-                          </div>
+                          </td>
                         );
                       })}
-                    </React.Fragment>
+                    </tr>
                   );
-                });
-              })()}
-            </div>
-          ) : (
-            <div
-              className="no-lessons"
-              style={{
-                textAlign: "center",
-                padding: "40px",
-                backgroundColor: "#f9f9f9",
-                borderRadius: "5px",
-              }}
-            >
-              <h3>No Lessons Assigned</h3>
-              <p>
-                This teacher has no lessons assigned in the current timetable.
-              </p>
-              <p>
-                Please check the timetable generation or lesson assignments.
-              </p>
-            </div>
-          )}
-        </div>
-      )}
+                })}
+              </tbody>
+            </table>
+          </div>
 
-      {/* Debug information (remove in production) */}
-      {process.env.NODE_ENV === "development" && (
-        <div
-          style={{
-            marginTop: "20px",
-            padding: "10px",
-            backgroundColor: "#f0f0f0",
-            fontSize: "0.8em",
-            border: "1px solid #ddd",
-          }}
-        >
-          <h4>Debug Information:</h4>
-          <p>
-            <strong>Teachers found:</strong> {teachers.length}
-          </p>
-          <p>
-            <strong>Selected teacher ID:</strong> {selectedTeacher}
-          </p>
-          <p>
-            <strong>Teacher lessons:</strong> {teacherLessons.length}
-          </p>
-          <p>
-            <strong>School ID:</strong> {schoolId}
-          </p>
-          <p>
-            <strong>User type:</strong> {user?.user_type}
-          </p>
+          {/* Summary */}
+          <div className="schedule-summary">
+            <h4>Weekly Summary</h4>
+            <div className="summary-stats">
+              <div className="stat">
+                <span className="stat-label">Total Lessons</span>
+                <span className="stat-value">
+                  {teacherSchedule.totalLessons}
+                </span>
+              </div>
+              <div className="stat">
+                <span className="stat-label">Periods/Day</span>
+                <span className="stat-value">
+                  {teacherSchedule.timeSlots.length}
+                </span>
+              </div>
+              <div className="stat">
+                <span className="stat-label">Working Days</span>
+                <span className="stat-value">
+                  {teacherSchedule.days.length}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div className="no-schedule">
+          <h3>No Schedule Available</h3>
+          <p>This teacher has no lessons assigned in any active timetables.</p>
+          <p>Lessons are assigned when you generate timetables for classes.</p>
         </div>
       )}
     </div>
@@ -491,69 +532,3 @@ const TeacherTimetables = () => {
 };
 
 export default TeacherTimetables;
-
-// const TeacherTimetables = () => {
-//   const [teachers, setTeachers] = useState([
-//     {
-//       id: 1,
-//       user: { first_name: "John", last_name: "Smith" },
-//       subjects_taught: [1, 4],
-//     },
-//     {
-//       id: 2,
-//       user: { first_name: "Mary", last_name: "Johnson" },
-//       subjects_taught: [1],
-//     },
-//   ]);
-
-//   const [selectedTeacher, setSelectedTeacher] = useState(1);
-//   const [timetable, setTimetable] = useState({
-//     id: 1,
-//     classes: [{ id: 101, name: "Grade 1 A" }],
-//     lessons: [
-//       {
-//         subject: { name: "Mathematics" },
-//         teacher: { user: { full_name: "John Smith" } },
-//         time_slot: {
-//           day_of_week: "MON",
-//           start_time: "08:00",
-//           end_time: "08:40",
-//           is_break: false,
-//         },
-//         is_double_period: false,
-//       },
-//     ],
-//   });
-
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState(null);
-
-//   return (
-//     <div className="teacher-timetables-container">
-//       <h2>Teacher Timetables</h2>
-
-//       <div className="teacher-selector">
-//         <label>Select Teacher:</label>
-//         <select
-//           value={selectedTeacher || ""}
-//           onChange={(e) => setSelectedTeacher(e.target.value)}
-//         >
-//           {teachers.map((teacher) => (
-//             <option key={teacher.id} value={teacher.id}>
-//               {teacher.user.first_name} {teacher.user.last_name}
-//             </option>
-//           ))}
-//         </select>
-//       </div>
-
-//       {timetable && (
-//         <TimetablePreview
-//           timetable={timetable}
-//           classId={timetable.classes[0]?.id}
-//         />
-//       )}
-//     </div>
-//   );
-// };
-
-// export default TeacherTimetables;

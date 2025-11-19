@@ -1,174 +1,497 @@
 import { useState, useEffect } from "react";
 import { useTimetableApi } from "../../../../hooks/useTimetableApi";
+import { useApi } from "../../../../hooks/useApi";
 import useUser from "../../../../hooks/useUser";
+import { FiBook, FiUser, FiClock, FiRefreshCw, FiPlus } from "react-icons/fi";
+import "./timetables.css";
 
 const SubjectsManagement = () => {
-  const { user } = useUser();
-  const api = useTimetableApi();
+  const { user, schoolId } = useUser();
+  const timetableApi = useTimetableApi();
+  const rawApi = useApi(); // For raw API calls like pagination
+
   const [subjects, setSubjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [enrichedSubjects, setEnrichedSubjects] = useState([]);
+  const [timetables, setTimetables] = useState({}); // Store timetable-class mapping
 
+  // Fetch timetables for class name lookup
   useEffect(() => {
-    if (!user?.school?.id) {
-      setLoading(false);
-      return;
-    }
+    if (!schoolId) return;
 
-    const fetchSubjectsFromTimetables = async () => {
+    const fetchTimetablesForMapping = async () => {
       try {
-        setLoading(true);
+        console.log("Fetching timetables for class mapping...");
+        const response = await timetableApi.getTimetables(schoolId);
 
-        // First, get all timetables for the school
-        const timetablesResponse = await api.getTimetables(user.school.id);
-        const timetables = Array.isArray(timetablesResponse.data)
-          ? timetablesResponse.data
-          : timetablesResponse.data?.results || [];
-
-        console.log("Timetables fetched:", timetables);
-
-        if (timetables.length === 0) {
-          setSubjects([]);
-          setLoading(false);
-          return;
-        }
-
-        // Get all lessons from all timetables
-        const allLessons = [];
-        for (const timetable of timetables) {
-          try {
-            const lessonsResponse = await api.getLessons(timetable.id);
-            const lessons = Array.isArray(lessonsResponse.data)
-              ? lessonsResponse.data
-              : lessonsResponse.data?.results || [];
-            allLessons.push(...lessons);
-          } catch (lessonError) {
-            console.error(
-              `Error fetching lessons for timetable ${timetable.id}:`,
-              lessonError
-            );
+        let timetableData = [];
+        if (response?.data) {
+          if (response.data.results && Array.isArray(response.data.results)) {
+            timetableData = response.data.results;
+          } else if (Array.isArray(response.data)) {
+            timetableData = response.data;
+          } else if (typeof response.data === "object") {
+            timetableData = [response.data];
           }
         }
 
-        console.log("All lessons fetched:", allLessons);
-
-        // Extract unique subjects with teacher information
-        const subjectMap = new Map();
-
-        allLessons.forEach((lesson) => {
-          if (lesson.subject_details && lesson.teacher_details) {
-            const subjectId = lesson.subject_details.id;
-            const subject = lesson.subject_details;
-            const teacher = lesson.teacher_details;
-
-            if (subjectMap.has(subjectId)) {
-              // Add teacher if not already in the list
-              const existingSubject = subjectMap.get(subjectId);
-              const teacherExists = existingSubject.teachers.some(
-                (t) => t.id === teacher.user.id
-              );
-              if (!teacherExists) {
-                existingSubject.teachers.push({
-                  id: teacher.user.id,
-                  first_name: teacher.user.first_name,
-                  last_name: teacher.user.last_name,
-                });
-              }
-              // Count periods per week
-              existingSubject.periods_per_week += 1;
-            } else {
-              // Create new subject entry
-              subjectMap.set(subjectId, {
-                id: subject.id,
-                name: subject.name,
-                code:
-                  subject.code || subject.name.substring(0, 3).toUpperCase(),
-                level: subject.level || "All",
-                teachers: [
-                  {
-                    id: teacher.user.id,
-                    first_name: teacher.user.first_name,
-                    last_name: teacher.user.last_name,
-                  },
-                ],
-                periods_per_week: 1,
-              });
-            }
+        // Create a mapping of timetable ID to class name
+        const timetableMap = {};
+        timetableData.forEach((timetable) => {
+          if (timetable.id && timetable.school_class_details?.name) {
+            timetableMap[timetable.id] = timetable.school_class_details.name;
+          } else if (timetable.id && timetable.school_class?.name) {
+            timetableMap[timetable.id] = timetable.school_class.name;
           }
         });
 
-        // Convert map to array
-        const uniqueSubjects = Array.from(subjectMap.values());
-
-        console.log("Processed subjects:", uniqueSubjects);
-        setSubjects(uniqueSubjects);
+        console.log("Timetable-class mapping:", timetableMap);
+        setTimetables(timetableMap);
       } catch (err) {
-        console.error("Error fetching timetable data:", err);
-        setError("Failed to load subjects from timetables");
+        console.error("Error fetching timetables for mapping:", err);
+      }
+    };
+
+    fetchTimetablesForMapping();
+  }, [schoolId, timetableApi]);
+
+  // Helper to get class name from lesson
+  const getClassName = (lesson) => {
+    // First, check if we have the timetable in our lookup
+    const timetableId = lesson.timetable;
+    if (timetableId && timetables[timetableId]) {
+      return timetables[timetableId];
+    }
+
+    // Fallback: Try multiple paths to get class name from lesson data
+    if (lesson.timetable_details?.school_class_details?.name) {
+      return lesson.timetable_details.school_class_details.name;
+    }
+    if (lesson.timetable_details?.school_class?.name) {
+      return lesson.timetable_details.school_class.name;
+    }
+    if (lesson.school_class_details?.name) {
+      return lesson.school_class_details.name;
+    }
+    if (lesson.school_class?.name) {
+      return lesson.school_class.name;
+    }
+    if (lesson.class_name) {
+      return lesson.class_name;
+    }
+
+    return null; // Return null instead of "Unknown Class"
+  };
+
+  // Fetch subjects from the subjects endpoint
+  useEffect(() => {
+    if (!schoolId) {
+      console.log("Waiting for school ID...");
+      return;
+    }
+
+    // Only fetch subjects after we have the timetable mapping
+    if (Object.keys(timetables).length === 0) {
+      console.log("Waiting for timetable mapping...");
+      return;
+    }
+
+    const fetchSubjects = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        console.log("Fetching subjects for school:", schoolId);
+
+        const response = await timetableApi.getSubjects(schoolId);
+        console.log("Subjects API response:", response);
+
+        let subjectsData = [];
+        if (response?.data) {
+          if (Array.isArray(response.data)) {
+            subjectsData = response.data;
+          } else if (
+            response.data.results &&
+            Array.isArray(response.data.results)
+          ) {
+            subjectsData = response.data.results;
+          }
+        }
+
+        console.log("Subjects loaded:", subjectsData.length);
+        setSubjects(subjectsData);
+
+        // Now enrich with teacher and timetable data
+        if (subjectsData.length > 0) {
+          await enrichSubjectsWithTimetableData(subjectsData);
+        }
+      } catch (err) {
+        console.error("Error fetching subjects:", err);
+        setError(
+          err.response?.data?.detail || err.message || "Failed to load subjects"
+        );
       } finally {
         setLoading(false);
       }
     };
 
-    fetchSubjectsFromTimetables();
-  }, [user?.school?.id, api]);
+    fetchSubjects();
+  }, [schoolId, timetableApi, timetables]);
 
-  if (!user?.school?.id && !loading) {
-    return <div className="error">No school data available</div>;
+  // Enrich subjects with teacher assignments and period counts from lessons
+  const enrichSubjectsWithTimetableData = async (subjectsData) => {
+    try {
+      console.log("Enriching subjects with timetable data...");
+
+      // Fetch all lessons
+      const lessonsResponse = await timetableApi.getLessons();
+
+      // Extract lessons array from response
+      let allLessons = [];
+      if (lessonsResponse?.data) {
+        if (Array.isArray(lessonsResponse.data)) {
+          allLessons = lessonsResponse.data;
+        } else if (
+          lessonsResponse.data.results &&
+          Array.isArray(lessonsResponse.data.results)
+        ) {
+          allLessons = lessonsResponse.data.results;
+
+          // Handle pagination if needed - use rawApi for pagination
+          let nextUrl = lessonsResponse.data.next;
+          while (nextUrl) {
+            console.log("Fetching next page of lessons...");
+            try {
+              // Extract just the path from the full URL
+              const urlPath = nextUrl.replace(/^https?:\/\/[^\/]+/, "");
+              const nextResponse = await rawApi.get(urlPath);
+
+              if (nextResponse?.data?.results) {
+                allLessons = [...allLessons, ...nextResponse.data.results];
+                nextUrl = nextResponse.data.next;
+              } else {
+                nextUrl = null;
+              }
+            } catch (pageError) {
+              console.error("Error fetching next page:", pageError);
+              nextUrl = null; // Stop pagination on error
+            }
+          }
+        }
+      }
+
+      console.log("Total lessons fetched:", allLessons.length);
+
+      // Create a map to track teacher assignments and period counts per subject
+      const subjectEnrichmentMap = new Map();
+
+      allLessons.forEach((lesson, lessonIdx) => {
+        const subjectId = lesson.subject_details?.id || lesson.subject;
+        if (!subjectId) {
+          if (lessonIdx < 3)
+            console.log(`Lesson ${lessonIdx + 1}: No subject ID`);
+          return;
+        }
+
+        if (!subjectEnrichmentMap.has(subjectId)) {
+          subjectEnrichmentMap.set(subjectId, {
+            teachers: new Map(),
+            periodsPerWeek: 0,
+            classes: new Set(),
+          });
+        }
+
+        const enrichment = subjectEnrichmentMap.get(subjectId);
+
+        // Add teacher
+        const teacherId =
+          lesson.teacher_details?.id ||
+          lesson.teacher_details?.user?.id ||
+          lesson.teacher;
+
+        if (teacherId) {
+          if (!enrichment.teachers.has(teacherId)) {
+            const teacherName = getTeacherName(lesson.teacher_details);
+            enrichment.teachers.set(teacherId, {
+              id: teacherId,
+              name: teacherName,
+            });
+          }
+        }
+
+        // Count periods
+        enrichment.periodsPerWeek += 1;
+
+        // Track classes
+        const className = getClassName(lesson);
+        if (className) {
+          enrichment.classes.add(className);
+        }
+      });
+
+      console.log("\n=== ENRICHMENT MAP SUMMARY ===");
+      console.log("Total subjects in map:", subjectEnrichmentMap.size);
+      subjectEnrichmentMap.forEach((value, key) => {
+        console.log(
+          `Subject ${key}: ${value.teachers.size} teachers, ${value.periodsPerWeek} periods, ${value.classes.size} classes`
+        );
+        if (value.classes.size > 0) {
+          console.log(`  Classes: ${Array.from(value.classes).join(", ")}`);
+        }
+      });
+
+      // Merge enrichment data with subjects
+      const enriched = subjectsData.map((subject) => {
+        const enrichment = subjectEnrichmentMap.get(subject.id);
+
+        const result = {
+          ...subject,
+          teachers: enrichment ? Array.from(enrichment.teachers.values()) : [],
+          periodsPerWeek: enrichment ? enrichment.periodsPerWeek : 0,
+          classesCount: enrichment ? enrichment.classes.size : 0,
+          classes: enrichment ? Array.from(enrichment.classes) : [],
+        };
+
+        console.log(`Subject "${subject.name}" (ID: ${subject.id}):`, {
+          teachers: result.teachers.length,
+          periods: result.periodsPerWeek,
+          classes: result.classesCount,
+          classList: result.classes,
+        });
+
+        return result;
+      });
+
+      console.log("Enriched subjects completed:", enriched.length);
+      console.log(
+        "Subjects with classes:",
+        enriched.filter((s) => s.classes.length > 0).length
+      );
+      console.log(
+        "Subjects with teachers:",
+        enriched.filter((s) => s.teachers.length > 0).length
+      );
+
+      setEnrichedSubjects(enriched);
+    } catch (err) {
+      console.error("Error enriching subjects:", err);
+      // Still set the basic subjects even if enrichment fails
+      setEnrichedSubjects(
+        subjectsData.map((s) => ({
+          ...s,
+          teachers: [],
+          periodsPerWeek: 0,
+          classesCount: 0,
+          classes: [],
+        }))
+      );
+    }
+  };
+
+  // Helper to extract teacher name from different structures
+  const getTeacherName = (teacher) => {
+    if (!teacher) return "Unknown";
+
+    // Try user.first_name and user.last_name (most common)
+    if (teacher.user) {
+      const firstName = teacher.user.first_name || "";
+      const lastName = teacher.user.last_name || "";
+      const fullName = `${firstName} ${lastName}`.trim();
+      if (fullName) return fullName;
+      if (teacher.user.username) return teacher.user.username;
+    }
+
+    // Try direct first_name and last_name
+    if (teacher.first_name || teacher.last_name) {
+      const fullName = `${teacher.first_name || ""} ${
+        teacher.last_name || ""
+      }`.trim();
+      if (fullName) return fullName;
+    }
+
+    // Try name field
+    if (teacher.name) return teacher.name;
+
+    // Try full_name field
+    if (teacher.full_name) return teacher.full_name;
+
+    return "Unknown Teacher";
+  };
+
+  const handleRefresh = () => {
+    setLoading(true);
+    setSubjects([]);
+    setEnrichedSubjects([]);
+    setTimetables({}); // Clear timetables too
+  };
+
+  if (!schoolId) {
+    return (
+      <div className="subjects-management-container">
+        <h2>Subjects Management</h2>
+        <div className="loading">Loading school information...</div>
+      </div>
+    );
   }
 
-  if (loading)
-    return <div className="loading">Loading subjects from timetables...</div>;
-  if (error) return <div className="error">{error}</div>;
+  if (loading) {
+    return (
+      <div className="subjects-management-container">
+        <h2>Subjects Management</h2>
+        <div className="loading">
+          <div className="loading-spinner"></div>
+          <p>Loading subjects...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="subjects-management-container">
+        <h2>Subjects Management</h2>
+        <div className="error-message">
+          <h3>Error</h3>
+          <p>{error}</p>
+          <button onClick={handleRefresh} className="btn-refresh">
+            <FiRefreshCw /> Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  const displaySubjects =
+    enrichedSubjects.length > 0 ? enrichedSubjects : subjects;
 
   return (
     <div className="subjects-management-container">
-      <h2>Subjects Management</h2>
-      <p>
-        View and manage subjects currently scheduled in timetables at{" "}
-        {user?.school?.name || "your school"}
-      </p>
-
-      {subjects.length === 0 ? (
-        <div className="no-subjects">
-          <p>No subjects found in current timetables.</p>
+      <div className="header">
+        <div>
+          <h2>Subjects Management</h2>
           <p>
-            Subjects will appear here once timetables are generated and
-            activated.
+            Manage subjects and view teaching assignments at{" "}
+            {user?.school?.name || "your school"}
           </p>
         </div>
-      ) : (
-        <div className="subjects-summary">
-          <p>Found {subjects.length} subjects across all active timetables</p>
+        <button onClick={handleRefresh} className="btn-refresh">
+          <FiRefreshCw /> Refresh
+        </button>
+      </div>
 
-          <table className="subjects-list-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Code</th>
-                <th>Level</th>
-                <th>Assigned Teachers</th>
-                <th>Total Periods/Week</th>
-              </tr>
-            </thead>
-            <tbody>
-              {subjects.map((subject) => (
-                <tr key={subject.id}>
-                  <td>{subject.name}</td>
-                  <td>{subject.code}</td>
-                  <td>{subject.level}</td>
-                  <td>
-                    {subject.teachers && subject.teachers.length > 0
-                      ? subject.teachers
-                          .map((t) => `${t.first_name} ${t.last_name}`)
-                          .join(", ")
-                      : "Not assigned"}
-                  </td>
-                  <td>{subject.periods_per_week}</td>
+      {displaySubjects.length === 0 ? (
+        <div className="no-subjects">
+          <FiBook size={48} style={{ opacity: 0.3 }} />
+          <h3>No Subjects Found</h3>
+          <p>No subjects have been added to the system yet.</p>
+          <p>Subjects need to be created before generating timetables.</p>
+          <button className="btn-add-subject">
+            <FiPlus /> Add Subject
+          </button>
+        </div>
+      ) : (
+        <div className="subjects-content">
+          <div className="subjects-summary">
+            <div className="summary-card">
+              <FiBook size={24} />
+              <div>
+                <div className="summary-value">{displaySubjects.length}</div>
+                <div className="summary-label">Total Subjects</div>
+              </div>
+            </div>
+            <div className="summary-card">
+              <FiUser size={24} />
+              <div>
+                <div className="summary-value">
+                  {displaySubjects.reduce(
+                    (sum, s) => sum + (s.teachers?.length || 0),
+                    0
+                  )}
+                </div>
+                <div className="summary-label">Teacher Assignments</div>
+              </div>
+            </div>
+            <div className="summary-card">
+              <FiClock size={24} />
+              <div>
+                <div className="summary-value">
+                  {displaySubjects.reduce(
+                    (sum, s) => sum + (s.periodsPerWeek || 0),
+                    0
+                  )}
+                </div>
+                <div className="summary-label">Total Periods/Week</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="subjects-table-container">
+            <table className="subjects-list-table">
+              <thead>
+                <tr>
+                  <th>Subject Name</th>
+                  <th>Code</th>
+                  <th>Level/Grade</th>
+                  <th>Assigned Teachers</th>
+                  <th>Classes</th>
+                  <th>Periods/Week</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {displaySubjects.map((subject) => (
+                  <tr key={subject.id}>
+                    <td>
+                      <div className="subject-name">
+                        <FiBook size={16} style={{ marginRight: "8px" }} />
+                        {subject.name}
+                      </div>
+                    </td>
+                    <td>
+                      <span className="subject-code">
+                        {subject.code ||
+                          subject.name.substring(0, 3).toUpperCase()}
+                      </span>
+                    </td>
+                    <td>
+                      {subject.level || subject.grade_level || "All Levels"}
+                    </td>
+                    <td>
+                      {subject.teachers && subject.teachers.length > 0 ? (
+                        <div className="teachers-list">
+                          {subject.teachers.map((teacher, idx) => (
+                            <span key={idx} className="teacher-badge">
+                              {teacher.name}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="no-assignment">Not assigned</span>
+                      )}
+                    </td>
+                    <td>
+                      {subject.classes && subject.classes.length > 0 ? (
+                        <div className="classes-list">
+                          {subject.classes.map((className, idx) => (
+                            <span key={idx} className="class-badge">
+                              {className}
+                            </span>
+                          ))}
+                        </div>
+                      ) : (
+                        <span className="no-assignment">-</span>
+                      )}
+                    </td>
+                    <td>
+                      <span className="periods-count">
+                        {subject.periodsPerWeek || 0}
+                      </span>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
@@ -176,181 +499,3 @@ const SubjectsManagement = () => {
 };
 
 export default SubjectsManagement;
-
-// import { useState, useEffect } from "react";
-// import { useTimetableApi } from "../../../../hooks/useTimetableApi";
-// import useUser from "../../../../hooks/useUser";
-// import "./timetables.css";
-
-// const SubjectsManagement = () => {
-//   const { user } = useUser();
-//   const { getSubjects } = useTimetableApi(); // Destructure getSubjects
-//   const [subjects, setSubjects] = useState([]);
-//   const [loading, setLoading] = useState(true);
-//   const [error, setError] = useState(null);
-
-//   useEffect(() => {
-//     const fetchSubjects = async () => {
-//       try {
-//         setLoading(true);
-//         setError(null);
-
-//         // 1. Get the school CODE (MMS001) - not the numeric ID
-//         const schoolCode = "MMS001"; // Hardcoded for now - replace with dynamic value if needed
-
-//         console.log("Fetching subjects for school code:", schoolCode);
-
-//         // 2. Use the getSubjects method (which sends school_id=MMS001)
-//         const response = await getSubjects(schoolCode);
-//         console.log("API Response:", response);
-
-//         // 3. Handle both paginated and non-paginated responses
-//         const subjectsData = response.data.results || response.data;
-
-//         if (!Array.isArray(subjectsData)) {
-//           throw new Error("Unexpected response format");
-//         }
-
-//         setSubjects(subjectsData);
-//       } catch (err) {
-//         console.error("Error fetching subjects:", {
-//           error: err.response?.data || err.message,
-//           status: err.response?.status,
-//         });
-//         setError(err.message || "Failed to load subjects");
-//       } finally {
-//         setLoading(false);
-//       }
-//     };
-
-//     fetchSubjects();
-//   }, []); // Empty dependency array = runs once on mount
-
-//   if (loading) {
-//     return <div className="loading">Loading subjects...</div>;
-//   }
-
-//   if (error) {
-//     return (
-//       <div className="error">
-//         <p>{error}</p>
-//         <button onClick={() => window.location.reload()}>Try Again</button>
-//       </div>
-//     );
-//   }
-
-//   return (
-//     <div className="subjects-management-container">
-//       <h2>Subjects Management</h2>
-//       <p>
-//         View and manage all subjects taught at Membley Mixed School (MMS001)
-//       </p>
-
-//       {subjects.length === 0 ? (
-//         <div className="no-subjects">
-//           <p>No subjects found for this school.</p>
-//           <p className="debug-hint">
-//             Debug Tip: Check if subjects exist for school code MMS001 in Django
-//             admin
-//           </p>
-//         </div>
-//       ) : (
-//         <table className="subjects-list-table">
-//           <thead>
-//             <tr>
-//               <th>Name</th>
-//               <th>Code</th>
-//               <th>Level</th>
-//               <th>Teachers</th>
-//               <th>Periods/Week</th>
-//             </tr>
-//           </thead>
-//           <tbody>
-//             {subjects.map((subject) => (
-//               <tr key={subject.id}>
-//                 <td>{subject.name}</td>
-//                 <td>{subject.code}</td>
-//                 <td>{subject.level || "All"}</td>
-//                 <td>
-//                   {subject.teachers?.length > 0
-//                     ? subject.teachers
-//                         .map((t) => `${t.first_name} ${t.last_name}`)
-//                         .join(", ")
-//                     : "Not assigned"}
-//                 </td>
-//                 <td>{subject.periods_per_week || 1}</td>
-//               </tr>
-//             ))}
-//           </tbody>
-//         </table>
-//       )}
-//     </div>
-//   );
-// };
-
-// export default SubjectsManagement;
-
-// const SubjectsManagement = () => {
-//   const [subjects, setSubjects] = useState([
-//     {
-//       id: 1,
-//       name: "Mathematics",
-//       code: "MATH101",
-//       level: "Primary",
-//       teachers: [
-//         { id: 1, first_name: "John", last_name: "Smith" },
-//         { id: 2, first_name: "Mary", last_name: "Johnson" },
-//       ],
-//       periods_per_week: 5,
-//     },
-//     {
-//       id: 2,
-//       name: "English",
-//       code: "ENG101",
-//       level: "All",
-//       teachers: [{ id: 3, first_name: "Sarah", last_name: "Williams" }],
-//       periods_per_week: 4,
-//     },
-//   ]);
-
-//   const [loading, setLoading] = useState(false);
-//   const [error, setError] = useState(null);
-
-//   return (
-//     <div className="subjects-management-container">
-//       <h2>Subjects Management</h2>
-//       <p>View and manage all subjects taught at your school</p>
-
-//       <table className="subjects-list-table">
-//         <thead>
-//           <tr>
-//             <th>Name</th>
-//             <th>Code</th>
-//             <th>Level</th>
-//             <th>Teachers</th>
-//             <th>Periods/Week</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {subjects.map((subject) => (
-//             <tr key={subject.id}>
-//               <td>{subject.name}</td>
-//               <td>{subject.code}</td>
-//               <td>{subject.level || "All"}</td>
-//               <td>
-//                 {subject.teachers && subject.teachers.length > 0
-//                   ? subject.teachers
-//                       .map((t) => `${t.first_name} ${t.last_name}`)
-//                       .join(", ")
-//                   : "Not assigned"}
-//               </td>
-//               <td>{subject.periods_per_week || 1}</td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// };
-
-// export default SubjectsManagement;

@@ -770,23 +770,190 @@
 }
 
 /* Teacher Timetables View */
-.teacher-timetables-container {
+/* .teacher-timetables-container {
   background: rgba(255, 255, 255, 0.05);
   border-radius: 10px;
   padding: 20px;
+} */
+
+.teacher-timetables-container {
+  background: #ffffff; /* White background */
+  color: #2c3e50; /* Dark text */
+  padding: 20px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.teacher-timetables-container .header h2 {
+  color: #2c3e50;
+}
+
+/* Make sure all text in this section is visible */
+.teacher-timetables-container * {
+  color: inherit;
+}
+
+.teacher-timetables-container select,
+.teacher-timetables-container input,
+.teacher-timetables-container label {
+  color: #2c3e50;
 }
 
 .teacher-selector {
   margin-bottom: 20px;
 }
 
-.teacher-selector select {
-  padding: 8px 12px;
-  border-radius: 5px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-color);
-  min-width: 300px;
+.teacher-selector-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.selector-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  color: #2c3e50; /* Dark color for visibility */
+}
+
+.selector-header label {
+  font-size: 16px;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.teacher-select {
+  width: 100%;
+  max-width: 400px;
+  padding: 10px 15px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: white;
+  color: #2c3e50; /* Ensure text is visible */
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.teacher-select option {
+  color: #2c3e50; /* Make sure dropdown options are visible */
+  background-color: white;
+  padding: 10px;
+}
+
+.teacher-select:hover {
+  border-color: #3498db;
+}
+
+.teacher-select:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.teacher-info {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+  border-left: 4px solid #3498db;
+}
+
+.teacher-info h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: #2c3e50; /* Dark text for visibility */
+  margin-bottom: 8px;
+}
+
+.teacher-info .employee-number {
+  font-size: 14px;
+  color: #7f8c8d;
+  margin-bottom: 8px;
+}
+
+.teacher-info .lesson-count {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #34495e;
+  margin-top: 8px;
+}
+
+/* Add these styles to your timetables.css file */
+
+/* Classes list styling - similar to teachers list */
+.classes-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+}
+
+.class-badge {
+  display: inline-block;
+  padding: 4px 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 14px;
+  font-size: 0.85em;
+  font-weight: 500;
+  white-space: nowrap;
+  box-shadow: 0 2px 4px rgba(102, 126, 234, 0.2);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.class-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
+}
+
+/* If you want to differentiate from teacher badges */
+/* .teacher-badge {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  box-shadow: 0 2px 4px rgba(245, 87, 108, 0.2);
+} */
+
+/* .teacher-badge:hover {
+  box-shadow: 0 4px 8px rgba(245, 87, 108, 0.3);
+} */
+
+/* Ensure table cells accommodate the badges properly */
+.subjects-list-table td {
+  vertical-align: top;
+  padding: 12px;
+}
+
+.subjects-list-table .teachers-list,
+.subjects-list-table .classes-list {
+  min-height: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* No assignment styling */
+.no-assignment {
+  color: #95a5a6;
+  font-style: italic;
+  font-size: 0.9em;
+}
+
+/* Classes count display (if showing count instead of list) */
+.classes-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background-color: #e3f2fd;
+  color: #1976d2;
+  border-radius: 12px;
+  font-size: 0.9em;
+  font-weight: 500;
 }
 
 /* Subjects Management */
