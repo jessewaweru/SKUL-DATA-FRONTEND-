@@ -7,6 +7,7 @@ import "react-date-range/dist/theme/default.css";
 import ActionLogsTable from "./ActionLogsTable";
 import ActionLogDetailsModal from "./ActionLogDetailsModal";
 import { format } from "date-fns";
+import api from "../../../../services/api";
 
 const ActionLogs = () => {
   const location = useLocation();
@@ -46,22 +47,75 @@ const ActionLogs = () => {
     fetchActionLogs();
   }, [filters, pagination.page, location.pathname]);
 
+  // Helper function to safely process API responses
+  const safeProcessOptions = (data, isCategory = false) => {
+    if (!data) return [];
+
+    try {
+      // If it's already an array of objects with value/label
+      if (
+        Array.isArray(data) &&
+        data.length > 0 &&
+        typeof data[0] === "object"
+      ) {
+        return data.map((item) => ({
+          value: item.value || item.id || item[0] || "",
+          label:
+            item.label ||
+            item.name ||
+            item[1] ||
+            String(item.value || item.id || item[0] || "Unknown"),
+        }));
+      }
+
+      // If it's an array of arrays (like [['value', 'label'], ...])
+      if (Array.isArray(data) && data.length > 0 && Array.isArray(data[0])) {
+        return data.map((item) => ({
+          value: item[0] || "",
+          label: item[1] || String(item[0] || "Unknown"),
+        }));
+      }
+
+      // If it's an array of strings/numbers
+      if (Array.isArray(data)) {
+        return data.map((item) => ({
+          value: item,
+          label: String(item),
+        }));
+      }
+
+      // If it's an object, convert to array
+      if (typeof data === "object" && !Array.isArray(data)) {
+        return Object.entries(data).map(([key, value]) => ({
+          value: key,
+          label: String(value),
+        }));
+      }
+
+      return [];
+    } catch (error) {
+      console.error("Error processing options:", error);
+      return [];
+    }
+  };
+
   const fetchFilterOptions = async () => {
     try {
       const [categoriesRes, modelsRes] = await Promise.all([
-        fetch("/api/action-logs/category_options/"),
-        fetch("/api/action-logs/model_options/"),
+        api.get("/logs/action-logs/category_options/"),
+        api.get("/logs/action-logs/model_options/"),
       ]);
 
-      const categories = await categoriesRes.json();
-      const models = await modelsRes.json();
-
       setFilterOptions({
-        categories: categories.map((c) => ({ value: c[0], label: c[1] })),
-        models: models.map((m) => ({ value: m.value, label: m.label })),
+        categories: safeProcessOptions(categoriesRes.data, true),
+        models: safeProcessOptions(modelsRes.data),
       });
     } catch (error) {
       console.error("Error fetching filter options:", error);
+      setFilterOptions({
+        categories: [],
+        models: [],
+      });
     }
   };
 
@@ -88,16 +142,16 @@ const ActionLogs = () => {
         queryParams.set("category", "SYSTEM");
       }
 
-      const response = await fetch(`/api/action-logs/?${queryParams}`);
-      const data = await response.json();
+      const response = await api.get(`/logs/action-logs/?${queryParams}`);
 
-      setLogs(data.results);
+      setLogs(response.data.results || []);
       setPagination((prev) => ({
         ...prev,
-        totalCount: data.count,
+        totalCount: response.data.count || 0,
       }));
     } catch (error) {
       console.error("Error fetching action logs:", error);
+      setLogs([]);
     } finally {
       setLoading(false);
     }
@@ -132,14 +186,20 @@ const ActionLogs = () => {
   const exportToCSV = async () => {
     try {
       const queryParams = new URLSearchParams({
-        ...filters,
+        search: filters.search,
+        category: filters.category,
+        content_type__model: filters.model,
+        user_tag: filters.user,
         timestamp__gte: format(filters.dateRange.startDate, "yyyy-MM-dd"),
         timestamp__lte: format(filters.dateRange.endDate, "yyyy-MM-dd"),
         export: "csv",
       });
 
-      const response = await fetch(`/api/action-logs/?${queryParams}`);
-      const blob = await response.blob();
+      const response = await api.get(`/logs/action-logs/?${queryParams}`, {
+        responseType: "blob",
+      });
+
+      const blob = new Blob([response.data], { type: "text/csv" });
       const url = window.URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -147,8 +207,35 @@ const ActionLogs = () => {
       document.body.appendChild(a);
       a.click();
       a.remove();
+      window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error("Error exporting logs:", error);
+      alert("Failed to export logs. Please try again.");
+    }
+  };
+
+  const clearFilters = () => {
+    setFilters({
+      search: "",
+      category: "",
+      model: "",
+      user: "",
+      dateRange: {
+        startDate: new Date(new Date().setMonth(new Date().getMonth() - 1)),
+        endDate: new Date(),
+        key: "selection",
+      },
+    });
+    setPagination((prev) => ({ ...prev, page: 1 }));
+  };
+
+  // Safe date formatting
+  const safeFormatDate = (date, formatString) => {
+    try {
+      return format(date, formatString);
+    } catch (error) {
+      console.error("Error formatting date:", error);
+      return "Invalid Date";
     }
   };
 
@@ -170,8 +257,17 @@ const ActionLogs = () => {
             className="filter-button"
             onClick={() => setShowFilters(!showFilters)}
           >
-            <FiFilter /> Filters
+            <FiFilter /> Filters {showFilters ? "▲" : "▼"}
           </button>
+
+          {(filters.search ||
+            filters.category ||
+            filters.model ||
+            filters.user) && (
+            <button className="clear-filters-button" onClick={clearFilters}>
+              Clear Filters
+            </button>
+          )}
 
           <button className="export-button" onClick={exportToCSV}>
             <FiDownload /> Export
@@ -201,8 +297,8 @@ const ActionLogs = () => {
           >
             <FiCalendar />
             <span>
-              {format(filters.dateRange.startDate, "MMM d, yyyy")} -{" "}
-              {format(filters.dateRange.endDate, "MMM d, yyyy")}
+              {safeFormatDate(filters.dateRange.startDate, "MMM d, yyyy")} -{" "}
+              {safeFormatDate(filters.dateRange.endDate, "MMM d, yyyy")}
             </span>
           </div>
           {showDatePicker && (
