@@ -9,11 +9,18 @@ const ParentDetailWrapper = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const { data: parent } = useQuery({
+  const {
+    data: parent,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: ["parent", parentId],
     queryFn: () => fetchParent(parentId),
-    enabled: !!parentId, // prevents query from running if parentId is undefined
+    enabled: !!parentId,
   });
+
+  console.log("ParentDetailWrapper - parent data:", parent);
+  console.log("ParentDetailWrapper - isLoading:", isLoading);
 
   // Default to profile tab if no sub-route
   useEffect(() => {
@@ -22,15 +29,66 @@ const ParentDetailWrapper = () => {
     }
   }, [location, navigate, parentId]);
 
+  if (isLoading) {
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
+        <p>Loading parent details...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="error-container">
+        <p>Error loading parent: {error.message}</p>
+        <button onClick={() => navigate("/dashboard/parents")}>
+          Back to Parents
+        </button>
+      </div>
+    );
+  }
+
+  if (!parent) {
+    return (
+      <div className="error-container">
+        <p>Parent not found</p>
+        <button onClick={() => navigate("/dashboard/parents")}>
+          Back to Parents
+        </button>
+      </div>
+    );
+  }
+
+  // Transform data to match expected structure
+  const transformedParent = {
+    ...parent,
+    user: {
+      first_name: parent.first_name,
+      last_name: parent.last_name,
+      email: parent.email,
+      last_login: parent.last_login,
+    },
+    children_count: parent.children?.length || 0,
+  };
+
   return (
     <div className="parent-detail-wrapper">
       <div className="parent-header">
-        <h2>
-          {parent?.user.first_name} {parent?.user.last_name}
-          <span className={`status-badge ${parent?.status.toLowerCase()}`}>
-            {parent?.status}
-          </span>
-        </h2>
+        <div className="header-content">
+          <button
+            className="back-button"
+            onClick={() => navigate("/dashboard/parents")}
+          >
+            ← Back
+          </button>
+          <h2>
+            {transformedParent.first_name} {transformedParent.last_name}
+            <span className={`status-badge ${parent.status.toLowerCase()}`}>
+              {parent.status}
+            </span>
+          </h2>
+        </div>
 
         <div className="tabs">
           <button
@@ -43,7 +101,7 @@ const ParentDetailWrapper = () => {
             className={location.pathname.includes("children") ? "active" : ""}
             onClick={() => navigate(`/dashboard/parents/${parentId}/children`)}
           >
-            Children ({parent?.children_count})
+            Children ({transformedParent.children_count})
           </button>
           <button
             className={location.pathname.includes("documents") ? "active" : ""}
@@ -70,7 +128,7 @@ const ParentDetailWrapper = () => {
         </div>
       </div>
 
-      <Outlet context={{ parent }} />
+      <Outlet context={{ parent: transformedParent }} />
     </div>
   );
 };

@@ -1,6 +1,15 @@
+import { useOutletContext } from "react-router-dom";
 import "../Parents/parents.css";
 
-const ParentChildren = ({ parent }) => {
+const ParentChildren = () => {
+  const { parent } = useOutletContext();
+
+  if (!parent) {
+    return <div className="loading-container">Loading parent data...</div>;
+  }
+
+  const children = parent.children_details || parent.children || [];
+
   return (
     <div className="parent-children">
       <div className="section-header">
@@ -8,23 +17,28 @@ const ParentChildren = ({ parent }) => {
         <button className="add-button">Assign Child</button>
       </div>
 
-      <div className="children-grid">
-        {parent.children.map((child) => (
-          <ChildCard key={child.id} child={child} />
-        ))}
-      </div>
+      {children.length > 0 ? (
+        <div className="children-grid">
+          {children.map((child) => (
+            <ChildCard key={child.id} child={child} />
+          ))}
+        </div>
+      ) : (
+        <div className="empty-state">
+          No children assigned to this parent yet
+        </div>
+      )}
     </div>
   );
 };
-export default ParentChildren;
 
 const ChildCard = ({ child }) => {
   return (
     <div className="child-card">
       <div className="child-header">
         <div className="child-avatar">
-          {child.first_name[0]}
-          {child.last_name[0]}
+          {child.first_name?.[0] || ""}
+          {child.last_name?.[0] || ""}
         </div>
         <div className="child-info">
           <h4>
@@ -54,3 +68,5 @@ const ChildCard = ({ child }) => {
     </div>
   );
 };
+
+export default ParentChildren;
