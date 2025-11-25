@@ -1,4 +1,3 @@
-// src/components/SchoolDashboard/Reports/GeneratedReports.jsx
 import React, { useState, useEffect } from "react";
 import {
   FiDownload,
@@ -34,6 +33,7 @@ const GeneratedReports = () => {
     date_to: "",
   });
   const [activeFilter, setActiveFilter] = useState("all");
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     fetchReports();
@@ -41,8 +41,9 @@ const GeneratedReports = () => {
 
   const fetchReports = async () => {
     setIsLoading(true);
+    setError(null);
     try {
-      let url = "/api/reports/generated/";
+      let url = "/reports/generated/";
       const params = new URLSearchParams();
 
       if (filters.report_type)
@@ -54,41 +55,104 @@ const GeneratedReports = () => {
       if (params.toString()) url += `?${params.toString()}`;
 
       const response = await api.get(url);
-      setReports(response.data);
+
+      // Handle different response structures
+      const reportsData = response.data?.results || response.data || [];
+      setReports(Array.isArray(reportsData) ? reportsData : []);
     } catch (error) {
       console.error("Error fetching reports:", error);
+      setError("Failed to load reports. Please try again.");
+      setReports([]);
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleDownload = async (reportId, filename) => {
+  const handleDownload = async (report, e) => {
+    // Prevent event bubbling
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    if (!report || !report.file) {
+      alert("Report file not available");
+      return;
+    }
+
     try {
+      // Use the file URL directly if it's a full URL
+      if (report.file.startsWith("http")) {
+        window.open(report.file, "_blank");
+        return;
+      }
+
+      // Otherwise, fetch through API
       const response = await api.get(
-        `/api/reports/generated/${reportId}/download/`,
+        `/reports/generated/${report.id}/download/`,
         {
           responseType: "blob",
         }
       );
 
-      const url = window.URL.createObjectURL(new Blob([response.data]));
+      // Create blob URL and trigger download
+      const blob = new Blob([response.data], {
+        type:
+          report.file_format === "PDF"
+            ? "application/pdf"
+            : "application/vnd.ms-excel",
+      });
+      const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
+
+      // Extract filename or create one
+      const filename =
+        report.file.split("/").pop() ||
+        `${report.title}.${report.file_format.toLowerCase()}`;
       link.setAttribute("download", filename);
+
       document.body.appendChild(link);
       link.click();
       link.remove();
+      window.URL.revokeObjectURL(url);
+
+      // Log the access
+      await api.post(`/reports/access-log/`, {
+        report: report.id,
+        action: "DOWNLOADED",
+      });
     } catch (error) {
       console.error("Error downloading report:", error);
+      alert("Failed to download report. Please try again.");
     }
   };
 
-  const handlePreview = (report) => {
+  const handlePreview = (report, e) => {
+    // Prevent event bubbling
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
     setSelectedReport(report);
     setShowPreview(true);
+
+    // Log the view action
+    api
+      .post(`/reports/access-log/`, {
+        report: report.id,
+        action: "VIEWED",
+      })
+      .catch((err) => console.error("Failed to log view:", err));
   };
 
-  const handleShare = (report) => {
+  const handleShare = (report, e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
     setSelectedReport(report);
     setShowShare(true);
   };
@@ -144,7 +208,7 @@ const GeneratedReports = () => {
                 >
                   <FiClock /> Draft
                 </button>
-                {user?.user_type === "school_superuser" && (
+                {user?.user_type === "school_admin" && (
                   <button
                     className={activeFilter === "ARCHIVED" ? "active" : ""}
                     onClick={() => handleStatusFilter("ARCHIVED")}
@@ -202,6 +266,8 @@ const GeneratedReports = () => {
         </button>
       </div>
 
+      {error && <div className="error-message">{error}</div>}
+
       {isLoading ? (
         <div className="loading-spinner">Loading reports...</div>
       ) : filteredReports.length === 0 ? (
@@ -231,14 +297,19 @@ const GeneratedReports = () => {
                 <tr key={report.id}>
                   <td>{report.title}</td>
                   <td
-                    className={`type-${report.report_type.template_type.toLowerCase()}`}
+                    className={`type-${
+                      report.report_type?.template_type?.toLowerCase() ||
+                      "unknown"
+                    }`}
                   >
-                    {report.report_type.template_type}
+                    {report.report_type?.template_type || "Unknown"}
                   </td>
                   <td>{new Date(report.generated_at).toLocaleDateString()}</td>
                   <td>
                     <span
-                      className={`status-badge ${report.status.toLowerCase()}`}
+                      className={`status-badge ${
+                        report.status?.toLowerCase() || ""
+                      }`}
                     >
                       {report.status}
                       {report.status === "PUBLISHED" && <FiCheckCircle />}
@@ -251,29 +322,22 @@ const GeneratedReports = () => {
                     <div className="action-buttons">
                       <button
                         className="btn-icon"
-                        onClick={() => handlePreview(report)}
+                        onClick={(e) => handlePreview(report, e)}
                         title="Preview"
                       >
                         <FiEye />
                       </button>
                       <button
                         className="btn-icon"
-                        onClick={() =>
-                          handleDownload(
-                            report.id,
-                            `${
-                              report.title
-                            }.${report.file_format.toLowerCase()}`
-                          )
-                        }
+                        onClick={(e) => handleDownload(report, e)}
                         title="Download"
                       >
                         <FiDownload />
                       </button>
-                      {user.user_type !== "parent" && (
+                      {user?.user_type !== "parent" && (
                         <button
                           className="btn-icon"
-                          onClick={() => handleShare(report)}
+                          onClick={(e) => handleShare(report, e)}
                           title="Share"
                         >
                           <FiShare2 />
@@ -288,10 +352,13 @@ const GeneratedReports = () => {
         </div>
       )}
 
-      {showPreview && (
+      {showPreview && selectedReport && (
         <ReportPreviewModal
           report={selectedReport}
-          onClose={() => setShowPreview(false)}
+          onClose={() => {
+            setShowPreview(false);
+            setSelectedReport(null);
+          }}
           onDownload={handleDownload}
         />
       )}
@@ -299,14 +366,20 @@ const GeneratedReports = () => {
       {showGenerator && (
         <GenerateReportModal
           onClose={() => setShowGenerator(false)}
-          onGenerate={fetchReports}
+          onGenerate={() => {
+            setShowGenerator(false);
+            fetchReports();
+          }}
         />
       )}
 
-      {showShare && (
+      {showShare && selectedReport && (
         <ShareReportModal
           report={selectedReport}
-          onClose={() => setShowShare(false)}
+          onClose={() => {
+            setShowShare(false);
+            setSelectedReport(null);
+          }}
         />
       )}
     </div>

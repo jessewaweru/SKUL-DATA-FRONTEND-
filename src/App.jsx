@@ -279,7 +279,7 @@ function App() {
               element: <ReportsOverview />,
             },
             {
-              index: true,
+              path: "generated",
               element: <GeneratedReports />,
             },
             {
@@ -287,7 +287,7 @@ function App() {
               element: <ReportTemplates />,
             },
             {
-              path: "scheduler",
+              path: "schedules",
               element: <ReportScheduler />,
             },
             {
@@ -299,7 +299,7 @@ function App() {
               element: <ReportAnalytics />,
             },
             {
-              path: "requests",
+              path: "term-requests",
               element: <ParentReportRequest />,
             },
           ],

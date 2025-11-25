@@ -1,9 +1,8 @@
-// src/components/SchoolDashboard/Reports/ScheduleEditorModal.jsx
-import React, { useState } from "react";
-import { FiX, FiSave, FiUsers } from "react-icons/fi";
+// src/components/SchoolDashboard/Reports/ScheduleEditorModal.jsx - Fixed version
+import React, { useState, useEffect } from "react";
+import { FiX, FiSave, FiUsers, FiInfo } from "react-icons/fi";
 import { useApi } from "../../../../hooks/useApi";
 import "../Reports/reports.css";
-import { useEffect } from "react";
 
 const ScheduleEditorModal = ({ schedule, templates, onSave, onClose }) => {
   const api = useApi();
@@ -16,37 +15,100 @@ const ScheduleEditorModal = ({ schedule, templates, onSave, onClose }) => {
     recipients: [],
     email_recipients: "",
     is_active: true,
-    ...schedule,
   });
+
   const [isSaving, setIsSaving] = useState(false);
   const [availableUsers, setAvailableUsers] = useState([]);
+  const [showRecipients, setShowRecipients] = useState(false);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   const frequencyOptions = [
-    { value: "DAILY", label: "Daily" },
-    { value: "WEEKLY", label: "Weekly" },
-    { value: "MONTHLY", label: "Monthly" },
-    { value: "TERMLY", label: "Termly" },
-    { value: "YEARLY", label: "Yearly" },
-    { value: "CUSTOM", label: "Custom Schedule" },
+    { value: "DAILY", label: "Daily", description: "Runs every day" },
+    { value: "WEEKLY", label: "Weekly", description: "Runs once per week" },
+    { value: "MONTHLY", label: "Monthly", description: "Runs once per month" },
+    { value: "TERMLY", label: "Termly", description: "Runs at end of term" },
+    { value: "YEARLY", label: "Yearly", description: "Runs once per year" },
+    {
+      value: "CUSTOM",
+      label: "Custom Schedule",
+      description: "Use cron expression",
+    },
   ];
+
+  // Initialize form data when schedule prop changes
+  useEffect(() => {
+    if (schedule) {
+      setFormData({
+        ...schedule,
+        report_template:
+          schedule.report_template?.id || schedule.report_template || "",
+        parameters: schedule.parameters || {},
+        recipients: schedule.recipients || [],
+        email_recipients: schedule.email_recipients || "",
+      });
+
+      // Find and set the selected template
+      if (schedule.report_template) {
+        const template = templates.find(
+          (t) =>
+            t.id === (schedule.report_template?.id || schedule.report_template)
+        );
+        setSelectedTemplate(template);
+      }
+    }
+  }, [schedule, templates]);
 
   useEffect(() => {
     const fetchUsers = async () => {
       try {
-        const response = await api.get("/api/users/");
-        setAvailableUsers(response.data);
+        const response = await api.get("/users/");
+        const usersData = response.data?.results || response.data || [];
+        setAvailableUsers(Array.isArray(usersData) ? usersData : []);
       } catch (error) {
         console.error("Error fetching users:", error);
+        setAvailableUsers([]);
       }
     };
     fetchUsers();
-  }, []);
+  }, [api]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
+
+    if (name === "report_template") {
+      const template = templates.find((t) => t.id === parseInt(value));
+      setSelectedTemplate(template);
+
+      // Auto-populate parameters based on template type
+      let defaultParams = {};
+      if (template?.template_type === "ACADEMIC") {
+        defaultParams = {
+          include_rankings: true,
+          include_comments: true,
+          include_graphs: false,
+        };
+      }
+
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+        parameters: { ...prev.parameters, ...defaultParams },
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
+  };
+
+  const handleParameterChange = (key, value) => {
     setFormData((prev) => ({
       ...prev,
-      [name]: type === "checkbox" ? checked : value,
+      parameters: {
+        ...prev.parameters,
+        [key]: value,
+      },
     }));
   };
 
@@ -64,26 +126,102 @@ const ScheduleEditorModal = ({ schedule, templates, onSave, onClose }) => {
     setIsSaving(true);
 
     try {
+      // Prepare data for submission
+      const submitData = {
+        ...formData,
+        report_template: parseInt(formData.report_template),
+        parameters: JSON.stringify(formData.parameters),
+      };
+
       let response;
-      if (formData.id) {
+      if (schedule?.id) {
         response = await api.put(
-          `/api/reports/schedules/${formData.id}/`,
-          formData
+          `/reports/schedules/${schedule.id}/`,
+          submitData
         );
       } else {
-        response = await api.post("/api/reports/schedules/", formData);
+        response = await api.post("/reports/schedules/", submitData);
       }
+
       onSave(response.data);
+      onClose();
     } catch (error) {
       console.error("Error saving schedule:", error);
+      alert("Failed to save schedule. Please check the form and try again.");
     } finally {
       setIsSaving(false);
     }
   };
 
+  const renderParametersEditor = () => {
+    if (!selectedTemplate) return null;
+
+    if (selectedTemplate.template_type === "ACADEMIC") {
+      return (
+        <div className="parameters-section">
+          <h4>Report Parameters</h4>
+          <div className="parameters-grid">
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={formData.parameters?.include_rankings || false}
+                onChange={(e) =>
+                  handleParameterChange("include_rankings", e.target.checked)
+                }
+              />
+              <span>Include Student Rankings</span>
+            </label>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={formData.parameters?.include_comments || false}
+                onChange={(e) =>
+                  handleParameterChange("include_comments", e.target.checked)
+                }
+              />
+              <span>Include Teacher Comments</span>
+            </label>
+            <label className="checkbox-label">
+              <input
+                type="checkbox"
+                checked={formData.parameters?.include_graphs || false}
+                onChange={(e) =>
+                  handleParameterChange("include_graphs", e.target.checked)
+                }
+              />
+              <span>Include Performance Graphs</span>
+            </label>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="parameters-section">
+        <h4>Report Parameters (JSON)</h4>
+        <textarea
+          value={JSON.stringify(formData.parameters, null, 2)}
+          onChange={(e) => {
+            try {
+              const parsed = JSON.parse(e.target.value);
+              setFormData((prev) => ({ ...prev, parameters: parsed }));
+            } catch {
+              // Invalid JSON, don't update
+            }
+          }}
+          rows="5"
+          className="json-editor"
+        />
+      </div>
+    );
+  };
+
   return (
-    <div className="modal-overlay">
-      <div className="schedule-editor-modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div
+        className="schedule-editor-modal"
+        onClick={(e) => e.stopPropagation()}
+      >
         <div className="modal-header">
           <h2>{schedule ? "Edit Schedule" : "Create New Schedule"}</h2>
           <button className="btn-icon" onClick={onClose}>
@@ -93,18 +231,19 @@ const ScheduleEditorModal = ({ schedule, templates, onSave, onClose }) => {
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Schedule Name</label>
+            <label>Schedule Name *</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleChange}
+              placeholder="e.g., End of Term Reports"
               required
             />
           </div>
 
           <div className="form-group">
-            <label>Report Template</label>
+            <label>Report Template *</label>
             <select
               name="report_template"
               value={formData.report_template}
@@ -118,10 +257,17 @@ const ScheduleEditorModal = ({ schedule, templates, onSave, onClose }) => {
                 </option>
               ))}
             </select>
+            {selectedTemplate && (
+              <small className="help-text">
+                <FiInfo />{" "}
+                {selectedTemplate.description ||
+                  `${selectedTemplate.template_type} report template`}
+              </small>
+            )}
           </div>
 
           <div className="form-group">
-            <label>Frequency</label>
+            <label>Frequency *</label>
             <select
               name="frequency"
               value={formData.frequency}
@@ -134,17 +280,23 @@ const ScheduleEditorModal = ({ schedule, templates, onSave, onClose }) => {
                 </option>
               ))}
             </select>
+            <small className="help-text">
+              {
+                frequencyOptions.find((o) => o.value === formData.frequency)
+                  ?.description
+              }
+            </small>
           </div>
 
           {formData.frequency === "CUSTOM" && (
             <div className="form-group">
-              <label>Cron Expression</label>
+              <label>Cron Expression *</label>
               <input
                 type="text"
                 name="custom_cron"
                 value={formData.custom_cron}
                 onChange={handleChange}
-                placeholder="e.g. 0 8 * * 1 (Monday at 8:00 AM)"
+                placeholder="0 8 * * 1 (Monday at 8:00 AM)"
                 required
               />
               <small className="help-text">
@@ -160,42 +312,42 @@ const ScheduleEditorModal = ({ schedule, templates, onSave, onClose }) => {
             </div>
           )}
 
-          <div className="form-group">
-            <label>Parameters (JSON)</label>
-            <textarea
-              name="parameters"
-              value={JSON.stringify(formData.parameters, null, 2)}
-              onChange={(e) => {
-                try {
-                  const parsed = JSON.parse(e.target.value);
-                  setFormData((prev) => ({ ...prev, parameters: parsed }));
-                } catch {
-                  // Invalid JSON, don't update
-                }
-              }}
-              rows="5"
-            />
-          </div>
+          {renderParametersEditor()}
 
           <div className="form-group">
             <label>
-              <FiUsers /> Recipients (In-App)
+              <FiUsers /> In-App Recipients
+              <button
+                type="button"
+                className="btn-text"
+                onClick={() => setShowRecipients(!showRecipients)}
+              >
+                {showRecipients ? "Hide" : "Show"} ({formData.recipients.length}{" "}
+                selected)
+              </button>
             </label>
-            <div className="recipients-grid">
-              {availableUsers.map((user) => (
-                <div key={user.id} className="recipient-item">
-                  <input
-                    type="checkbox"
-                    id={`user-${user.id}`}
-                    checked={formData.recipients.includes(user.id)}
-                    onChange={() => handleRecipientToggle(user.id)}
-                  />
-                  <label htmlFor={`user-${user.id}`}>
-                    {user.username} ({user.user_type})
-                  </label>
-                </div>
-              ))}
-            </div>
+
+            {showRecipients && (
+              <div className="recipients-grid">
+                {availableUsers.length === 0 ? (
+                  <p>No users available</p>
+                ) : (
+                  availableUsers.map((user) => (
+                    <div key={user.id} className="recipient-item">
+                      <input
+                        type="checkbox"
+                        id={`user-${user.id}`}
+                        checked={formData.recipients.includes(user.id)}
+                        onChange={() => handleRecipientToggle(user.id)}
+                      />
+                      <label htmlFor={`user-${user.id}`}>
+                        {user.first_name} {user.last_name} ({user.user_type})
+                      </label>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
 
           <div className="form-group">
@@ -204,9 +356,12 @@ const ScheduleEditorModal = ({ schedule, templates, onSave, onClose }) => {
               name="email_recipients"
               value={formData.email_recipients}
               onChange={handleChange}
-              placeholder="Comma-separated email addresses"
-              rows="3"
+              placeholder="email1@example.com, email2@example.com"
+              rows="2"
             />
+            <small className="help-text">
+              Comma-separated email addresses for external recipients
+            </small>
           </div>
 
           <div className="form-group checkbox-group">
@@ -217,7 +372,10 @@ const ScheduleEditorModal = ({ schedule, templates, onSave, onClose }) => {
               checked={formData.is_active}
               onChange={handleChange}
             />
-            <label htmlFor="is_active">Active Schedule</label>
+            <label htmlFor="is_active">
+              Active Schedule
+              <small>(Uncheck to pause this schedule)</small>
+            </label>
           </div>
 
           <div className="form-actions">

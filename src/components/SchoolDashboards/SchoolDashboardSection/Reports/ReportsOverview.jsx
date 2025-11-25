@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../../../../hooks/useApi";
+import ReportPreviewModal from "./ReportPreviewModal";
 import "../Reports/reports.css";
 
 const ReportsOverview = () => {
@@ -10,6 +11,8 @@ const ReportsOverview = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [userData, setUserData] = useState(null);
+  const [selectedReport, setSelectedReport] = useState(null);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     const fetchUserData = async () => {
@@ -34,7 +37,7 @@ const ReportsOverview = () => {
         setLoading(true);
         const response = await api.get("/reports/generated/");
         const reportsData = response.data.results || response.data;
-        setReports(reportsData);
+        setReports(Array.isArray(reportsData) ? reportsData : []);
         setError(null);
       } catch (err) {
         console.error("Failed to fetch reports:", err);
@@ -50,6 +53,66 @@ const ReportsOverview = () => {
 
     fetchReports();
   }, [api, userData]);
+
+  const handlePreview = (report, e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+    setSelectedReport(report);
+    setShowPreview(true);
+  };
+
+  const handleDownload = async (report, e) => {
+    if (e) {
+      e.stopPropagation();
+      e.preventDefault();
+    }
+
+    if (!report || !report.file) {
+      alert("Report file not available");
+      return;
+    }
+
+    try {
+      // Use the file URL directly if it's a full URL
+      if (report.file.startsWith("http")) {
+        window.open(report.file, "_blank");
+        return;
+      }
+
+      // Otherwise, fetch through API
+      const response = await api.get(
+        `/reports/generated/${report.id}/download/`,
+        {
+          responseType: "blob",
+        }
+      );
+
+      const blob = new Blob([response.data], {
+        type:
+          report.file_format === "PDF"
+            ? "application/pdf"
+            : "application/vnd.ms-excel",
+      });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+
+      const filename =
+        report.file.split("/").pop() ||
+        `${report.title}.${report.file_format.toLowerCase()}`;
+      link.setAttribute("download", filename);
+
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Error downloading report:", error);
+      alert("Failed to download report. Please try again.");
+    }
+  };
 
   const isAdmin = userData?.user_type === "school_admin";
   const isTeacher = userData?.user_type === "teacher";
@@ -179,12 +242,7 @@ const ReportsOverview = () => {
                   </thead>
                   <tbody>
                     {reports.map((report) => (
-                      <tr
-                        key={report.id}
-                        onClick={() =>
-                          navigate(`/dashboard/reports/generated/${report.id}`)
-                        }
-                      >
+                      <tr key={report.id}>
                         <td className="report-title">
                           <strong>{report.title}</strong>
                           {report.related_students?.length > 0 && (
@@ -195,14 +253,19 @@ const ReportsOverview = () => {
                         </td>
                         <td>
                           <span
-                            className={`type-${report.report_type.template_type.toLowerCase()}`}
+                            className={`type-${
+                              report.report_type?.template_type?.toLowerCase() ||
+                              "unknown"
+                            }`}
                           >
-                            {report.report_type.template_type}
+                            {report.report_type?.template_type || "Unknown"}
                           </span>
                         </td>
                         <td>
                           <span
-                            className={`status-badge ${report.status.toLowerCase()}`}
+                            className={`status-badge ${
+                              report.status?.toLowerCase() || ""
+                            }`}
                           >
                             {report.status}
                           </span>
@@ -218,16 +281,28 @@ const ReportsOverview = () => {
                         </td>
                         <td>
                           <div className="action-buttons">
-                            <button className="btn-icon" title="View">
+                            <button
+                              className="btn-icon"
+                              title="View"
+                              onClick={(e) => handlePreview(report, e)}
+                            >
                               👁️
                             </button>
-                            <button className="btn-icon" title="Download">
+                            <button
+                              className="btn-icon"
+                              title="Download"
+                              onClick={(e) => handleDownload(report, e)}
+                            >
                               ⬇️
                             </button>
                             {isAdmin && (
                               <button
                                 className="btn-icon danger"
                                 title="Delete"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  // Add delete functionality
+                                }}
                               >
                                 🗑️
                               </button>
@@ -253,6 +328,17 @@ const ReportsOverview = () => {
           </div>
         )}
       </div>
+
+      {showPreview && selectedReport && (
+        <ReportPreviewModal
+          report={selectedReport}
+          onClose={() => {
+            setShowPreview(false);
+            setSelectedReport(null);
+          }}
+          onDownload={handleDownload}
+        />
+      )}
     </div>
   );
 };
