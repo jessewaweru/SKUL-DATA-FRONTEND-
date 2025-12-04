@@ -379,7 +379,8 @@ const ClassAnalytics = () => {
       {/* Add attendance summary here */}
       <div className="attendance-summary-section">
         <h3>Detailed Attendance Summary</h3>
-        <ClassAttendanceSummary classId={classId} />
+        <ClassAttendanceSummary classId={classId} />{" "}
+        {/* Make sure classId is passed */}
       </div>
     </div>
   );

@@ -21,7 +21,8 @@ const StudentsOverview = () => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const response = await api.get("/students/analytics/");
+        // FIX: Correct endpoint
+        const response = await api.get("/api/students/students/analytics/");
         setStats(response.data);
       } catch (error) {
         console.error("Error fetching student stats:", error);
@@ -102,7 +103,6 @@ const StudentsOverview = () => {
               View All
             </button>
           </div>
-          {/* Placeholder for recent students table */}
           <div className="placeholder-content">
             <p>Recent students list will appear here</p>
           </div>

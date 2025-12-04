@@ -1,7 +1,7 @@
 // components/SchoolDashboard/Students/StudentsPage.jsx
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { FiUsers, FiBarChart2, FiPlus } from "react-icons/fi";
-import "../Students/students.css";
+import "./students.css";
 
 const StudentsPage = () => {
   const navigate = useNavigate();

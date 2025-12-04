@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useApi } from "../../../../hooks/useApi";
 import { FiUser, FiSave, FiX } from "react-icons/fi";
-import "../Students/students.css";
+import "./students.css";
 
 const CreateStudent = () => {
   const api = useApi();

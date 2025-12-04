@@ -1,5 +1,5 @@
 import { FiMail, FiPhone, FiMapPin } from "react-icons/fi";
-import "../Students/students.css";
+import "./students.css";
 
 const BasicInfoTab = ({ student }) => {
   return (

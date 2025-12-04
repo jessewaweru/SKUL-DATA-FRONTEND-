@@ -1,7 +1,7 @@
 // components/SchoolDashboard/Students/StudentFilters.jsx
 import { useState } from "react";
 import { FiFilter, FiX } from "react-icons/fi";
-import "../Students/students.css";
+import "./students.css";
 
 const StudentFilters = ({ onFilter }) => {
   const [filters, setFilters] = useState({

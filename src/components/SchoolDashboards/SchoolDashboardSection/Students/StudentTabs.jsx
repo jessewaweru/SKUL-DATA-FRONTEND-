@@ -1,6 +1,6 @@
 // components/SchoolDashboard/Students/StudentTabs.jsx
 import { FiUser, FiBook, FiCalendar, FiFileText } from "react-icons/fi";
-import "../Students/students.css";
+import "./students.css";
 
 const StudentTabs = ({ activeTab, setActiveTab, student }) => {
   return (

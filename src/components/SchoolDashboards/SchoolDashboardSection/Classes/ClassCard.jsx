@@ -1,5 +1,11 @@
 import { Link } from "react-router-dom";
-import { FiUsers, FiBarChart2, FiActivity, FiFileText } from "react-icons/fi";
+import {
+  FiUsers,
+  FiBarChart2,
+  FiActivity,
+  FiFileText,
+  FiCalendar,
+} from "react-icons/fi";
 import "./classes.css";
 
 const ClassCard = ({ classData }) => {
@@ -44,6 +50,12 @@ const ClassCard = ({ classData }) => {
           className="action-link"
         >
           <FiActivity /> View Analytics
+        </Link>
+        <Link
+          to={`/dashboard/classes/attendance/${classData.id}`}
+          className="action-link"
+        >
+          <FiCalendar /> Take Attendance
         </Link>
         <Link
           to={`/dashboard/classes/documents/${classData.id}`}

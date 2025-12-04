@@ -11,7 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import "../Students/students.css";
+import "./students.css";
 
 const StudentAnalytics = () => {
   const api = useApi();

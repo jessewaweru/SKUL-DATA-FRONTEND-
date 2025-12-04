@@ -51,6 +51,7 @@ import ClassAttendanceSummary from "./components/SchoolDashboards/SchoolDashboar
 import ClassDocumentsPage from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassDocumentsPage.jsx";
 import ClassTimetablesPage from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassTimetablesPage.jsx";
 import ClassAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassAnalytics.jsx";
+import ClassAttendancePage from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassAttendancePage.jsx";
 import StreamsManagement from "./components/SchoolDashboards/SchoolDashboardSection/Classes/StreamsManagement.jsx";
 import ClassesOverview from "./components/SchoolDashboards/SchoolDashboardSection/Classes/ClassesOverview.jsx";
 import StudentsPage from "./components/SchoolDashboards/SchoolDashboardSection/Students/StudentsPage.jsx";
@@ -480,6 +481,10 @@ function App() {
             {
               path: "timetables",
               element: <ClassTimetablesPage />,
+            },
+            {
+              path: "attendance/:classId",
+              element: <ClassAttendancePage />,
             },
             {
               path: "analytics/:classId",

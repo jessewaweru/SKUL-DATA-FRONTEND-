@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useApi } from "../../../../hooks/useApi";
 import { FiEdit2, FiUser, FiTrash2, FiRefreshCw } from "react-icons/fi";
 import StudentFilters from "./StudentFilters";
@@ -6,6 +7,7 @@ import "../Students/students.css";
 
 const StudentDirectory = () => {
   const api = useApi();
+  const navigate = useNavigate();
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showInactive, setShowInactive] = useState(false);
@@ -16,16 +18,13 @@ const StudentDirectory = () => {
       setLoading(true);
       setError(null);
 
-      // Make sure to include the school ID if needed
       const params = {
         show_inactive: showInactive,
-        // Add any other required params here
       };
 
-      const response = await api.get("/students/students/", { params });
-      console.log("API Response:", response); // Debug log
+      // FIX: Correct endpoint
+      const response = await api.get("/api/students/students/", { params });
 
-      // Handle both paginated and non-paginated responses
       let data = response.data?.results || response.data;
 
       if (Array.isArray(data)) {
@@ -46,17 +45,17 @@ const StudentDirectory = () => {
 
   useEffect(() => {
     fetchStudents();
-  }, [showInactive]); // Refetch when showInactive changes
+  }, [showInactive]);
 
   const handleDeactivate = async (studentId) => {
     if (!window.confirm("Are you sure you want to deactivate this student?"))
       return;
 
     try {
-      await api.post(`/students/students/${studentId}/deactivate/`, {
+      await api.post(`/api/students/students/${studentId}/deactivate/`, {
         reason: "Deactivated by admin",
       });
-      fetchStudents(); // Refresh the list
+      fetchStudents();
     } catch (error) {
       console.error("Error deactivating student:", error);
       alert("Failed to deactivate student");
@@ -65,15 +64,14 @@ const StudentDirectory = () => {
 
   const handleRestore = async (studentId) => {
     try {
-      await api.post(`/students/students/${studentId}/restore/`);
-      fetchStudents(); // Refresh the list
+      await api.post(`/api/students/students/${studentId}/restore/`);
+      fetchStudents();
     } catch (error) {
       console.error("Error restoring student:", error);
       alert("Failed to restore student");
     }
   };
 
-  // Helper function to render student status
   const renderStatus = (status) => {
     const statusMap = {
       ACTIVE: { class: "active", label: "Active" },
@@ -144,29 +142,42 @@ const StudentDirectory = () => {
                   className={!student.is_active ? "inactive" : ""}
                 >
                   <td>
-                    <a href={`#/dashboard/students/profile/${student.id}`}>
+                    {/* FIX: Use button with onClick instead of anchor */}
+                    <button
+                      onClick={() =>
+                        navigate(`/dashboard/students/profile/${student.id}`)
+                      }
+                      className="student-name-link"
+                    >
                       {student.full_name}
-                    </a>
+                    </button>
                   </td>
                   <td>{student.age}</td>
                   <td>{student.student_class?.name || "N/A"}</td>
-                  <td>{student.parent?.user?.full_name || "N/A"}</td>
-                  <td>{student.teacher?.user?.full_name || "N/A"}</td>
+                  <td>
+                    {student.parent?.user?.first_name}{" "}
+                    {student.parent?.user?.last_name || "N/A"}
+                  </td>
+                  <td>{student.teacher_name || "N/A"}</td>
                   <td>
                     {new Date(student.admission_date).toLocaleDateString()}
                   </td>
                   <td>{renderStatus(student.status)}</td>
                   <td className="actions">
-                    <a
-                      href={`#/dashboard/students/edit/${student.id}`}
+                    <button
+                      onClick={() =>
+                        navigate(`/dashboard/students/edit/${student.id}`)
+                      }
                       className="edit-btn"
+                      title="Edit Student"
                     >
                       <FiEdit2 />
-                    </a>
+                    </button>
                     {student.is_active ? (
                       <button
                         onClick={() => handleDeactivate(student.id)}
                         className="delete-btn"
+                        title="Deactivate Student"
                       >
                         <FiTrash2 />
                       </button>
@@ -174,8 +185,9 @@ const StudentDirectory = () => {
                       <button
                         onClick={() => handleRestore(student.id)}
                         className="restore-btn"
+                        title="Restore Student"
                       >
-                        <FiUser /> Restore
+                        <FiUser />
                       </button>
                     )}
                   </td>
