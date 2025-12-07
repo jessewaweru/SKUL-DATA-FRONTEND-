@@ -14,7 +14,7 @@ import { fetchTeacherById } from "../../../../services/teacherService";
 import StatusBadge from "../../../common/StatusBadge";
 import TabNavigation from "../../../common/TabNavigation";
 import TeacherDocuments from "./TeacherDocuments";
-import "../Teachers/teachers.css";
+import "./teachers.css";
 
 const TeacherProfileDetail = () => {
   const { id, tab } = useParams(); // Get both id and tab from URL

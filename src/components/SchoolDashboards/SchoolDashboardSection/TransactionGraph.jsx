@@ -1,4 +1,4 @@
-import { FiUser } from "react-icons/fi";
+import { FiDollarSign } from "react-icons/fi";
 import {
   XAxis,
   YAxis,
@@ -8,81 +8,114 @@ import {
   Line,
   LineChart,
 } from "recharts";
+import "../SchoolDashboardSection/dashboard.css";
 
-const data = [
-  {
-    name: "Jan",
-    Teachers: 275,
-    NewStudents: 41,
-  },
-  {
-    name: "Feb",
-    Teachers: 620,
-    NewStudents: 96,
-  },
-  {
-    name: "Mar",
-    Teachers: 202,
-    NewStudents: 192,
-  },
-  {
-    name: "Apr",
-    Teachers: 500,
-    NewStudents: 50,
-  },
-  {
-    name: "May",
-    Teachers: 355,
-    NewStudents: 400,
-  },
-  {
-    name: "Jun",
-    Teachers: 875,
-    NewStudents: 200,
-  },
-  {
-    name: "Jul",
-    Teachers: 700,
-    NewStudents: 205,
-  },
-];
+const TransactionGraph = ({ revenueData = [] }) => {
+  // Format revenue for display
+  const formatRevenue = (value) => {
+    if (value >= 1000000) {
+      return `${(value / 1000000).toFixed(1)}M`;
+    } else if (value >= 1000) {
+      return `${(value / 1000).toFixed(1)}K`;
+    }
+    return value.toFixed(0);
+  };
 
-const TransactionGraph = () => {
+  // Custom tooltip
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div
+          style={{
+            backgroundColor: "var(--card-background)",
+            padding: "0.75rem",
+            border: "1px solid var(--border-color)",
+            borderRadius: "0.25rem",
+            boxShadow: "0 2px 8px rgba(0, 0, 0, 0.3)",
+          }}
+        >
+          <p
+            style={{
+              color: "var(--text-color)",
+              marginBottom: "0.25rem",
+              fontWeight: "bold",
+            }}
+          >
+            {label}
+          </p>
+          <p style={{ color: "#3b82f6", margin: 0 }}>
+            Revenue: Ksh {payload[0].value.toLocaleString()}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
+
   return (
     <div className="graph-container">
       <div className="graph-header">
         <h3 className="graph-title">
-          <FiUser />
-          Transactions
+          <FiDollarSign />
+          Revenue Trend
         </h3>
+        <p
+          style={{
+            fontSize: "0.875rem",
+            color: "#b0b0b0",
+            marginTop: "0.25rem",
+          }}
+        >
+          Monthly school fee collections (Last 12 months)
+        </p>
       </div>
 
       <div className="graph-content">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={data}
-            margin={{ top: 0, right: 0, left: -24, bottom: 0 }}
+        {revenueData && revenueData.length > 0 ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={revenueData}
+              margin={{ top: 10, right: 10, left: -10, bottom: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="var(--border-color)"
+              />
+              <XAxis
+                dataKey="name"
+                stroke="var(--accent-purple-light)"
+                style={{ fontSize: "0.75rem" }}
+              />
+              <YAxis
+                tickFormatter={formatRevenue}
+                stroke="var(--accent-purple-light)"
+                style={{ fontSize: "0.75rem" }}
+              />
+              <Tooltip content={<CustomTooltip />} />
+              <Line
+                type="monotone"
+                dataKey="revenue"
+                stroke="#3b82f6"
+                strokeWidth={2}
+                fill="#3b82f6"
+                dot={{ fill: "#3b82f6", r: 4 }}
+                activeDot={{ r: 6 }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              height: "100%",
+              color: "var(--text-color)",
+            }}
           >
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="NewStudents"
-              className="recharts-line-new-students"
-              stroke="#ff8a80"
-              fill="#ff8a80"
-            />
-            <Line
-              type="monotone"
-              dataKey="Teachers"
-              className="recharts-line-teachers"
-              stroke="#007BFF"
-              fill="#007BFF"
-            />
-          </LineChart>
-        </ResponsiveContainer>
+            No revenue data available
+          </div>
+        )}
       </div>
     </div>
   );

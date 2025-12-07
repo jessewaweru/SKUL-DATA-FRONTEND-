@@ -1,62 +1,74 @@
-import { FiDollarSign, FiMoreHorizontal } from "react-icons/fi";
-import { FiArrowUpRight } from "react-icons/fi";
+import { FiActivity, FiMoreHorizontal, FiArrowUpRight } from "react-icons/fi";
+import "../SchoolDashboardSection/dashboard.css";
 
-const RecentActivityTable = () => {
+const RecentActivityTable = ({ activities = [] }) => {
+  // Category color mapping
+  const getCategoryColor = (category) => {
+    const colors = {
+      CREATE: "#10b981",
+      UPDATE: "#3b82f6",
+      DELETE: "#ef4444",
+      VIEW: "#8b5cf6",
+      LOGIN: "#06b6d4",
+      LOGOUT: "#f59e0b",
+      UPLOAD: "#ec4899",
+      DOWNLOAD: "#14b8a6",
+      SHARE: "#522978ff",
+      SYSTEM: "#6366f1",
+      OTHER: "#9ca3af",
+    };
+    return colors[category] || colors["OTHER"];
+  };
+
   return (
     <div className="table-container">
       <div className="table-header">
-        <h3 className="table-title">
-          <FiDollarSign /> Recent Transactions
-        </h3>
+        <div>
+          <h3 className="table-title">
+            <FiActivity /> Recent Activity
+          </h3>
+          <p
+            style={{
+              fontSize: "0.875rem",
+              color: "#b0b0b0",
+              marginTop: "0.25rem",
+            }}
+          >
+            Latest actions performed in the system
+          </p>
+        </div>
         <button className="see-all-button">See all</button>
       </div>
-      <table className="data-table">
-        <TableHead />
-        <tbody>
-          <TableRow
-            userId="USER_2941"
-            userRole="Admin"
-            dataAccessed="User Profiles"
-            timestamp="Apr 1, 2025 10:23 AM"
-            orderAccessed={1}
-          />
-          <TableRow
-            userId="USER_1587"
-            userRole="Editor"
-            dataAccessed="Financial Records"
-            timestamp="Apr 1, 2025 09:45 AM"
-            orderAccessed={2}
-          />
-          <TableRow
-            userId="USER_3094"
-            userRole="Viewer"
-            dataAccessed="Analytics Dashboard"
-            timestamp="Mar 31, 2025 04:12 PM"
-            orderAccessed={3}
-          />
-          <TableRow
-            userId="USER_0491"
-            userRole="Admin"
-            dataAccessed="System Settings"
-            timestamp="Mar 31, 2025 02:30 PM"
-            orderAccessed={4}
-          />
-          <TableRow
-            userId="USER_8765"
-            userRole="Editor"
-            dataAccessed="Product Database"
-            timestamp="Mar 31, 2025 11:18 AM"
-            orderAccessed={5}
-          />
-          <TableRow
-            userId="USER_4321"
-            userRole="Viewer"
-            dataAccessed="Customer Reports"
-            timestamp="Mar 30, 2025 05:47 PM"
-            orderAccessed={6}
-          />
-        </tbody>
-      </table>
+
+      {activities && activities.length > 0 ? (
+        <table className="data-table">
+          <TableHead />
+          <tbody>
+            {activities.map((activity, index) => (
+              <TableRow
+                key={activity.id}
+                user={activity.user}
+                action={activity.action}
+                category={activity.category}
+                categoryColor={getCategoryColor(activity.category)}
+                timestamp={activity.timestamp}
+                affectedModel={activity.affectedModel}
+                orderAccessed={index + 1}
+              />
+            ))}
+          </tbody>
+        </table>
+      ) : (
+        <div
+          style={{
+            padding: "2rem",
+            textAlign: "center",
+            color: "var(--text-color)",
+          }}
+        >
+          No recent activity to display
+        </div>
+      )}
     </div>
   );
 };
@@ -67,9 +79,10 @@ const TableHead = () => {
   return (
     <thead>
       <tr className="table-head-row">
-        <th className="table-head-cell">User ID</th>
-        <th className="table-head-cell">User Role</th>
-        <th className="table-head-cell">Data Accessed</th>
+        <th className="table-head-cell">User</th>
+        <th className="table-head-cell">Action</th>
+        <th className="table-head-cell">Category</th>
+        <th className="table-head-cell">Affected Model</th>
         <th className="table-head-cell">Timestamp</th>
         <th className="cell-width-options"></th>
       </tr>
@@ -78,22 +91,59 @@ const TableHead = () => {
 };
 
 const TableRow = ({
-  userId,
-  userRole,
-  dataAccessed,
+  user,
+  action,
+  category,
+  categoryColor,
   timestamp,
+  affectedModel,
   orderAccessed,
 }) => {
   return (
     <tr className={orderAccessed % 2 ? "table-row-odd" : "table-row-even"}>
       <td className="table-cell">
-        <a href="#" className="user-id-link">
-          {userId} <FiArrowUpRight />
-        </a>
+        <span style={{ fontWeight: 600, color: "var(--highlight-text)" }}>
+          {user}
+        </span>
       </td>
-      <td className="table-cell">{userRole}</td>
-      <td className="table-cell">{dataAccessed}</td>
-      <td className="table-cell">{timestamp}</td>
+      <td className="table-cell" style={{ maxWidth: "300px" }}>
+        <span
+          style={{
+            fontSize: "0.875rem",
+            display: "block",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
+          {action}
+        </span>
+      </td>
+      <td className="table-cell">
+        <span
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            padding: "0.25rem 0.5rem",
+            borderRadius: "0.25rem",
+            fontSize: "0.75rem",
+            fontWeight: 600,
+            backgroundColor: `${categoryColor}20`,
+            color: categoryColor,
+            border: `1px solid ${categoryColor}40`,
+          }}
+        >
+          {category}
+        </span>
+      </td>
+      <td className="table-cell">
+        <span style={{ color: "#b0b0b0", fontSize: "0.875rem" }}>
+          {affectedModel}
+        </span>
+      </td>
+      <td className="table-cell">
+        <span style={{ fontSize: "0.875rem" }}>{timestamp}</span>
+      </td>
       <td className="cell-width-options">
         <button className="action-button">
           <FiMoreHorizontal />

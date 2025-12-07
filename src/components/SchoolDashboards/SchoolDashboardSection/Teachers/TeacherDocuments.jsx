@@ -18,7 +18,7 @@ import {
   fetchTeacherById, // Add this import
 } from "../../../../services/teacherService";
 import useUser from "../../../../hooks/useUser";
-import "../Teachers/teachers.css";
+import "./teachers.css";
 
 const TeacherDocuments = ({ teacherId, teacher: teacherProp }) => {
   const { user, schoolId } = useUser();

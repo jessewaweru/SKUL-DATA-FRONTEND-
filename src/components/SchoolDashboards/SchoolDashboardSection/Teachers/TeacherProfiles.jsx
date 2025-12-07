@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 import TeacherTable from "./TeacherTable";
 import { fetchTeachers } from "../../../../services/teacherService";
 import { useEffect, useState } from "react";
-import "../Teachers/teachers.css";
+import "./teachers.css";
 
 const TeacherProfiles = () => {
   const [teachers, setTeachers] = useState([]);

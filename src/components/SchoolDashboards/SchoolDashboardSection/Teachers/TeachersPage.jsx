@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import TeachersHeader from "./TeachersHeader";
-import "../Teachers/teachers.css";
+import "./teachers.css";
 
 const TeachersPage = () => {
   return (

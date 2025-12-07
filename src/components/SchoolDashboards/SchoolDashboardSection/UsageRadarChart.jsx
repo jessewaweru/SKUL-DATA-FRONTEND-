@@ -9,6 +9,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
+import "../SchoolDashboardSection/dashboard.css";
 
 const data = [
   {

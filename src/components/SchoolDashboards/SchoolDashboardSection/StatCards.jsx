@@ -1,28 +1,90 @@
-import { FiTrendingUp, FiTrendingDown } from "react-icons/fi";
+import {
+  FiTrendingUp,
+  FiTrendingDown,
+  FiUsers,
+  FiBookOpen,
+  FiFileText,
+  FiDollarSign,
+  FiCheckCircle,
+  FiUserCheck,
+} from "react-icons/fi";
+import "../SchoolDashboardSection/dashboard.css";
 
-const StatCards = () => {
+const StatCards = ({ stats }) => {
+  const {
+    totalStudents = 0,
+    activeTeachers = 0,
+    totalClasses = 0,
+    totalDocuments = 0,
+    avgAttendance = 0,
+    pendingFees = 0,
+    totalParents = 0,
+  } = stats || {};
+
   return (
     <>
       <Card
-        title="Gross Revenue"
-        value="$120,054.24"
-        pillText="2.75%"
+        icon={<FiUsers />}
+        title="Total Students"
+        value={totalStudents.toLocaleString()}
+        pillText="Active"
         trend="up"
-        period="From Jan 1st - Jul 31st"
+        period="Enrolled in school"
+        color="#3b82f6"
       />
       <Card
-        title="Avg Order"
-        value="$27.97"
-        pillText="1.01%"
+        icon={<FiUserCheck />}
+        title="Active Teachers"
+        value={activeTeachers.toLocaleString()}
+        pillText="Teaching"
+        trend="up"
+        period="Currently on staff"
+        color="#10b981"
+      />
+      <Card
+        icon={<FiBookOpen />}
+        title="Total Classes"
+        value={totalClasses.toLocaleString()}
+        pillText="Active"
+        trend="neutral"
+        period="Academic classes"
+        color="#8b5cf6"
+      />
+      <Card
+        icon={<FiFileText />}
+        title="School Documents"
+        value={totalDocuments.toLocaleString()}
+        pillText="Stored"
+        trend="up"
+        period="In document management"
+        color="#f59e0b"
+      />
+      <Card
+        icon={<FiCheckCircle />}
+        title="Average Attendance"
+        value={`${parseFloat(avgAttendance).toFixed(1)}%`}
+        pillText={parseFloat(avgAttendance) >= 85 ? "Good" : "Needs Attention"}
+        trend={parseFloat(avgAttendance) >= 85 ? "up" : "down"}
+        period="Overall attendance rate"
+        color="#06b6d4"
+      />
+      <Card
+        icon={<FiDollarSign />}
+        title="Pending School Fees"
+        value={`Ksh ${parseFloat(pendingFees).toLocaleString()}`}
+        pillText="Unpaid"
         trend="down"
-        period="From Jan 1st - Jul 31st"
+        period="Outstanding balance"
+        color="#ef4444"
       />
       <Card
-        title="Trailing Year"
-        value="$278,054.24"
-        pillText="60.75%"
+        icon={<FiUsers />}
+        title="Total Parents"
+        value={totalParents.toLocaleString()}
+        pillText="Registered"
         trend="up"
-        period="Previous 365 days"
+        period="In parent portal"
+        color="#ec4899"
       />
     </>
   );
@@ -30,17 +92,40 @@ const StatCards = () => {
 
 export default StatCards;
 
-const Card = ({ title, value, pillText, trend, period }) => {
+const Card = ({ icon, title, value, pillText, trend, period, color }) => {
   return (
     <div className="stat-card">
       <div className="card-header">
         <div>
-          <h3 className="card-title">{title}</h3>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              marginBottom: "0.5rem",
+            }}
+          >
+            <span style={{ color: color, fontSize: "1.25rem" }}>{icon}</span>
+            <h3 className="card-title">{title}</h3>
+          </div>
           <p className="card-value">{value}</p>
         </div>
 
-        <span className={`pill ${trend === "up" ? "pill-up" : "pill-down"}`}>
-          {trend === "up" ? <FiTrendingUp /> : <FiTrendingDown />} {pillText}
+        <span
+          className={`pill ${
+            trend === "up"
+              ? "pill-up"
+              : trend === "down"
+              ? "pill-down"
+              : "pill-neutral"
+          }`}
+        >
+          {trend === "up" ? (
+            <FiTrendingUp />
+          ) : trend === "down" ? (
+            <FiTrendingDown />
+          ) : null}{" "}
+          {pillText}
         </span>
       </div>
 

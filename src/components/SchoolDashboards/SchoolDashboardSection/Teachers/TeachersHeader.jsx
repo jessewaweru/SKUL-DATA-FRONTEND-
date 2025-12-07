@@ -1,6 +1,6 @@
 import { FiBookOpen, FiPlus } from "react-icons/fi";
 import { useLocation, useNavigate } from "react-router-dom";
-import "../Teachers/teachers.css";
+import "./teachers.css";
 
 const TeachersHeader = () => {
   const navigate = useNavigate();

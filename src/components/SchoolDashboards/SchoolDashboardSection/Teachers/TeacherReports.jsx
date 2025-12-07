@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FiFileText, FiDownload, FiEye, FiFilter } from "react-icons/fi";
 import TabNavigation from "../../../common/TabNavigation";
-import "../Teachers/teachers.css";
+import "./teachers.css";
 
 const TeacherReports = () => {
   const [activeTab, setActiveTab] = useState("submitted");

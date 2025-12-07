@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FiLogIn, FiFileText, FiCalendar, FiAlertCircle } from "react-icons/fi";
 import { FiFilter } from "react-icons/fi";
-import "../Teachers/teachers.css";
+import "./teachers.css";
 
 const TeacherActivityLogs = () => {
   const [filterOpen, setFilterOpen] = useState(false);
