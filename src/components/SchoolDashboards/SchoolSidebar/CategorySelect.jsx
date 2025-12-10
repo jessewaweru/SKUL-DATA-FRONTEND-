@@ -542,6 +542,23 @@ const CategorySelect = () => {
               onClick={() => handleReportSubItemClick("")}
               isActive={location.pathname === "/dashboard/reports"}
             />
+
+            {/* ✅ ADD THIS NEW ROUTE - For Teachers/Admins */}
+            <SubRoute
+              Icon={FiUpload}
+              title="Upload Performance"
+              onClick={() => handleReportSubItemClick("upload-performance")}
+              isActive={location.pathname.includes(
+                "/reports/upload-performance"
+              )}
+            />
+
+            <SubRoute
+              title="Generated Reports"
+              onClick={() => handleReportSubItemClick("generated")}
+              isActive={location.pathname.includes("/reports/generated")}
+            />
+
             <SubRoute
               title="Templates"
               onClick={() => handleReportSubItemClick("templates")}
@@ -562,10 +579,12 @@ const CategorySelect = () => {
               onClick={() => handleReportSubItemClick("analytics")}
               isActive={location.pathname.includes("/reports/analytics")}
             />
+
+            {/* This is for parents only */}
             <SubRoute
               title="My Requests"
-              onClick={() => handleReportSubItemClick("requests")}
-              isActive={location.pathname.includes("/reports/requests")}
+              onClick={() => handleReportSubItemClick("term-requests")}
+              isActive={location.pathname.includes("/reports/term-requests")}
             />
           </div>
         )}

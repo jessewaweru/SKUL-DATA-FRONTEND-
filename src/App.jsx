@@ -37,6 +37,7 @@ import ReportBuilder from "./components/SchoolDashboards/SchoolDashboardSection/
 import ReportAnalytics from "./components/SchoolDashboards/SchoolDashboardSection/Reports/ReportAnalytics.jsx";
 import ParentReportRequest from "./components/SchoolDashboards/SchoolDashboardSection/Reports/ParentReportRequest.jsx";
 import ReportsOverview from "./components/SchoolDashboards/SchoolDashboardSection/Reports/ReportsOverview.jsx";
+import PerformanceUpload from "./components/SchoolDashboards/SchoolDashboardSection/Reports/PerformanceUpload.jsx";
 import DocumentsMainPage from "./components/SchoolDashboards/SchoolDashboardSection/Documents/DocumentsLayout.jsx";
 import DocumentsOverview from "./components/SchoolDashboards/SchoolDashboardSection/Documents/DocumentsOverview.jsx";
 import DocumentCategories from "./components/SchoolDashboards/SchoolDashboardSection/Documents/DocumentCategories.jsx";
@@ -302,6 +303,10 @@ function App() {
             {
               path: "term-requests",
               element: <ParentReportRequest />,
+            },
+            {
+              path: "upload-performance",
+              element: <PerformanceUpload />,
             },
           ],
         },

@@ -1155,6 +1155,17 @@
   }
 }
 
+.badge-new {
+  background: #e74c3c;
+  color: white;
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: 8px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
 /* Keep all the other existing styles from previous implementation */
 
 /* Responsive adjustments */

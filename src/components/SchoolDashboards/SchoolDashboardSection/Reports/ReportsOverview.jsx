@@ -127,6 +127,15 @@ const ReportsOverview = () => {
       visible: true,
       count: reports.length,
     },
+    // ✅ ADD THIS NEW CARD - Should be near the top for easy access
+    {
+      title: "Upload Performance",
+      description: "Upload student academic performance data via CSV",
+      path: "upload-performance",
+      icon: "📤",
+      visible: isAdmin || isTeacher, // Only for teachers and admins
+      badge: "New",
+    },
     {
       title: "Report Templates",
       description: "Manage report templates and designs",
@@ -206,7 +215,10 @@ const ReportsOverview = () => {
               onClick={() => navigate(`/dashboard/reports/${card.path}`)}
             >
               <div className="card-icon">{card.icon}</div>
-              <h3>{card.title}</h3>
+              <h3>
+                {card.title}
+                {card.badge && <span className="badge-new">{card.badge}</span>}
+              </h3>
               <p>{card.description}</p>
               {card.count !== undefined && (
                 <div className="report-count">{card.count} reports</div>
