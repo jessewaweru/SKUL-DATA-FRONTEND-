@@ -5,12 +5,14 @@ import {
   FiCheck,
   FiAlertCircle,
   FiRefreshCw,
+  FiFileText,
+  FiClock,
 } from "react-icons/fi";
 import { useApi } from "../../../../hooks/useApi";
 
 const PerformanceUpload = () => {
   const api = useApi();
-  const [step, setStep] = useState(1); // 1: Download Template, 2: Upload Filled Template
+  const [step, setStep] = useState(1);
   const [classes, setClasses] = useState([]);
   const [subjects, setSubjects] = useState([]);
   const [selectedClass, setSelectedClass] = useState("");
@@ -23,10 +25,48 @@ const PerformanceUpload = () => {
   const [uploadResult, setUploadResult] = useState(null);
   const [error, setError] = useState(null);
 
+  const [reportGeneration, setReportGeneration] = useState({
+    taskId: null,
+    status: null,
+    isGenerating: false,
+  });
+
   useEffect(() => {
     fetchClasses();
     fetchSubjects();
   }, []);
+
+  useEffect(() => {
+    if (reportGeneration.taskId && reportGeneration.isGenerating) {
+      const interval = setInterval(async () => {
+        try {
+          const response = await api.get(
+            `/reports/check-report-status/${reportGeneration.taskId}/`
+          );
+
+          if (response.data.status === "SUCCESS") {
+            setReportGeneration({
+              ...reportGeneration,
+              status: "completed",
+              isGenerating: false,
+            });
+            clearInterval(interval);
+          } else if (response.data.status === "FAILURE") {
+            setReportGeneration({
+              ...reportGeneration,
+              status: "failed",
+              isGenerating: false,
+            });
+            clearInterval(interval);
+          }
+        } catch (err) {
+          console.error("Failed to check status:", err);
+        }
+      }, 3000);
+
+      return () => clearInterval(interval);
+    }
+  }, [reportGeneration.taskId, reportGeneration.isGenerating]);
 
   const fetchClasses = async () => {
     try {
@@ -68,12 +108,9 @@ const PerformanceUpload = () => {
           term,
           school_year: schoolYear,
         },
-        {
-          responseType: "blob",
-        }
+        { responseType: "blob" }
       );
 
-      // Download the CSV file
       const blob = new Blob([response.data], { type: "text/csv" });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement("a");
@@ -90,7 +127,7 @@ const PerformanceUpload = () => {
       link.remove();
       window.URL.revokeObjectURL(url);
 
-      setStep(2); // Move to upload step
+      setStep(2);
     } catch (err) {
       setError("Failed to generate template. Please try again.");
       console.error(err);
@@ -132,22 +169,43 @@ const PerformanceUpload = () => {
         "/reports/upload-performance/",
         formData,
         {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
+          headers: { "Content-Type": "multipart/form-data" },
         }
       );
 
       setUploadResult(response.data);
       setUploadFile(null);
 
-      // Reset file input
       const fileInput = document.getElementById("file-upload");
       if (fileInput) fileInput.value = "";
     } catch (err) {
       setError(
         err.response?.data?.error || "Failed to upload performance data"
       );
+      console.error(err);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleGenerateReports = async () => {
+    setIsUploading(true);
+    setError(null);
+
+    try {
+      const response = await api.post("/reports/generate-reports-for-class/", {
+        class_id: selectedClass,
+        term,
+        school_year: schoolYear,
+      });
+
+      setReportGeneration({
+        taskId: response.data.task_id,
+        status: "queued",
+        isGenerating: true,
+      });
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to generate reports");
       console.error(err);
     } finally {
       setIsUploading(false);
@@ -161,98 +219,30 @@ const PerformanceUpload = () => {
     setUploadFile(null);
     setUploadResult(null);
     setError(null);
+    setReportGeneration({ taskId: null, status: null, isGenerating: false });
   };
 
   return (
-    <div
-      style={{
-        maxWidth: "900px",
-        margin: "20px auto",
-        padding: "30px",
-        background: "white",
-        borderRadius: "8px",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-      }}
-    >
-      <div style={{ marginBottom: "30px" }}>
-        <h2 style={{ marginBottom: "10px", color: "#2c3e50" }}>
-          Upload Student Performance
-        </h2>
-        <p style={{ color: "#7f8c8d", fontSize: "14px" }}>
+    <div className="performance-upload-container">
+      <div className="performance-upload-header">
+        <h2>Upload Student Performance</h2>
+        <p className="subtitle">
           Follow the steps below to upload student academic performance data
         </p>
       </div>
 
       {/* Progress Steps */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          marginBottom: "40px",
-          position: "relative",
-        }}
-      >
-        <div style={{ flex: 1, textAlign: "center", position: "relative" }}>
-          <div
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              background: step >= 1 ? "#3498db" : "#ecf0f1",
-              color: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 10px",
-              fontWeight: "bold",
-            }}
-          >
-            1
-          </div>
-          <div
-            style={{
-              fontSize: "12px",
-              color: step >= 1 ? "#2c3e50" : "#95a5a6",
-            }}
-          >
+      <div className="upload-progress-steps">
+        <div className="progress-step">
+          <div className={`step-circle ${step >= 1 ? "active" : ""}`}>1</div>
+          <div className={`step-label ${step >= 1 ? "active" : ""}`}>
             Download Template
           </div>
         </div>
-
-        <div
-          style={{
-            position: "absolute",
-            top: "20px",
-            left: "25%",
-            right: "25%",
-            height: "2px",
-            background: step >= 2 ? "#3498db" : "#ecf0f1",
-          }}
-        />
-
-        <div style={{ flex: 1, textAlign: "center", position: "relative" }}>
-          <div
-            style={{
-              width: "40px",
-              height: "40px",
-              borderRadius: "50%",
-              background: step >= 2 ? "#3498db" : "#ecf0f1",
-              color: "white",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              margin: "0 auto 10px",
-              fontWeight: "bold",
-            }}
-          >
-            2
-          </div>
-          <div
-            style={{
-              fontSize: "12px",
-              color: step >= 2 ? "#2c3e50" : "#95a5a6",
-            }}
-          >
+        <div className={`progress-line ${step >= 2 ? "active" : ""}`} />
+        <div className="progress-step">
+          <div className={`step-circle ${step >= 2 ? "active" : ""}`}>2</div>
+          <div className={`step-label ${step >= 2 ? "active" : ""}`}>
             Upload Filled Template
           </div>
         </div>
@@ -260,19 +250,7 @@ const PerformanceUpload = () => {
 
       {/* Error Display */}
       {error && (
-        <div
-          style={{
-            padding: "15px",
-            background: "#fee",
-            border: "1px solid #fcc",
-            borderRadius: "4px",
-            marginBottom: "20px",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            color: "#c0392b",
-          }}
-        >
+        <div className="upload-alert upload-alert-error">
           <FiAlertCircle />
           <span>{error}</span>
         </div>
@@ -280,39 +258,51 @@ const PerformanceUpload = () => {
 
       {/* Success Display */}
       {uploadResult && (
-        <div
-          style={{
-            padding: "20px",
-            background: "#d4edda",
-            border: "1px solid #c3e6cb",
-            borderRadius: "4px",
-            marginBottom: "20px",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-              marginBottom: "15px",
-            }}
-          >
-            <FiCheck style={{ color: "#27ae60", fontSize: "24px" }} />
-            <h3 style={{ margin: 0, color: "#155724" }}>Upload Successful!</h3>
+        <div className="upload-alert upload-alert-success">
+          <div className="upload-success-header">
+            <FiCheck />
+            <h3>Upload Successful!</h3>
           </div>
-          <div style={{ fontSize: "14px", color: "#155724" }}>
+          <div className="upload-success-details">
             <p>
               <strong>Created:</strong> {uploadResult.created} records
             </p>
             <p>
               <strong>Updated:</strong> {uploadResult.updated} records
             </p>
+
+            {uploadResult.ready_for_reports ? (
+              <div className="ready-for-reports-notice">
+                <p>✓ All subjects completed! Ready to generate reports.</p>
+                <button
+                  onClick={handleGenerateReports}
+                  disabled={reportGeneration.isGenerating}
+                  className="btn-generate-reports"
+                >
+                  <FiFileText />
+                  {reportGeneration.isGenerating
+                    ? "Generating Reports..."
+                    : "Generate Report Forms"}
+                </button>
+              </div>
+            ) : (
+              <div className="upload-progress-info">
+                <p>
+                  📊 Progress: {uploadResult.subjects_completed}/
+                  {uploadResult.total_subjects} subjects completed
+                </p>
+                <p className="upload-progress-hint">
+                  Upload performance for all subjects to generate reports
+                </p>
+              </div>
+            )}
+
             {uploadResult.errors && uploadResult.errors.length > 0 && (
-              <div>
-                <p style={{ color: "#856404" }}>
+              <div className="upload-warnings">
+                <p>
                   <strong>Warnings:</strong>
                 </p>
-                <ul style={{ marginLeft: "20px" }}>
+                <ul>
                   {uploadResult.errors.slice(0, 5).map((err, idx) => (
                     <li key={idx}>{err.error}</li>
                   ))}
@@ -320,68 +310,53 @@ const PerformanceUpload = () => {
               </div>
             )}
           </div>
-          <button
-            onClick={resetForm}
-            style={{
-              marginTop: "15px",
-              padding: "8px 16px",
-              background: "#27ae60",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              gap: "8px",
-            }}
-          >
+          <button onClick={resetForm} className="btn-reset">
             <FiRefreshCw /> Upload Another Subject
           </button>
         </div>
       )}
 
-      {/* Step 1: Download Template */}
-      {step === 1 && (
-        <div
-          style={{
-            padding: "25px",
-            background: "#f8f9fa",
-            borderRadius: "8px",
-            marginBottom: "20px",
-          }}
-        >
-          <h3 style={{ marginBottom: "20px", color: "#2c3e50" }}>
-            Step 1: Generate CSV Template
-          </h3>
+      {/* Report Generation Status */}
+      {reportGeneration.isGenerating && (
+        <div className="report-generation-status">
+          <div className="generation-header">
+            <FiClock />
+            <h3>Generating Reports...</h3>
+          </div>
+          <p>
+            Please wait while we generate report forms for all students. This
+            may take a few minutes.
+          </p>
+          <div className="generation-progress-bar">
+            <div className="generation-progress-fill" />
+          </div>
+        </div>
+      )}
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "20px",
-            }}
-          >
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontWeight: "600",
-                  color: "#34495e",
-                }}
-              >
-                Select Class *
-              </label>
+      {reportGeneration.status === "completed" && (
+        <div className="upload-alert upload-alert-success">
+          <div className="upload-success-header">
+            <FiCheck />
+            <h3>Reports Generated Successfully!</h3>
+          </div>
+          <p>
+            All report forms have been generated and are available in the
+            "Generated Reports" section.
+          </p>
+        </div>
+      )}
+
+      {/* Step 1: Download Template */}
+      {step === 1 && !uploadResult && (
+        <div className="upload-step-container">
+          <h3>Step 1: Generate CSV Template</h3>
+
+          <div className="upload-form-grid">
+            <div className="form-group">
+              <label>Select Class *</label>
               <select
                 value={selectedClass}
                 onChange={(e) => setSelectedClass(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                }}
               >
                 <option value="">Choose a class...</option>
                 {classes.map((cls) => (
@@ -392,27 +367,11 @@ const PerformanceUpload = () => {
               </select>
             </div>
 
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontWeight: "600",
-                  color: "#34495e",
-                }}
-              >
-                Select Subject *
-              </label>
+            <div className="form-group">
+              <label>Select Subject *</label>
               <select
                 value={selectedSubject}
                 onChange={(e) => setSelectedSubject(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                }}
               >
                 <option value="">Choose a subject...</option>
                 {subjects.map((subj) => (
@@ -423,57 +382,22 @@ const PerformanceUpload = () => {
               </select>
             </div>
 
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontWeight: "600",
-                  color: "#34495e",
-                }}
-              >
-                Term *
-              </label>
-              <select
-                value={term}
-                onChange={(e) => setTerm(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                }}
-              >
+            <div className="form-group">
+              <label>Term *</label>
+              <select value={term} onChange={(e) => setTerm(e.target.value)}>
                 <option value="Term 1">Term 1</option>
                 <option value="Term 2">Term 2</option>
                 <option value="Term 3">Term 3</option>
               </select>
             </div>
 
-            <div>
-              <label
-                style={{
-                  display: "block",
-                  marginBottom: "8px",
-                  fontWeight: "600",
-                  color: "#34495e",
-                }}
-              >
-                School Year *
-              </label>
+            <div className="form-group">
+              <label>School Year *</label>
               <input
                 type="text"
                 value={schoolYear}
                 onChange={(e) => setSchoolYear(e.target.value)}
                 placeholder="e.g., 2025"
-                style={{
-                  width: "100%",
-                  padding: "10px",
-                  border: "1px solid #ddd",
-                  borderRadius: "4px",
-                  fontSize: "14px",
-                }}
               />
             </div>
           </div>
@@ -481,38 +405,15 @@ const PerformanceUpload = () => {
           <button
             onClick={handleDownloadTemplate}
             disabled={isGenerating || !selectedClass || !selectedSubject}
-            style={{
-              marginTop: "25px",
-              padding: "12px 24px",
-              background: isGenerating ? "#95a5a6" : "#3498db",
-              color: "white",
-              border: "none",
-              borderRadius: "4px",
-              cursor: isGenerating ? "not-allowed" : "pointer",
-              fontSize: "15px",
-              fontWeight: "600",
-              display: "flex",
-              alignItems: "center",
-              gap: "10px",
-            }}
+            className="btn-download-template"
           >
             <FiDownload />
             {isGenerating ? "Generating..." : "Download CSV Template"}
           </button>
 
-          <div
-            style={{
-              marginTop: "20px",
-              padding: "15px",
-              background: "#e8f4f8",
-              border: "1px solid #b8dce8",
-              borderRadius: "4px",
-              fontSize: "13px",
-              color: "#2c3e50",
-            }}
-          >
+          <div className="upload-instructions">
             <strong>📌 Instructions:</strong>
-            <ol style={{ marginLeft: "20px", marginTop: "10px" }}>
+            <ol>
               <li>
                 Select the class and subject you want to enter performance for
               </li>
@@ -525,44 +426,20 @@ const PerformanceUpload = () => {
               </li>
               <li>Add optional comments for students</li>
               <li>Save the file and return here to upload it</li>
+              <li>Repeat for all subjects before generating reports</li>
             </ol>
           </div>
         </div>
       )}
 
       {/* Step 2: Upload Filled Template */}
-      {step === 2 && (
-        <div
-          style={{
-            padding: "25px",
-            background: "#f8f9fa",
-            borderRadius: "8px",
-          }}
-        >
-          <h3 style={{ marginBottom: "20px", color: "#2c3e50" }}>
-            Step 2: Upload Filled Template
-          </h3>
+      {step === 2 && !reportGeneration.status && (
+        <div className="upload-step-container">
+          <h3>Step 2: Upload Filled Template</h3>
 
-          <div
-            style={{
-              padding: "20px",
-              background: "white",
-              border: "2px dashed #3498db",
-              borderRadius: "8px",
-              textAlign: "center",
-              marginBottom: "20px",
-            }}
-          >
-            <FiUpload
-              style={{
-                fontSize: "48px",
-                color: "#3498db",
-                marginBottom: "15px",
-              }}
-            />
-            <p style={{ marginBottom: "15px", color: "#7f8c8d" }}>
-              Upload the CSV file with student performance data
-            </p>
+          <div className="file-upload-area">
+            <FiUpload className="upload-icon" />
+            <p>Upload the CSV file with student performance data</p>
             <input
               id="file-upload"
               type="file"
@@ -570,69 +447,22 @@ const PerformanceUpload = () => {
               onChange={handleFileSelect}
               style={{ display: "none" }}
             />
-            <label
-              htmlFor="file-upload"
-              style={{
-                padding: "10px 20px",
-                background: "#3498db",
-                color: "white",
-                borderRadius: "4px",
-                cursor: "pointer",
-                display: "inline-block",
-                fontWeight: "600",
-              }}
-            >
+            <label htmlFor="file-upload" className="btn-choose-file">
               Choose CSV File
             </label>
             {uploadFile && (
-              <div
-                style={{
-                  marginTop: "15px",
-                  padding: "10px",
-                  background: "#e8f4f8",
-                  borderRadius: "4px",
-                  display: "inline-block",
-                }}
-              >
-                ✓ Selected: {uploadFile.name}
-              </div>
+              <div className="file-selected">✓ Selected: {uploadFile.name}</div>
             )}
           </div>
 
-          <div style={{ display: "flex", gap: "15px" }}>
-            <button
-              onClick={() => setStep(1)}
-              style={{
-                padding: "12px 24px",
-                background: "#95a5a6",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: "pointer",
-                fontSize: "15px",
-                fontWeight: "600",
-              }}
-            >
+          <div className="upload-actions">
+            <button onClick={() => setStep(1)} className="btn-secondary">
               ← Back
             </button>
             <button
               onClick={handleUploadPerformance}
               disabled={isUploading || !uploadFile}
-              style={{
-                flex: 1,
-                padding: "12px 24px",
-                background: isUploading ? "#95a5a6" : "#27ae60",
-                color: "white",
-                border: "none",
-                borderRadius: "4px",
-                cursor: isUploading || !uploadFile ? "not-allowed" : "pointer",
-                fontSize: "15px",
-                fontWeight: "600",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "10px",
-              }}
+              className="btn-upload-performance"
             >
               <FiUpload />
               {isUploading ? "Uploading..." : "Upload Performance Data"}
