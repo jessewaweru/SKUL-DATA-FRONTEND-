@@ -1,26 +1,40 @@
-// Dashboard API Service - Updated to work with your existing api setup
 export const createDashboardApi = (api) => ({
   // Get dashboard statistics
   getStats: async () => {
     try {
       // First get the current user to get school ID
-      let schoolId = 1; // Default fallback
+      let schoolId = null;
+
       try {
         const userRes = await api.get("/users/me/");
-        schoolId = userRes.data.school_admin_profile?.school?.id || 1;
+        console.log("Current user response:", userRes.data);
+
+        // Try multiple ways to get school ID
+        if (userRes.data.school?.id) {
+          schoolId = userRes.data.school.id;
+          console.log("✅ Got school ID from user.school:", schoolId);
+        } else if (userRes.data.school_admin_profile?.school?.id) {
+          schoolId = userRes.data.school_admin_profile.school.id;
+          console.log("✅ Got school ID from school_admin_profile:", schoolId);
+        }
+
+        if (!schoolId) {
+          console.error("❌ Could not determine school ID from user data");
+          throw new Error("School ID not found. Please contact support.");
+        }
       } catch (error) {
-        console.warn(
-          "Could not fetch user, using default school ID:",
-          error.message
-        );
+        console.error("Error fetching user:", error);
+        throw new Error("Could not fetch user information");
       }
+
+      console.log("Fetching dashboard stats for school ID:", schoolId);
 
       // Fetch data sequentially with individual error handling
       let students = [];
       try {
         const studentsRes = await api.get("/students/students/");
-        // Handle paginated response - get results array
         students = studentsRes.data.results || studentsRes.data || [];
+        console.log(`✅ Students fetched: ${students.length}`);
       } catch (error) {
         console.warn("Could not fetch students:", error.message);
       }
@@ -28,8 +42,8 @@ export const createDashboardApi = (api) => ({
       let teachers = [];
       try {
         const teachersRes = await api.get(`/schools/${schoolId}/teachers/`);
-        // Teachers response has nested 'teachers' array
         teachers = teachersRes.data.teachers || teachersRes.data || [];
+        console.log(`✅ Teachers fetched: ${teachers.length}`);
       } catch (error) {
         console.warn("Could not fetch teachers:", error.message);
       }
@@ -37,7 +51,6 @@ export const createDashboardApi = (api) => ({
       let classes = [];
       try {
         const classesRes = await api.get("/schools/classes/");
-        // Handle both array and paginated response
         if (Array.isArray(classesRes.data)) {
           classes = classesRes.data;
         } else if (classesRes.data.results) {
@@ -45,7 +58,7 @@ export const createDashboardApi = (api) => ({
         } else {
           classes = [];
         }
-        console.log("Classes fetched:", classes.length);
+        console.log(`✅ Classes fetched: ${classes.length}`);
       } catch (error) {
         console.warn("Could not fetch classes:", error.message);
       }
@@ -53,7 +66,6 @@ export const createDashboardApi = (api) => ({
       let documents = [];
       try {
         const documentsRes = await api.get("/documents/documents/");
-        // Handle both array and paginated response
         if (Array.isArray(documentsRes.data)) {
           documents = documentsRes.data;
         } else if (documentsRes.data.results) {
@@ -61,7 +73,7 @@ export const createDashboardApi = (api) => ({
         } else {
           documents = [];
         }
-        console.log("Documents fetched:", documents.length);
+        console.log(`✅ Documents fetched: ${documents.length}`);
       } catch (error) {
         console.warn("Could not fetch documents:", error.message);
       }
@@ -69,48 +81,37 @@ export const createDashboardApi = (api) => ({
       let parents = [];
       try {
         const parentsRes = await api.get(`/schools/${schoolId}/parents/`);
-        // Parents response has nested 'parents' array
         parents = parentsRes.data.parents || parentsRes.data || [];
+        console.log(`✅ Parents fetched: ${parents.length}`);
       } catch (error) {
         console.warn("Could not fetch parents:", error.message);
       }
 
       let attendance = [];
       try {
-        console.log("Fetching attendance data...");
         const attendanceRes = await api.get("/schools/class-attendances/", {
-          timeout: 30000, // 30 second timeout for attendance
+          timeout: 30000,
         });
-        // Handle paginated response
         attendance = attendanceRes.data.results || attendanceRes.data || [];
-        console.log(
-          "Attendance data fetched successfully:",
-          attendance.length,
-          "records"
-        );
+        console.log(`✅ Attendance fetched: ${attendance.length} records`);
       } catch (error) {
-        console.warn(
-          "Could not fetch attendance (will use mock data):",
-          error.message
-        );
-        // Continue with empty array - will generate mock data below
+        console.warn("Could not fetch attendance:", error.message);
       }
 
       let fees = [];
       try {
-        // Fees might take longer, so we'll handle it specially
         const feesRes = await api.get("/fees/fee-records/");
-        // Handle both paginated and non-paginated responses
         fees = feesRes.data.results || feesRes.data || [];
+        console.log(`✅ Fees fetched: ${fees.length}`);
       } catch (error) {
         console.warn("Could not fetch fees:", error.message);
-        // Continue with empty fees array
       }
 
       let activityLogs = [];
       try {
         const activityLogsRes = await api.get("/logs/action-logs/?limit=10");
         activityLogs = activityLogsRes.data.results || activityLogsRes.data;
+        console.log(`✅ Activity logs fetched: ${activityLogs.length}`);
       } catch (error) {
         console.warn("Could not fetch activity logs:", error.message);
       }
@@ -126,17 +127,13 @@ export const createDashboardApi = (api) => ({
       const totalParents = Array.isArray(parents) ? parents.length : 0;
 
       // Debug logging
-      console.log("Dashboard Statistics:", {
+      console.log("📊 Dashboard Statistics:", {
+        schoolId,
         totalStudents,
         activeTeachers,
         totalClasses,
         totalDocuments,
         totalParents,
-        studentsArray: Array.isArray(students),
-        teachersArray: Array.isArray(teachers),
-        classesArray: Array.isArray(classes),
-        documentsArray: Array.isArray(documents),
-        parentsArray: Array.isArray(parents),
       });
 
       // Calculate average attendance
@@ -178,6 +175,7 @@ export const createDashboardApi = (api) => ({
           revenue: revenueTrend,
         },
         recentActivity,
+        schoolId, // Return school ID for debugging
       };
     } catch (error) {
       console.error("Error fetching dashboard stats:", error);
@@ -192,19 +190,14 @@ export const createDashboardApi = (api) => ({
       return response.data;
     } catch (error) {
       console.error("Error fetching current user:", error.message);
-      // Return a default user object instead of throwing
-      return {
-        first_name: "School",
-        last_name: "Administrator",
-        email: "admin@school.com",
-      };
+      throw error;
     }
   },
 });
 
 export default createDashboardApi;
 
-// Helper function to process attendance trend
+// Helper functions remain the same...
 const processAttendanceTrend = (attendance) => {
   const months = [
     "Jan",
@@ -231,7 +224,6 @@ const processAttendanceTrend = (attendance) => {
     );
     const monthName = months[date.getMonth()];
 
-    // Filter attendance for this month
     const monthAttendance = Array.isArray(attendance)
       ? attendance.filter((a) => {
           const aDate = new Date(a.date);
@@ -242,7 +234,6 @@ const processAttendanceTrend = (attendance) => {
         })
       : [];
 
-    // Calculate average for the month
     let avgRate = 0;
     if (monthAttendance.length > 0) {
       const rates = monthAttendance.map((a) => a.attendance_rate || 0);
@@ -258,7 +249,6 @@ const processAttendanceTrend = (attendance) => {
   return trend;
 };
 
-// Helper function to process revenue trend
 const processRevenueTrend = (fees) => {
   const months = [
     "Jan",
@@ -285,7 +275,6 @@ const processRevenueTrend = (fees) => {
     );
     const monthName = months[date.getMonth()];
 
-    // Filter payments for this month
     const monthRevenue = Array.isArray(fees)
       ? fees.reduce((sum, fee) => {
           if (fee.payments && Array.isArray(fee.payments)) {
@@ -314,7 +303,6 @@ const processRevenueTrend = (fees) => {
   return trend;
 };
 
-// Helper function to process activity logs
 const processActivityLogs = (logs) => {
   if (!Array.isArray(logs)) return [];
 

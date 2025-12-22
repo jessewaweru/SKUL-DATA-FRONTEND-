@@ -552,38 +552,6 @@ export const bulkUploadTeacherDocuments = async (teacherId, files) => {
   }
 };
 
-// export const fetchTeacherDocuments = async (teacherId) => {
-//   try {
-//     const response = await api.get(`/api/users/teacher-documents/`, {
-//       params: { teacher: teacherId },
-//     });
-
-//     // Handle both paginated and non-paginated responses
-//     const documentsData = response.data.results || response.data;
-
-//     // Transform data to match frontend expectations
-//     return Array.isArray(documentsData)
-//       ? documentsData.map((doc) => ({
-//           id: doc.id,
-//           title: doc.title,
-//           document_type: doc.document_type,
-//           file: doc.file,
-//           description: doc.description,
-//           uploaded_by: doc.uploaded_by,
-//           uploaded_at: doc.uploaded_at,
-//           is_confidential: doc.is_confidential,
-//           file_size: doc.file_size || "N/A",
-//         }))
-//       : [];
-//   } catch (error) {
-//     console.error(
-//       `Error fetching documents for teacher with ID ${teacherId}:`,
-//       error
-//     );
-//     throw error;
-//   }
-// };
-
 // New function to fetch teacher documents using schools API
 export const fetchTeacherDocumentsFromSchool = async (schoolId, teacherId) => {
   try {

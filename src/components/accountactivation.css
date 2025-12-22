@@ -1,0 +1,146 @@
+/* Account Activation Styles */
+.activation-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  padding: 20px;
+}
+
+.activation-box {
+  background: white;
+  padding: 50px 40px;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.activation-box .icon {
+  font-size: 64px;
+  margin-bottom: 20px;
+}
+
+.activation-box .icon.success {
+  color: #4caf50;
+}
+
+.activation-box .icon.error {
+  color: #f44336;
+}
+
+.activation-box .icon.spinning {
+  color: #667eea;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.activation-box h2 {
+  color: #333;
+  margin-bottom: 15px;
+  font-size: 28px;
+}
+
+.activation-box p {
+  color: #666;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+
+.account-info {
+  background: #f5f5f5;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 20px 0;
+}
+
+.account-info p {
+  margin: 5px 0;
+  color: #333;
+}
+
+.redirect-message {
+  color: #667eea;
+  font-weight: 600;
+  margin-top: 20px;
+}
+
+.manual-link {
+  display: inline-block;
+  color: #667eea;
+  text-decoration: none;
+  margin-top: 10px;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+
+.manual-link:hover {
+  color: #764ba2;
+  text-decoration: underline;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 25px;
+}
+
+.primary-button,
+.secondary-button {
+  padding: 12px 24px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+  display: inline-block;
+}
+
+.primary-button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.primary-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.secondary-button {
+  background: white;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.secondary-button:hover {
+  background: #f5f5f5;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .activation-box {
+    padding: 40px 25px;
+  }
+
+  .activation-box .icon {
+    font-size: 48px;
+  }
+
+  .activation-box h2 {
+    font-size: 24px;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}

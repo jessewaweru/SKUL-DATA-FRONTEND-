@@ -17,6 +17,7 @@ import "@syncfusion/ej2-react-schedule/styles/material.css";
 import { UserProvider } from "./context/AuthProvider.jsx";
 import { RouterProvider } from "react-router-dom";
 import LoginRegister from "./pages/LoginRegister.jsx";
+import PasswordReset from "./pages/PasswordReset.jsx";
 import DashboardPage from "./pages/DashboardPage.jsx";
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import MainLayout from "./components/MainLayout.jsx";
@@ -165,6 +166,7 @@ import KCSESubjectAnalysis from "./components/SchoolDashboards/SchoolDashboardSe
 import KCSEComparativeAnalysis from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSEComparativeAnalysis";
 import KCSETeacherPerformance from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSETeacherPerformance";
 import KCSEManagement from "./components/SchoolDashboards/SchoolDashboardSection/KCSE/KCSEManagement.jsx";
+import AccountActivation from "./components/Accountactivation.jsx";
 
 console.log("DEBUG TEST - App component mounted"); // Debug A
 console.log("Environment Variables:", {
@@ -188,6 +190,10 @@ function App() {
       element: <MainLayout />,
     },
     {
+      path: "/activate-account/:token",
+      element: <AccountActivation />,
+    },
+    {
       path: "/pricing",
       element: <Pricing />,
     },
@@ -198,6 +204,10 @@ function App() {
     {
       path: "/register",
       element: <LoginRegister mode="register" />,
+    },
+    {
+      path: "/password-reset", // ADD THIS ROUTE
+      element: <PasswordReset />,
     },
     {
       path: "/teacher-dashboard",

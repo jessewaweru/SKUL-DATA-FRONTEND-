@@ -1,117 +1,37 @@
-import { useEffect, useState } from "react";
-import {
-  FaPhone,
-  FaLock,
-  FaEnvelope,
-  FaSchool,
-  FaMapMarkerAlt,
-  FaChalkboardTeacher,
-} from "react-icons/fa";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { FaLock, FaEnvelope } from "react-icons/fa";
+import { useNavigate, Link } from "react-router-dom";
 import "../styles/loginRegister.css";
 import Axios from "axios";
 
-const LoginRegister = ({ mode = "login" }) => {
-  const [action, setAction] = useState(mode === "register" ? "active" : "");
+const Login = () => {
   const [formData, setFormData] = useState({
     username: "",
-    email: "",
     password: "",
-    schoolName: "",
-    schoolLevel: "",
-    physicalAddress: "",
-    phone_number: "",
-    confirmPassword: "",
+    rememberMe: false,
   });
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
-
-  useEffect(() => {
-    if (mode === "register") {
-      setAction("active");
-    } else {
-      setAction("");
-    }
-  }, [mode, location.pathname]);
 
   const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: type === "checkbox" ? checked : value,
     });
+    // Clear error when user starts typing
+    if (error) setError(null);
   };
-
-  // const handleLoginSubmit = (e) => {
-  //   e.preventDefault();
-  //   Axios.post("http://localhost:8000/users/login/", {
-  //     email: formData.email,
-  //     password: formData.password,
-  //   })
-  //     .then((response) => {
-  //       localStorage.setItem("access_token", response.data.token);
-  //       navigate("/dashboard");
-  //     })
-  //     .catch(() => {
-  //       setError("Invalid credentials. Please try again.");
-  //     });
-  // };
-
-  // const handleLoginSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await Axios.post("http://localhost:8000/api/token/", {
-  //       username: formData.email, // Django expects 'username' field
-  //       password: formData.password,
-  //     });
-
-  //     console.log("Login response:", response.data); // Debug
-
-  //     // Store BOTH tokens correctly
-  //     localStorage.setItem("accessToken", response.data.access);
-  //     localStorage.setItem("refreshToken", response.data.refresh);
-
-  //     // Redirect to protected page
-  //     navigate("/dashboard");
-  //   } catch (error) {
-  //     console.error("Login failed:", error.response?.data || error);
-  //     setError(error.response?.data?.detail || "Login failed");
-  //   }
-  // };
-
-  // const handleLoginSubmit = async (e) => {
-  //   e.preventDefault();
-  //   try {
-  //     const response = await Axios.post("http://localhost:8000/api/token/", {
-  //       username: formData.email, // Change this from email to username
-  //       password: formData.password,
-  //     });
-
-  //     console.log("Login response:", response.data);
-  //     localStorage.setItem("accessToken", response.data.access);
-  //     localStorage.setItem("refreshToken", response.data.refresh);
-
-  //     // Add immediate verification
-  //     const token = localStorage.getItem("accessToken");
-  //     console.log("Stored token:", token);
-
-  //     navigate("/dashboard");
-  //   } catch (error) {
-  //     console.error("Full error:", error);
-  //     console.error("Response data:", error.response?.data);
-  //     setError(error.response?.data?.detail || "Login failed");
-  //   }
-  // };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
+
     try {
       console.log("Attempting login with:", {
         username: formData.username,
-        // Don't log password in production
       });
 
       const response = await Axios.post(
@@ -124,7 +44,7 @@ const LoginRegister = ({ mode = "login" }) => {
           headers: {
             "Content-Type": "application/json",
           },
-          withCredentials: true, // Important for session cookies
+          withCredentials: true,
         }
       );
 
@@ -139,7 +59,7 @@ const LoginRegister = ({ mode = "login" }) => {
         "Authorization"
       ] = `Bearer ${response.data.access}`;
 
-      // Redirect
+      // Redirect to dashboard
       navigate("/dashboard");
     } catch (error) {
       console.error("Login error:", error);
@@ -160,47 +80,15 @@ const LoginRegister = ({ mode = "login" }) => {
     }
   };
 
-  const handleRegisterSubmit = (e) => {
-    e.preventDefault();
-
-    if (formData.password !== formData.confirmPassword) {
-      setError("Passwords do not match.");
-      return;
-    }
-
-    Axios.post("http://localhost:8000/users/register/", {
-      email: formData.email,
-      password: formData.password,
-      schoolName: formData.schoolName,
-      schoolLevel: formData.schoolLevel,
-      physicalAddress: formData.physicalAddress,
-      phone_number: formData.phone_number,
-      confirmPassword: formData.confirmPassword,
-    })
-      .then((response) => {
-        localStorage.setItem("access_token", response.data.token);
-        navigate("/dashboard");
-      })
-      .catch(() => {
-        setError("Registration failed. Please try again.");
-      });
-  };
-
-  const registerLink = () => {
-    setAction("active");
-    navigate("/register", { replace: true });
-  };
-  const loginLink = () => {
-    setAction("");
-    navigate("/login", { replace: true });
-  };
-
   return (
-    <div className={`wrapper ${action}`}>
-      <div className="form-box login">
+    <div className="wrapper">
+      <div className="form-box login centered">
         <form onSubmit={handleLoginSubmit}>
-          <h1>Login</h1>
+          <h1>Skul Data Login</h1>
+          <p className="subtitle">School Management System</p>
+
           {error && <p className="error-message">{error}</p>}
+
           <div className="input-box">
             <input
               type="text"
@@ -210,9 +98,11 @@ const LoginRegister = ({ mode = "login" }) => {
               onChange={handleChange}
               required
               disabled={isLoading}
+              autoFocus
             />
             <FaEnvelope className="icon" />
           </div>
+
           <div className="input-box">
             <input
               type="password"
@@ -225,128 +115,29 @@ const LoginRegister = ({ mode = "login" }) => {
             />
             <FaLock className="icon" />
           </div>
+
           <div className="remember-forgot">
-            <label htmlFor="checkbox">
-              <input type="checkbox" name="checkbox" />
+            <label htmlFor="rememberMe">
+              <input
+                type="checkbox"
+                name="rememberMe"
+                id="rememberMe"
+                checked={formData.rememberMe}
+                onChange={handleChange}
+              />
               Remember me
             </label>
-            <a href="#">Forgot Password?</a>
+            <Link to="/password-reset">Forgot Password?</Link>
           </div>
+
           <button type="submit" disabled={isLoading}>
             {isLoading ? "Logging in..." : "Login"}
           </button>
-          <div className="register-link">
-            <p>
-              Don't have an account?
-              <a href="#" onClick={registerLink}>
-                {" "}
-                Register
-              </a>
-            </p>
-          </div>
-        </form>
-      </div>
 
-      <div className="form-box register">
-        <form onSubmit={handleRegisterSubmit}>
-          <h1>Registration</h1>
-          {error && <p className="error-message">{error}</p>}
-          <div className="input-box">
-            <input
-              type="text"
-              name="schoolName"
-              placeholder="Official School Name"
-              value={formData.schoolName}
-              onChange={handleChange}
-              required
-            />
-            <FaSchool className="icon" />
-          </div>
-          <div className="input-box">
-            <select
-              name="schoolLevel"
-              className="select-input-button"
-              value={formData.schoolLevel}
-              onChange={handleChange}
-              required
-            >
-              <option value="" disabled>
-                Choose School Level
-              </option>
-              <option value="kindergarten">Kindergarten</option>
-              <option value="primary">Primary School</option>
-              <option value="secondary">Secondary School</option>
-              <option value="mixed">Primary & Secondary</option>
-            </select>
-            <FaChalkboardTeacher className="icon" />
-          </div>
-          <div className="input-box">
-            <input
-              type="text"
-              name="physicalAddress"
-              placeholder="Physical Address"
-              value={formData.physicalAddress}
-              onChange={handleChange}
-              required
-            />
-            <FaMapMarkerAlt className="icon" />
-          </div>
-
-          <div className="input-box">
-            <input
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={handleChange}
-              required
-            />
-            <FaEnvelope className="icon" />
-          </div>
-          <div className="input-box">
-            <input
-              type="text"
-              name="phone_number"
-              placeholder="School Phone Number"
-              value={formData.phone_number}
-              onChange={handleChange}
-              required
-            />
-            <FaPhone className="icon" />
-          </div>
-          <div className="input-box">
-            <input
-              type="password"
-              placeholder="password"
-              value={formData.password}
-              onChange={handleChange}
-              required
-            />
-            <FaLock className="icon" />
-          </div>
-          <div className="input-box">
-            <input
-              type="password"
-              placeholder="confirm-password"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              required
-            />
-            <FaLock className="icon" />
-          </div>
-          <div className="remember-forgot">
-            <label htmlFor="checkbox">
-              <input type="checkbox" name="checkbox" />I agree to the terms &
-              conditions
-            </label>
-          </div>
-          <button type="submit">Register</button>
-          <div className="register-link">
+          <div className="info-text">
             <p>
-              Already have an account?
-              <a href="#" onClick={loginLink}>
-                {" "}
-                Login
-              </a>
+              New school? <a href="mailto:sales@skuldata.com">Contact us</a> to
+              get started
             </p>
           </div>
         </form>
@@ -355,4 +146,4 @@ const LoginRegister = ({ mode = "login" }) => {
   );
 };
 
-export default LoginRegister;
+export default Login;
